@@ -3,7 +3,7 @@ import GoogleProvider from 'next-auth/providers/google'
 import { db, users } from './db'
 import { eq } from 'drizzle-orm'
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -11,7 +11,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     })
   ],
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user }: any) {
       if (!user.email) return false
       const existing = await db.select().from(users).where(eq(users.email, user.email)).limit(1)
       if (existing.length === 0) {
@@ -25,17 +25,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true
     },
-    async session({ session }) {
+    async session({ session }: any) {
       if (session.user?.email) {
         const [u] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
         if (u) {
-          (session.user as any).id = u.id;
-          (session.user as any).credits = u.credits;
-          (session.user as any).plan = u.plan
+          session.user.id = u.id
+          session.user.credits = u.credits
+          session.user.plan = u.plan
         }
       }
       return session
     }
   },
   pages: { signIn: '/login' }
-})
+}
+
+const handler = NextAuth(authOptions)
+export { handler as auth }
+export default handler
