@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react'
 import { useGenerate } from '@/hooks/useGenerate'
 import { WorkflowTimeline } from '@/components/workflow/WorkflowTimeline'
 import { ScriptPicker } from '@/components/studio/ScriptPicker'
@@ -7,26 +8,46 @@ import { ChatBox } from '@/components/studio/ChatBox'
 
 export default function Home() {
   const g = useGenerate()
+  const [dark, setDark] = useState(true)
+
   const isWorking  = g.step === 'working' || g.step === 'producing'
   const isPicking  = g.step === 'picking'
   const isComplete = g.step === 'complete'
   const isFailed   = g.step === 'failed'
 
+  const t = {
+    bg:       dark ? '#0f0f0f' : '#fafaf8',
+    bg2:      dark ? '#161616' : '#f2f2ef',
+    bg3:      dark ? '#1c1c1c' : '#e8e8e4',
+    border:   dark ? '#262626' : '#d8d8d2',
+    border2:  dark ? '#2e2e2e' : '#cececa',
+    text:     dark ? '#f0f0f0' : '#111111',
+    text2:    dark ? '#888888' : '#666666',
+    text3:    dark ? '#444444' : '#999999',
+    accent:   dark ? '#d4a853' : '#c49a3a',
+    accentBg: dark ? 'rgba(212,168,83,0.08)' : 'rgba(196,154,58,0.1)',
+    inputBg:  dark ? '#141414' : '#ffffff',
+  }
+
   return (
-    <div style={{ background: '#050505', minHeight: '100vh', color: '#fff', fontFamily: "'Syne', sans-serif", overflowX: 'hidden' }}>
+    <div style={{ background: t.bg, minHeight: '100vh', color: t.text, transition: 'background 0.4s, color 0.4s' }}>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap');
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; cursor: pointer; border: none; }
+        textarea, input { font-family: inherit; }
 
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(32px); }
+          from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes glow {
-          0%, 100% { opacity: 0.5; transform: scale(1); }
-          50%       { opacity: 1;   transform: scale(1.05); }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
         }
         @keyframes marquee {
           from { transform: translateX(0); }
@@ -34,178 +55,179 @@ export default function Home() {
         }
         @keyframes pulse {
           0%, 100% { opacity: 1; }
-          50%       { opacity: 0.3; }
+          50% { opacity: 0.4; }
         }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @keyframes slideIn {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
+        @keyframes shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
         }
 
-        .fu0 { animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.0s both; }
-        .fu1 { animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s both; }
-        .fu2 { animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
-        .fu3 { animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s both; }
-        .fu4 { animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s both; }
+        .f0 { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.0s both; }
+        .f1 { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.08s both; }
+        .f2 { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.16s both; }
+        .f3 { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.24s both; }
+        .f4 { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.32s both; }
 
-        textarea:focus, input:focus { outline: none; }
-        textarea::placeholder, input::placeholder { color: #555; }
-        a { text-decoration: none; color: inherit; }
-        button { font-family: inherit; cursor: pointer; }
+        textarea::placeholder { color: #666; }
+        textarea:focus { outline: none; }
 
-        .card-hover {
-          transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-          border: 1px solid #1a1a1a;
-        }
-        .card-hover:hover {
-          border-color: #00ff87;
-          transform: translateY(-2px);
-          box-shadow: 0 0 40px rgba(0,255,135,0.08);
-        }
-
-        .glow-btn {
-          position: relative;
-          overflow: hidden;
-          transition: all 0.3s;
-        }
-        .glow-btn::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, #00ff87, #60efff);
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-        .glow-btn:hover::before { opacity: 0.15; }
-        .glow-btn:hover { box-shadow: 0 0 30px rgba(0,255,135,0.3); transform: translateY(-1px); }
-
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #00ff87; border-radius: 2px; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
       `}</style>
 
-      {/* ── NOISE TEXTURE OVERLAY ── */}
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E")`,
-        opacity: 0.4
-      }} />
-
-      {/* ── HERO GLOW ORBS ── */}
-      <div style={{ position: 'fixed', top: '-200px', left: '50%', transform: 'translateX(-50%)', width: '800px', height: '600px', background: 'radial-gradient(ellipse, rgba(0,255,135,0.06) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0, animation: 'glow 8s ease-in-out infinite' }} />
-      <div style={{ position: 'fixed', bottom: '-100px', right: '-100px', width: '500px', height: '500px', background: 'radial-gradient(ellipse, rgba(96,239,255,0.04) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
-
       {/* ── NAV ── */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, borderBottom: '1px solid #111', backdropFilter: 'blur(20px)', background: 'rgba(5,5,5,0.8)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 64 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00ff87', boxShadow: '0 0 12px #00ff87', animation: 'pulse 2s infinite' }} />
-            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 20, letterSpacing: -0.5 }}>SceneForge</span>
-            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, color: '#00ff87', letterSpacing: 2, border: '1px solid #00ff8740', padding: '2px 6px', borderRadius: 3 }}>STUDIO</span>
+      <nav style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        background: dark ? 'rgba(15,15,15,0.92)' : 'rgba(250,250,248,0.92)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: `1px solid ${t.border}`,
+        transition: 'background 0.4s',
+      }}>
+        <div style={{ maxWidth: 1120, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 60 }}>
+
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 7, height: 7, borderRadius: '50%', background: t.accent, animation: 'pulse 3s infinite' }} />
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontStyle: 'italic', color: t.text, letterSpacing: -0.3 }}>SceneForge</span>
+            <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, color: t.text3, letterSpacing: 1.5, border: `1px solid ${t.border}`, padding: '2px 6px', borderRadius: 3 }}>STUDIO</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+
+          {/* Nav links */}
+          <div style={{ display: 'flex', gap: 0 }}>
             {[['Studio','/studio'],['Work','/episodes'],['Dashboard','/dashboard']].map(([l,h]) => (
-              <a key={l} href={h} style={{ fontSize: 13, color: '#888', padding: '8px 14px', borderRadius: 8, transition: 'color 0.2s', fontFamily: "'Outfit', sans-serif" }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#888')}>{l}</a>
+              <a key={l} href={h} style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, color: t.text2, padding: '8px 14px', borderRadius: 7, transition: 'color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = t.text)}
+                onMouseLeave={e => (e.currentTarget.style.color = t.text2)}>{l}</a>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <a href="/login" style={{ fontSize: 13, color: '#888', padding: '8px 16px', fontFamily: "'Outfit', sans-serif" }}>Sign in</a>
-            <a href="/login" className="glow-btn" style={{ fontSize: 13, fontWeight: 600, color: '#050505', background: '#00ff87', padding: '9px 20px', borderRadius: 8, fontFamily: "'Outfit', sans-serif", position: 'relative' }}>
-              Start free →
+
+          {/* Right */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {/* Theme toggle */}
+            <button onClick={() => setDark(!dark)} style={{
+              width: 36, height: 36, borderRadius: 8, background: t.bg3, border: `1px solid ${t.border}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, transition: 'all 0.2s', color: t.text2
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = t.accent; e.currentTarget.style.color = t.accent }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = t.border; e.currentTarget.style.color = t.text2 }}>
+              {dark ? '☀' : '◐'}
+            </button>
+
+            <a href="/login" style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, color: t.text2, padding: '8px 14px', transition: 'color 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = t.text)}
+              onMouseLeave={e => (e.currentTarget.style.color = t.text2)}>Sign in</a>
+
+            <a href="/login" style={{
+              fontFamily: "'Geist', sans-serif", fontSize: 13, fontWeight: 500,
+              color: dark ? '#0f0f0f' : '#fafaf8',
+              background: t.text,
+              padding: '8px 18px', borderRadius: 8,
+              transition: 'all 0.2s', display: 'inline-block'
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = t.accent; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.background = t.text; e.currentTarget.style.color = dark ? '#0f0f0f' : '#fafaf8' }}>
+              Start free
             </a>
           </div>
         </div>
       </nav>
 
       {/* ── HERO ── */}
-      <section style={{ position: 'relative', zIndex: 1, maxWidth: 900, margin: '0 auto', padding: '140px 32px 80px', textAlign: 'center' }}>
+      <section style={{ maxWidth: 820, margin: '0 auto', padding: '96px 32px 72px', textAlign: 'center', position: 'relative' }}>
+        {/* Subtle glow */}
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 600, height: 400, background: `radial-gradient(ellipse, ${t.accentBg} 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
-        <div className="fu0" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 32, background: '#0a1a0a', border: '1px solid #00ff8740', borderRadius: 100, padding: '6px 16px 6px 10px' }}>
-          <div style={{ background: '#00ff87', borderRadius: '50%', width: 6, height: 6, animation: 'pulse 1.5s infinite' }} />
-          <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: '#00ff87', letterSpacing: 1 }}>CREATOR PRODUCTION STUDIO</span>
+        <div className="f0" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 28, padding: '5px 14px 5px 10px', borderRadius: 100, background: t.accentBg, border: `1px solid ${dark ? 'rgba(212,168,83,0.2)' : 'rgba(196,154,58,0.3)'}` }}>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: t.accent }} />
+          <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.accent, letterSpacing: 1.5 }}>CREATOR PRODUCTION STUDIO</span>
         </div>
 
-        <h1 className="fu1" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(52px, 8vw, 96px)', lineHeight: 0.95, letterSpacing: -3, marginBottom: 28 }}>
-          <span style={{ display: 'block', color: '#fff' }}>Produce studio-grade</span>
-          <span style={{ display: 'block', background: 'linear-gradient(135deg, #00ff87, #60efff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>creator content</span>
-          <span style={{ display: 'block', color: '#fff' }}>in minutes.</span>
+        <h1 className="f1" style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: 'clamp(44px, 7vw, 80px)',
+          lineHeight: 1.08,
+          letterSpacing: -1.5,
+          marginBottom: 24,
+          fontWeight: 400,
+        }}>
+          Your AI-assisted<br />
+          <em style={{ color: t.accent, fontStyle: 'italic' }}>production studio.</em>
         </h1>
 
-        <p className="fu2" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 18, color: '#888', lineHeight: 1.7, maxWidth: 520, margin: '0 auto 48px', fontWeight: 300 }}>
-          Research. Scripts. Voice. Visuals. SEO. All in one workflow — you stay in control and publish when you're ready.
+        <p className="f2" style={{ fontFamily: "'Geist', sans-serif", fontSize: 17, color: t.text2, lineHeight: 1.72, maxWidth: 480, margin: '0 auto 48px', fontWeight: 300 }}>
+          Compress weeks of research, scripting, and production into a single session. You review and publish on your own schedule.
         </p>
 
-        {/* ── CONSOLE ── */}
-        <div className="fu3" style={{ maxWidth: 680, margin: '0 auto' }}>
+        {/* ── INPUT CONSOLE ── */}
+        <div className="f3" style={{ maxWidth: 660, margin: '0 auto' }}>
           <div style={{
-            background: '#0a0a0a',
-            border: `1px solid ${isWorking ? '#00ff87' : '#1a1a1a'}`,
-            borderRadius: 16,
+            background: t.inputBg,
+            border: `1px solid ${isWorking ? t.accent : t.border}`,
+            borderRadius: 14,
             overflow: 'hidden',
-            boxShadow: isWorking ? '0 0 60px rgba(0,255,135,0.08)' : '0 0 0 1px #111',
-            transition: 'all 0.4s'
+            boxShadow: dark
+              ? `0 1px 3px rgba(0,0,0,0.4), 0 20px 60px rgba(0,0,0,0.3)${isWorking ? `, 0 0 40px rgba(212,168,83,0.06)` : ''}`
+              : `0 1px 3px rgba(0,0,0,0.08), 0 20px 60px rgba(0,0,0,0.06)`,
+            transition: 'all 0.4s',
           }}>
-            {/* Console header bar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 16px', borderBottom: '1px solid #111', background: '#080808' }}>
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ff5f57' }} />
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#febc2e' }} />
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#28c840' }} />
-              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#333', marginLeft: 8 }}>sceneforge — production studio</span>
-              {isWorking && <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#00ff87', marginLeft: 'auto', animation: 'pulse 1s infinite' }}>● RUNNING</span>}
-            </div>
 
-            {/* Input */}
+            {/* Input state */}
             {(g.step === 'idle' || isFailed) && (
-              <div>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '20px 20px 14px' }}>
-                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 14, color: '#00ff87', marginTop: 2, flexShrink: 0 }}>$</span>
+              <>
+                <div style={{ padding: '20px 22px 14px', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                  <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 13, color: t.accent, marginTop: 2, flexShrink: 0 }}>›</span>
                   <textarea
                     value={g.topic}
                     onChange={e => g.setTopic(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); g.generate() } }}
                     rows={2}
-                    placeholder="What's your episode about? Press Enter to start..."
-                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 15, color: '#fff', lineHeight: 1.6, resize: 'none', fontFamily: "'Outfit', sans-serif" }}
+                    placeholder="What's your episode about?"
+                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 15, color: t.text, lineHeight: 1.6, resize: 'none', fontFamily: "'Geist', sans-serif", fontWeight: 300 }}
                   />
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px 16px' }}>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    {['🔍 Research', '✍ Scripts×5', '🎙 Voice', '🖼 Visuals', '📋 SEO'].map(c => (
-                      <span key={c} style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, color: '#444', padding: '3px 8px', borderRadius: 4, border: '1px solid #1a1a1a' }}>{c}</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px 16px', borderTop: `1px solid ${t.border}` }}>
+                  <div style={{ display: 'flex', gap: 4, marginTop: 10 }}>
+                    {['Research', '5 Scripts', 'Voice', 'Visuals', 'SEO'].map(c => (
+                      <span key={c} style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, color: t.text3, padding: '3px 8px', borderRadius: 4, border: `1px solid ${t.border}`, letterSpacing: 0.3 }}>{c}</span>
                     ))}
                   </div>
                   <button onClick={g.generate} disabled={!g.topic.trim()}
-                    className="glow-btn"
-                    style={{ fontSize: 13, fontWeight: 700, color: g.topic.trim() ? '#050505' : '#333', background: g.topic.trim() ? '#00ff87' : '#111', border: 'none', padding: '10px 24px', borderRadius: 8, transition: 'all 0.2s', position: 'relative', fontFamily: "'Outfit', sans-serif" }}>
-                    Begin production ↗
+                    style={{
+                      marginTop: 10,
+                      fontFamily: "'Geist', sans-serif", fontSize: 13, fontWeight: 500,
+                      color: g.topic.trim() ? (dark ? '#0f0f0f' : '#fafaf8') : t.text3,
+                      background: g.topic.trim() ? t.text : t.bg3,
+                      padding: '9px 20px', borderRadius: 8,
+                      transition: 'all 0.2s',
+                      border: `1px solid ${g.topic.trim() ? 'transparent' : t.border}`,
+                    }}
+                    onMouseEnter={e => { if (g.topic.trim()) { e.currentTarget.style.background = t.accent; e.currentTarget.style.color = '#fff' } }}
+                    onMouseLeave={e => { if (g.topic.trim()) { e.currentTarget.style.background = t.text; e.currentTarget.style.color = dark ? '#0f0f0f' : '#fafaf8' } }}>
+                    Begin production →
                   </button>
                 </div>
-                {isFailed && g.error && <p style={{ padding: '0 20px 16px', fontSize: 12, color: '#ff4444', fontFamily: "'Space Mono', monospace" }}>✕ {g.error}</p>}
-              </div>
+                {isFailed && g.error && <p style={{ padding: '0 20px 14px', fontFamily: "'Geist Mono', monospace", fontSize: 11, color: '#e05555' }}>✕ {g.error}</p>}
+              </>
             )}
 
             {/* Working */}
-            {(isWorking) && (
+            {isWorking && (
               <div style={{ padding: '16px 20px 20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#00ff87' }}>
-                    {g.step === 'working' ? '$ researching + writing...' : '$ producing assets...'}
+                  <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.accent, letterSpacing: 0.5 }}>
+                    {g.step === 'working' ? '› researching + writing...' : '› producing assets...'}
                   </span>
-                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#444' }}>{g.completedStages.length}/6</span>
+                  <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.text3 }}>{g.completedStages.length}/6</span>
                 </div>
                 <WorkflowTimeline activeStage={g.activeStage} completedStages={g.completedStages} failedStages={g.failedStages} />
               </div>
             )}
 
-            {/* Script Picker */}
+            {/* Script picker */}
             {isPicking && g.scripts.length > 0 && (
               <div style={{ padding: '16px 20px 20px' }}>
-                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#00ff87', marginBottom: 12 }}>$ choose your angle —</div>
+                <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.accent, marginBottom: 12, letterSpacing: 0.5 }}>› choose your angle</div>
                 <ScriptPicker scripts={g.scripts} evaluations={g.evaluations} winner={g.winner} selectedAngle={g.selectedAngle} selectedDuration={g.selectedDuration} onSelectAngle={g.setSelectedAngle} onSelectDuration={g.setSelectedDuration} onProduce={g.produce} />
               </div>
             )}
@@ -215,137 +237,157 @@ export default function Home() {
           </div>
 
           {g.step === 'idle' && (
-            <p style={{ marginTop: 14, fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#333', textAlign: 'center', letterSpacing: 0.5 }}>
-              NO AUTO-POSTING · YOU OWN EVERY EPISODE · CLAUDE + ELEVENLABS + REPLICATE
+            <p style={{ marginTop: 14, fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.text3, textAlign: 'center', letterSpacing: 0.8 }}>
+              NO AUTO-POSTING · CLAUDE · ELEVENLABS · REPLICATE · YOU OWN EVERY EPISODE
             </p>
           )}
         </div>
       </section>
 
-      {/* ── STATS BAND ── */}
-      <div style={{ position: 'relative', zIndex: 1, borderTop: '1px solid #111', borderBottom: '1px solid #111' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)' }}>
+      {/* ── STATS ── */}
+      <div style={{ borderTop: `1px solid ${t.border}`, borderBottom: `1px solid ${t.border}` }}>
+        <div style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)' }}>
           {[
-            ['60s', 'Topic to first script'],
-            ['5×', 'Script variations scored'],
-            ['100%', 'Creator controlled'],
-            ['$0', 'ML training needed'],
+            ['One session', 'Weeks of production compressed'],
+            ['5 angles', 'Written and scored per episode'],
+            ['Your call', 'You review before anything goes live'],
+            ['Studio quality', 'ElevenLabs narration + AI visuals'],
           ].map(([v, l], i, a) => (
-            <div key={v} style={{ padding: '40px 32px', borderRight: i < a.length - 1 ? '1px solid #111' : 'none', textAlign: 'center' }}>
-              <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 48, letterSpacing: -2, background: 'linear-gradient(135deg, #00ff87, #60efff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1, marginBottom: 8 }}>{v}</div>
-              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: '#555', fontWeight: 300 }}>{l}</div>
+            <div key={v} style={{ padding: '36px 32px', borderRight: i < a.length - 1 ? `1px solid ${t.border}` : 'none', textAlign: 'center' }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 22, color: t.accent, marginBottom: 6 }}>{v}</div>
+              <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, color: t.text2, fontWeight: 300 }}>{l}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── MARQUEE ── */}
-      <div style={{ position: 'relative', zIndex: 1, padding: '20px 0', borderBottom: '1px solid #111', overflow: 'hidden', background: '#080808' }}>
-        <div style={{ display: 'flex', width: 'max-content', animation: 'marquee 25s linear infinite' }}>
-          {[...Array(2)].map((_, ri) =>
-            ['Research Agent', 'Script × 5', 'Claude Sonnet 4', 'ElevenLabs Voice', 'Replicate Thumbnails', 'SEO Package', 'Human in the Loop', 'Zero Auto-Post', 'Studio Quality', 'Multi-Provider AI'].map((item, i) => (
-              <span key={`${ri}-${i}`} style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: i % 2 === 0 ? '#00ff87' : '#333', padding: '0 32px', borderRight: '1px solid #1a1a1a', whiteSpace: 'nowrap', display: 'inline-block' }}>
-                {item}
-              </span>
-            ))
-          )}
+      <div style={{ borderBottom: `1px solid ${t.border}`, overflow: 'hidden', background: t.bg2, padding: '16px 0' }}>
+        <div style={{ display: 'flex', width: 'max-content', animation: 'marquee 28s linear infinite' }}>
+          {[...Array(2)].flatMap(() =>
+            ['Research', 'Script × 5', 'Claude Sonnet 4', 'ElevenLabs', 'Replicate', 'SEO Package', 'Human in the loop', 'Studio quality', 'Multi-provider', 'Zero auto-post']
+          ).map((item, i) => (
+            <span key={i} style={{ fontFamily: "'Geist Mono', monospace", fontSize: 11, color: t.text3, padding: '0 28px', borderRight: `1px solid ${t.border}`, whiteSpace: 'nowrap', display: 'inline-block', letterSpacing: 0.5 }}>
+              {item}
+            </span>
+          ))}
         </div>
       </div>
 
       {/* ── HOW IT WORKS ── */}
-      <section style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', padding: '100px 32px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 56, gap: 32, flexWrap: 'wrap' }}>
+      <section style={{ maxWidth: 1120, margin: '0 auto', padding: '96px 32px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 52, gap: 32, flexWrap: 'wrap' }}>
           <div>
-            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#00ff87', letterSpacing: 2, marginBottom: 16 }}>// THE WORKFLOW</div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(32px,4vw,52px)', letterSpacing: -1.5, lineHeight: 1.0 }}>
-              From brief to<br /><span style={{ background: 'linear-gradient(135deg, #00ff87, #60efff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>broadcast-ready.</span>
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.accent, letterSpacing: 2, marginBottom: 14 }}>THE WORKFLOW</div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', letterSpacing: -0.8, lineHeight: 1.1 }}>
+              From brief to broadcast-ready.<br /><em style={{ color: t.text2, fontStyle: 'italic' }}>In one session.</em>
             </h2>
           </div>
-          <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: '#555', lineHeight: 1.7, maxWidth: 320, fontWeight: 300 }}>Six stages. One session. You make the only decision that matters.</p>
+          <p style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, color: t.text2, lineHeight: 1.72, maxWidth: 300, fontWeight: 300 }}>
+            Six stages. One session. You make the only decision that matters — which angle to produce.
+          </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: '#111' }}>
+        <div style={{ border: `1px solid ${t.border}`, borderRadius: 12, overflow: 'hidden' }}>
           {[
-            ['01', '🔍', 'Research', 'Deep topic analysis — facts, angles, controversies, trending hooks. Before a word of script is written.'],
-            ['02', '✍', 'Script × 5', 'Five completely different angles. Technical, Story, Investment, Beginner, Contrarian. Each scored on 10 metrics.'],
-            ['03', '⚡', 'You choose', 'Pick the angle and length. 20, 30, or 45 minutes. This is the only decision in the workflow.'],
-            ['04', '🎙', 'Narration', 'ElevenLabs renders two distinct voices at broadcast quality. Not TTS — an actual conversation.'],
-            ['05', '🖼', 'Visuals', 'Three AI cover art variations for YouTube, podcast platforms, and social.'],
-            ['06', '📋', 'Packaging', 'YouTube title + description, Instagram caption, Twitter thread, LinkedIn post, newsletter — done.'],
-          ].map(([n, ic, name, desc]) => (
-            <div key={n} className="card-hover" style={{ background: '#080808', padding: '32px 28px', cursor: 'default', transition: 'all 0.3s' }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#0a0a0a'; (e.currentTarget.querySelector('.step-num') as any).style.color = '#00ff87' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#080808'; (e.currentTarget.querySelector('.step-num') as any).style.color = '#222' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <span className="step-num" style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: '#222', transition: 'color 0.3s', letterSpacing: 1 }}>{n}</span>
-                <span style={{ fontSize: 24 }}>{ic}</span>
-              </div>
-              <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 20, marginBottom: 10, color: '#fff' }}>{name}</div>
-              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: '#555', lineHeight: 1.7, fontWeight: 300 }}>{desc}</div>
+            ['01', 'Research', 'Deep topic analysis — key facts, angles, controversies, trending hooks. Before a word of script is written.'],
+            ['02', 'Script × 5', 'Five completely different angles scored on 10 quality metrics. Technical, Story, Investment, Beginner, Contrarian.'],
+            ['03', 'You choose', 'Pick the angle and length that fits. 20, 30, or 45 minutes. This is the only decision in the workflow.'],
+            ['04', 'Narration', 'ElevenLabs renders two distinct speaker voices at broadcast quality. Not robotic TTS — a real conversation.'],
+            ['05', 'Visuals', 'Three cover art variations generated for YouTube, podcast platforms, and social media.'],
+            ['06', 'Packaging', 'YouTube description, Instagram caption, Twitter thread, LinkedIn post, blog post, newsletter — all done.'],
+          ].map(([n, name, desc], i, arr) => (
+            <div key={n} style={{
+              display: 'grid', gridTemplateColumns: '64px 200px 1fr', alignItems: 'center',
+              borderBottom: i < arr.length - 1 ? `1px solid ${t.border}` : 'none',
+              background: t.inputBg, transition: 'background 0.2s'
+            }}
+              onMouseEnter={e => (e.currentTarget.style.background = t.bg2)}
+              onMouseLeave={e => (e.currentTarget.style.background = t.inputBg)}>
+              <div style={{ padding: '22px 0 22px 24px', fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.text3, letterSpacing: 1 }}>{n}</div>
+              <div style={{ padding: '22px 20px', fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 17, color: t.text, borderLeft: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}` }}>{name}</div>
+              <div style={{ padding: '22px 28px', fontFamily: "'Geist', sans-serif", fontSize: 13, color: t.text2, lineHeight: 1.65, fontWeight: 300 }}>{desc}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── WHY SCENEFORGE ── */}
-      <section style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', padding: '100px 32px 0' }}>
-        <div style={{ marginBottom: 56 }}>
-          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#00ff87', letterSpacing: 2, marginBottom: 16 }}>// NOT A GENERATOR</div>
-          <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(32px,4vw,52px)', letterSpacing: -1.5, lineHeight: 1.0 }}>
-            A production system.<br /><span style={{ color: '#333' }}>Built for creators who ship.</span>
+      <section style={{ maxWidth: 1120, margin: '0 auto', padding: '96px 32px 0' }}>
+        <div style={{ marginBottom: 52 }}>
+          <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.accent, letterSpacing: 2, marginBottom: 14 }}>WHAT MAKES IT DIFFERENT</div>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400, fontSize: 'clamp(28px,3.5vw,44px)', letterSpacing: -0.8, lineHeight: 1.1 }}>
+            Not a generator.<br /><em style={{ color: t.text2 }}>A production system.</em>
           </h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: '#111' }}>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: t.border, borderRadius: 12, overflow: 'hidden' }}>
           {[
-            ['You stay in control', 'No auto-posting. No scheduling. No spam. You decide what goes live and when. Every episode is reviewed before it leaves your account.', '🔒'],
-            ['Quality over quantity', 'Five distinct scripts per topic, scored on engagement, clarity, authority, and viral potential. You pick the best — not the first.', '⚡'],
-            ['Real voices', 'ElevenLabs renders two distinct speaker personalities. Natural pacing, tone, and emotion. Not TTS — a conversation.', '🎙'],
-            ['Your IP, your brand', 'Every episode belongs to you. Download audio, visuals, transcript. No lock-in. No revenue share.', '👑'],
-            ['Multi-provider reliability', 'Claude fails → OpenAI. OpenAI fails → Groq. Three AI providers on standby. No single point of failure.', '🛡'],
-            ['Built for volume', 'One episode or fifty — same quality, same workflow, same speed. Infrastructure that scales with your output.', '🚀'],
-          ].map(([name, body, icon]) => (
-            <div key={name as string} className="card-hover" style={{ background: '#080808', padding: '32px 28px', position: 'relative', overflow: 'hidden' }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#0a1a0a'; (e.currentTarget.querySelector('.accent-line') as any).style.transform = 'scaleX(1)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#080808'; (e.currentTarget.querySelector('.accent-line') as any).style.transform = 'scaleX(0)' }}>
-              <div className="accent-line" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #00ff87, #60efff)', transform: 'scaleX(0)', transformOrigin: 'left', transition: 'transform 0.35s cubic-bezier(0.16,1,0.3,1)' }} />
-              <div style={{ fontSize: 28, marginBottom: 16 }}>{icon as string}</div>
-              <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 17, color: '#fff', marginBottom: 10, lineHeight: 1.2 }}>{name as string}</div>
-              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: '#555', lineHeight: 1.7, fontWeight: 300 }}>{body as string}</div>
+            ['You stay in control', 'No auto-posting. No scheduling. No spam. You decide what goes live. Every episode is reviewed before it leaves your account.'],
+            ['Quality over quantity', 'Five distinct scripts per topic, scored on engagement, clarity, authority, and viral potential. You pick the best — not the first.'],
+            ['Real voices', 'ElevenLabs renders two distinct speaker personalities. Natural pacing, tone, emotion. Not TTS — a conversation.'],
+            ['Your IP, your brand', 'Every episode belongs to you. Download audio, visuals, transcript. No platform lock-in. No revenue share.'],
+            ['Multi-provider reliability', 'Claude fails → OpenAI. OpenAI fails → Groq. Three AI providers on standby. No single point of failure.'],
+            ['Built for volume', 'One episode or fifty — same quality, same workflow, same speed. Infrastructure that scales with your output.'],
+          ].map(([name, body]) => (
+            <div key={name} style={{ background: t.inputBg, padding: '32px 28px', position: 'relative', overflow: 'hidden', transition: 'background 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.background = t.bg2; (e.currentTarget.querySelector('.al') as any).style.transform = 'scaleX(1)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = t.inputBg; (e.currentTarget.querySelector('.al') as any).style.transform = 'scaleX(0)' }}>
+              <div className="al" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: t.accent, transform: 'scaleX(0)', transformOrigin: 'left', transition: 'transform 0.3s cubic-bezier(0.16,1,0.3,1)' }} />
+              <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 18, color: t.text, marginBottom: 12, lineHeight: 1.25 }}>{name}</div>
+              <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 13, color: t.text2, lineHeight: 1.7, fontWeight: 300 }}>{body}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── TESTIMONIAL ── */}
-      <section style={{ position: 'relative', zIndex: 1, maxWidth: 800, margin: '100px auto 0', padding: '0 32px' }}>
-        <div style={{ background: '#080808', border: '1px solid #1a1a1a', borderRadius: 16, padding: '48px 52px', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, background: 'radial-gradient(circle, rgba(0,255,135,0.05) 0%, transparent 70%)', pointerEvents: 'none' }} />
-          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: '#00ff87', marginBottom: 24, letterSpacing: 1 }}>// EARLY ACCESS</div>
-          <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: 22, color: '#fff', lineHeight: 1.5, marginBottom: 24 }}>
+      <section style={{ maxWidth: 720, margin: '96px auto 0', padding: '0 32px' }}>
+        <div style={{ background: t.bg2, border: `1px solid ${t.border}`, borderRadius: 14, padding: '44px 52px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: 24, right: 32, fontFamily: "'Playfair Display', serif", fontSize: 80, color: t.accent, opacity: 0.08, lineHeight: 1 }}>"</div>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 21, color: t.text, lineHeight: 1.55, marginBottom: 24 }}>
             "The research alone saves me three hours per episode. The script evaluation is the feature I didn't know I needed."
           </p>
-          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: '#444' }}>Early access creator · Scripted tech podcast</div>
+          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, color: t.text3, fontWeight: 300 }}>Early access creator · Scripted tech podcast</div>
         </div>
       </section>
 
       {/* ── CTA ── */}
-      <section style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '100px auto 0', padding: '0 32px 120px' }}>
-        <div style={{ background: 'linear-gradient(135deg, #0a1a0a 0%, #050505 100%)', border: '1px solid #00ff8730', borderRadius: 20, padding: '80px 64px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 64, position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: -60, left: -60, width: 400, height: 400, background: 'radial-gradient(circle, rgba(0,255,135,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <section style={{ maxWidth: 1120, margin: '96px auto 0', padding: '0 32px 120px' }}>
+        <div style={{
+          background: dark ? 'linear-gradient(135deg, #161410 0%, #0f0f0f 60%)' : 'linear-gradient(135deg, #f5f0e8 0%, #fafaf8 60%)',
+          border: `1px solid ${dark ? 'rgba(212,168,83,0.2)' : 'rgba(196,154,58,0.25)'}`,
+          borderRadius: 16, padding: '72px 64px',
+          display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 64,
+          position: 'relative', overflow: 'hidden', transition: 'background 0.4s'
+        }}>
           <div>
-            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: '#00ff87', letterSpacing: 2, marginBottom: 20 }}>// BEGIN PRODUCTION</div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(36px,5vw,64px)', lineHeight: 0.95, letterSpacing: -2.5, marginBottom: 16 }}>
-              Your brief.<br /><span style={{ background: 'linear-gradient(135deg, #00ff87, #60efff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Studio output.</span>
+            <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 10, color: t.accent, letterSpacing: 2, marginBottom: 18 }}>BEGIN PRODUCTION</div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400, fontSize: 'clamp(32px,4vw,56px)', lineHeight: 1.0, letterSpacing: -1, marginBottom: 16 }}>
+              Your brief.<br /><em style={{ color: t.accent }}>Studio output.</em>
             </h2>
-            <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: '#555', lineHeight: 1.7, maxWidth: 420, fontWeight: 300 }}>Research, script, narration, visuals, and distribution copy — done. 10 free credits on sign up. No card required.</p>
+            <p style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, color: t.text2, lineHeight: 1.72, maxWidth: 400, fontWeight: 300 }}>
+              Research, script, narration, visuals, and distribution copy — done. 10 free credits on sign up. No card required.
+            </p>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flexShrink: 0 }}>
-            <a href="/login" className="glow-btn" style={{ fontSize: 16, fontWeight: 700, color: '#050505', background: '#00ff87', border: 'none', padding: '16px 40px', borderRadius: 10, textAlign: 'center', whiteSpace: 'nowrap', fontFamily: "'Outfit', sans-serif", position: 'relative' }}>
-              Start producing free ↗
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }}>
+            <a href="/login" style={{
+              fontFamily: "'Geist', sans-serif", fontSize: 15, fontWeight: 500,
+              color: dark ? '#0f0f0f' : '#fafaf8', background: t.text,
+              padding: '14px 40px', borderRadius: 10, textAlign: 'center', whiteSpace: 'nowrap',
+              transition: 'all 0.2s', display: 'block'
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = t.accent; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.background = t.text; e.currentTarget.style.color = dark ? '#0f0f0f' : '#fafaf8' }}>
+              Start producing →
             </a>
-            <a href="/studio" style={{ fontSize: 14, color: '#444', background: 'none', border: '1px solid #1a1a1a', padding: '14px 40px', borderRadius: 10, textAlign: 'center', fontFamily: "'Outfit', sans-serif", transition: 'border-color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = '#333')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = '#1a1a1a')}>
+            <a href="/studio" style={{
+              fontFamily: "'Geist', sans-serif", fontSize: 14, color: t.text2,
+              border: `1px solid ${t.border}`, padding: '13px 40px',
+              borderRadius: 10, textAlign: 'center', transition: 'all 0.2s', display: 'block'
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = t.text2 }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = t.border }}>
               See the Studio
             </a>
           </div>
@@ -353,19 +395,19 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ position: 'relative', zIndex: 1, borderTop: '1px solid #111', padding: '28px 32px', maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <footer style={{ borderTop: `1px solid ${t.border}`, padding: '24px 32px', maxWidth: 1120, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00ff87' }} />
-          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 15 }}>SceneForge</span>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: t.accent }} />
+          <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 15, color: t.text2 }}>SceneForge</span>
         </div>
         <div style={{ display: 'flex', gap: 2 }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
-            <a key={l} href={h} style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, color: '#444', padding: '6px 12px', transition: 'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#888')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#444')}>{l}</a>
+            <a key={l} href={h} style={{ fontFamily: "'Geist', sans-serif", fontSize: 12, color: t.text3, padding: '6px 12px', transition: 'color 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = t.text2)}
+              onMouseLeave={e => (e.currentTarget.style.color = t.text3)}>{l}</a>
           ))}
         </div>
-        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, color: '#1a1a1a', letterSpacing: 2 }}>PRODUCTION STUDIO FOR CREATOR MEDIA</span>
+        <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, color: t.text3, letterSpacing: 1.5 }}>PRODUCTION STUDIO FOR CREATOR MEDIA</span>
       </footer>
 
       <ChatBox />
