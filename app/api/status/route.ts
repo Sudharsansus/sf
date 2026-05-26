@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db, episodes, users } from '@/lib/db'
@@ -56,3 +57,4 @@ export async function GET(req: NextRequest) {
     }
   })
 }
+

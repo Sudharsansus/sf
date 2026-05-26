@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { getAuthUrl } from '@/lib/instagram'
@@ -11,3 +12,4 @@ export async function GET(req: NextRequest) {
   await redis.setex(`ig_state:${state}`, 600, session.user.email)
   return NextResponse.redirect(getAuthUrl(state))
 }
+

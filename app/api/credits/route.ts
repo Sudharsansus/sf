@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db, users } from '@/lib/db'
@@ -9,3 +10,4 @@ export async function GET() {
   const [user] = await db.select({ credits: users.credits, plan: users.plan }).from(users).where(eq(users.email, session.user.email)).limit(1)
   return NextResponse.json(user || { credits: 0, plan: 'free' })
 }
+

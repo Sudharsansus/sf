@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { getAIStats } from '@/lib/ai'
@@ -8,3 +9,4 @@ export async function GET() {
   const stats = await getAIStats()
   return NextResponse.json(stats)
 }
+
