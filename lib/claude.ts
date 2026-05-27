@@ -74,13 +74,13 @@ export async function runEvaluateAgent(scripts: AllScripts) {
 }
 
 // ── REFINE AGENT — premium (Claude) ───────────────────────────────────────────
-export async function runRefineAgent(script: SingleScript, topic: string) {
-  logger.info('Refine agent', { angle: script.angle, provider: 'claude→openai→groq' })
+export async function runRefineAgent(script: SingleScript, topic: string, selectedSpeaker: string = 'both') {
+  logger.info('Refine agent', { angle: script.angle, speaker: selectedSpeaker, provider: 'claude→openai→groq' })
   const { data } = await safeGenerate({
     system: REFINE_PROMPT,
-    user: `Topic: ${topic}\n\nScript:\n${JSON.stringify(script, null, 2)}`,
+    user: `Topic: ${topic}\nSpeaker Mode: ${selectedSpeaker}\n\nScript:\n${JSON.stringify(script, null, 2)}`,
     taskType: 'refine',
-    maxTokens: 2000
+    maxTokens: 1500
   })
   return data
 }

@@ -48,10 +48,10 @@ export const aiWorker = {
     return evaluations
   },
 
-  async refine(episodeId: string, script: any, topic: string) {
-    logger.info('AI Worker: refine', { episodeId })
+  async refine(episodeId: string, script: any, topic: string, selectedSpeaker: string = 'both') {
+    logger.info('AI Worker: refine', { episodeId, selectedSpeaker })
     await emitEvent('workflow.refine.started', { episodeId })
-    const refined = await runRefineAgent(script, topic)
+    const refined = await runRefineAgent(script, topic, selectedSpeaker)
     await emitEvent('workflow.refine.completed', { episodeId })
     return refined
   }

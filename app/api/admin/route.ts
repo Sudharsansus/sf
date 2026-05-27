@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
-import { db, users, episodes, aiRequestLog, auditLogs } from '@/lib/db'
+import { db, users, episodes, aiRequestLog, auditLogs, waitlist } from '@/lib/db'
 import { isAdmin } from '@/lib/security'
 import { getAIStats } from '@/lib/ai'
 import { eq, desc, sql, gte } from 'drizzle-orm'
@@ -48,7 +48,31 @@ export async function GET(req: NextRequest) {
       credits: users.credits, plan: users.plan, role: users.role,
       createdAt: users.createdAt
     }).from(users).orderBy(desc(users.createdAt)).limit(100)
-    return NextResponse.json({ users: allUsers })
+    return NextResponse.json(allUsers)
+  }
+
+  if (view === 'episodes') {
+    const allEpisodes = await db.select({
+      id: episodes.id,
+      title: episodes.title,
+      email: users.email,
+      status: episodes.status,
+      createdAt: episodes.createdAt
+    }).from(episodes)
+      .innerJoin(users, eq(episodes.userId, users.id))
+      .orderBy(desc(episodes.createdAt))
+      .limit(100)
+    return NextResponse.json(allEpisodes)
+  }
+
+  if (view === 'waitlist') {
+    const waitlistEntries = await db.select({
+      id: waitlist.id,
+      email: waitlist.email,
+      name: waitlist.name,
+      createdAt: waitlist.createdAt
+    }).from(waitlist).orderBy(desc(waitlist.createdAt)).limit(500)
+    return NextResponse.json(waitlistEntries)
   }
 
   return NextResponse.json({ error: 'Unknown view' }, { status: 400 })

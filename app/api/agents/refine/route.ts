@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const { success: rlOk } = await refineLimit.limit(session.user.email)
     if (!rlOk) return NextResponse.json({ error: 'Too many production requests. Wait before retrying.' }, { status: 429 })
 
-    const { episodeId, selectedAngle, durationLabel } = await req.json()
+    const { episodeId, selectedAngle, durationLabel, selectedSpeaker } = await req.json()
     if (!episodeId || !selectedAngle) return NextResponse.json({ error: 'Missing params' }, { status: 400 })
 
     const [episode] = await db.select().from(episodes).where(eq(episodes.id, episodeId)).limit(1)
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     // ── STEP 1: REFINE (AI Worker) ────────────────────────────────────────────
     let chosen: any = selectedScript
     try {
-      const refinedData = await aiWorker.refine(episodeId, selectedScript, episode.topic)
+      const refinedData = await aiWorker.refine(episodeId, selectedScript, episode.topic, selectedSpeaker)
       chosen = refinedData.refined?.find((r: any) => r.duration_label === (durationLabel || '30min'))
         || refinedData.refined?.[0]
         || selectedScript

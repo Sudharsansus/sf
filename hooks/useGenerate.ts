@@ -17,7 +17,8 @@ export function useGenerate() {
   const [evaluations,      setEvaluations]      = useState<any[]>([])
   const [winner,           setWinner]           = useState('')
   const [selectedAngle,    setSelectedAngle]    = useState('')
-  const [selectedDuration, setSelectedDuration] = useState('30min')
+  const [selectedDuration, setSelectedDuration] = useState('5min')
+  const [selectedSpeaker,  setSelectedSpeaker]  = useState('both')
   const [result,           setResult]           = useState<any>(null)
   const [error,            setError]            = useState('')
   const [episodeId,        setEpisodeId]        = useState('')
@@ -82,7 +83,7 @@ export function useGenerate() {
       const res = await fetch('/api/agents/refine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ episodeId, selectedAngle, durationLabel: selectedDuration })
+        body: JSON.stringify({ episodeId, selectedAngle, durationLabel: selectedDuration, selectedSpeaker })
       })
       const data = await res.json()
 
@@ -114,6 +115,7 @@ export function useGenerate() {
     scripts, evaluations, winner,
     selectedAngle, setSelectedAngle,
     selectedDuration, setSelectedDuration,
+    selectedSpeaker, setSelectedSpeaker,
     result, error, episodeId, shareId,
     generate, produce, reset
   }

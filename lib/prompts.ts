@@ -87,7 +87,9 @@ OUTPUT SCHEMA:
 }`
 
 // ── REFINEMENT AGENT ─────────────────────────────────────────────────────────
-export const REFINE_PROMPT = `You are SceneForge's script refinement agent. Take a podcast script and produce 3 refined versions for different durations.
+export const REFINE_PROMPT = `CRITICAL: You must return ONLY valid JSON. No markdown, no backticks, no extra text before or after the JSON object. The JSON must be complete and properly closed. Never truncate the output.
+
+You are SceneForge's script refinement agent. Take a podcast script and refine it for the requested duration.
 
 Return ONLY raw JSON — no markdown, no fences.
 
@@ -95,10 +97,9 @@ OUTPUT SCHEMA:
 {
   "refined": [
     {
-      "duration_label": "20min",
-      "duration_estimate_seconds": 1200,
+      "duration_label": "selected duration",
+      "duration_estimate_seconds": number,
       "title": "...",
-      "improvement_notes": "what was improved",
       "speakers": [
         { "id": "A", "name": "Alex", "personality": "..." },
         { "id": "B", "name": "Sam", "personality": "..." }
@@ -106,25 +107,18 @@ OUTPUT SCHEMA:
       "lines": [
         { "speaker": "A", "text": "..." }
       ]
-    },
-    {
-      "duration_label": "30min",
-      "duration_estimate_seconds": 1800,
-      ...
-    },
-    {
-      "duration_label": "45min",
-      "duration_estimate_seconds": 2700,
-      ...
     }
   ]
 }
 
 RULES:
 - Improve hooks, tighten dialog, add more concrete examples
-- 20min: 6-8 lines
-- 30min: 10-12 lines
-- 45min: 14-16 lines`
+- Adjust the number of dialog lines to match the requested duration.
+- Estimate: 1 line ≈ 15 seconds of audio.
+- So for 30sec use 2 lines, 1min use 4 lines, 5min use 20 lines,
+- 10min use 40 lines, 20min use 80 lines, 30min use 120 lines.
+- Match the requested duration_label exactly.
+- Speaker Mode: If mode is 'a', write all lines with speaker: 'A' only. If mode is 'b', write all lines with speaker: 'B' only. If mode is 'both', alternate between A and B naturally.`
 
 // ── SEO AGENT ────────────────────────────────────────────────────────────────
 export const SEO_PROMPT = `You are SceneForge's SEO and content agent. Given an episode script and topic, generate all distribution content.

@@ -41,6 +41,25 @@ export function safeParseJSON(raw: string): { ok: true; data: any } | { ok: fals
   try {
     const repaired = repairJSON(raw)
     return { ok: true, data: JSON.parse(repaired) }
+  } catch {}
+
+  // Extract first complete JSON object by matching braces
+  try {
+    const trimmed = raw.trim()
+    const firstBrace = trimmed.indexOf('{')
+    if (firstBrace === -1) return { ok: false, error: 'No JSON object found' }
+    
+    let braceCount = 0
+    for (let i = firstBrace; i < trimmed.length; i++) {
+      if (trimmed[i] === '{') braceCount++
+      else if (trimmed[i] === '}') braceCount--
+      
+      if (braceCount === 0) {
+        const extracted = trimmed.slice(firstBrace, i + 1)
+        return { ok: true, data: JSON.parse(extracted) }
+      }
+    }
+    return { ok: false, error: 'No matching closing brace found' }
   } catch (e: any) {
     return { ok: false, error: e.message }
   }

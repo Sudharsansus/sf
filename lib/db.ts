@@ -27,6 +27,7 @@ export const users = pgTable('users', {
 export const episodes = pgTable('episodes', {
   id:               uuid('id').primaryKey().defaultRandom(),
   userId:           uuid('user_id').notNull(),
+  projectId:        uuid('project_id'),
   topic:            text('topic').notNull(),
   title:            text('title').notNull().default(''),
   researchData:     jsonb('research_data'),
@@ -142,5 +143,21 @@ export const auditLogs = pgTable('audit_logs', {
   resource:  text('resource'),
   metadata:  jsonb('metadata'),
   ipAddress: text('ip_address'),
+  createdAt: timestamp('created_at').notNull().defaultNow()
+})
+
+export const projects = pgTable('projects', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  userId:      uuid('user_id').notNull(),
+  name:        text('name').notNull(),
+  description: text('description'),
+  createdAt:   timestamp('created_at').notNull().defaultNow(),
+  updatedAt:   timestamp('updated_at').notNull().defaultNow()
+})
+
+export const waitlist = pgTable('waitlist', {
+  id:        uuid('id').primaryKey().defaultRandom(),
+  email:     text('email').notNull().unique(),
+  name:      text('name'),
   createdAt: timestamp('created_at').notNull().defaultNow()
 })

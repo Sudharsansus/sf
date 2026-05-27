@@ -3,6 +3,8 @@
 // Renders the 5-script selection UI with evaluation scores
 // Extracted from app/page.tsx
 
+import { useState } from 'react'
+
 interface Script {
   angle: string
   title: string
@@ -20,15 +22,18 @@ interface Props {
   winner:           string
   selectedAngle:    string
   selectedDuration: string
+  selectedSpeaker:  string
   onSelectAngle:    (angle: string) => void
   onSelectDuration: (d: string) => void
+  onSelectSpeaker:  (s: string) => void
   onProduce:        () => void
 }
 
 export function ScriptPicker({
-  scripts, evaluations, winner, selectedAngle, selectedDuration,
-  onSelectAngle, onSelectDuration, onProduce
+  scripts, evaluations, winner, selectedAngle, selectedDuration, selectedSpeaker,
+  onSelectAngle, onSelectDuration, onSelectSpeaker, onProduce
 }: Props) {
+  const [customDuration, setCustomDuration] = useState('')
   const getScore = (angle: string) => evaluations.find(e => e.angle === angle)?.total || 0
 
   return (
@@ -63,14 +68,39 @@ export function ScriptPicker({
               </div>
               {isSelected && (
                 <div style={{ marginTop:10, marginLeft:26 }}>
-                  <div style={{ fontSize:12, color:'#888', fontStyle:'italic' }}>{s.hook}</div>
-                  <div style={{ marginTop:8, display:'flex', gap:6 }}>
-                    {['20min','30min','45min'].map(d => (
-                      <button key={d} onClick={e => { e.stopPropagation(); onSelectDuration(d) }}
-                        style={{ fontSize:11, padding:'4px 10px', borderRadius:5, border:`1px solid ${selectedDuration===d?'#666':'#222'}`, background:selectedDuration===d?'#2a2a2a':'transparent', color:selectedDuration===d?'#f0f0f0':'#555', cursor:'pointer' }}>
-                        {d}
-                      </button>
-                    ))}
+                  <div style={{ fontSize:12, color:'#888', fontStyle:'italic', marginBottom:12 }}>{s.hook}</div>
+                  
+                  <div style={{ marginBottom:14 }}>
+                    <p style={{ fontSize:11, color:'#555', marginBottom:6, fontWeight:500 }}>Duration</p>
+                    <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:8 }}>
+                      {['30sec', '1min', '2min', '5min', '10min', '15min', '20min', '30min', '45min', '60min'].map(d => (
+                        <button key={d} onClick={e => { e.stopPropagation(); onSelectDuration(d); setCustomDuration('') }}
+                          style={{ fontSize:11, padding:'4px 10px', borderRadius:5, border:`1px solid ${selectedDuration===d?'#666':'#222'}`, background:selectedDuration===d?'#2a2a2a':'transparent', color:selectedDuration===d?'#f0f0f0':'#555', cursor:'pointer' }}>
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Or type custom: e.g. 3min, 90sec"
+                      value={selectedDuration}
+                      onChange={e => onSelectDuration(e.target.value)}
+                      onClick={e => e.stopPropagation()}
+                      onKeyDown={e => e.stopPropagation()}
+                      style={{ width:'100%', fontSize:12, padding:'7px 12px', borderRadius:6, border:'1px solid #333', background:'#0a0a0a', color:'#888', fontFamily:'inherit' }}
+                    />
+                  </div>
+
+                  <div>
+                    <p style={{ fontSize:11, color:'#555', marginBottom:6, fontWeight:500 }}>Speaker format</p>
+                    <div style={{ display:'flex', gap:6 }}>
+                      {[['both', 'A + B (Conversation)'], ['a', 'Solo A'], ['b', 'Solo B']].map(([val, label]) => (
+                        <button key={val} onClick={e => { e.stopPropagation(); onSelectSpeaker(val as string) }}
+                          style={{ fontSize:11, padding:'5px 12px', borderRadius:6, border:`1px solid ${selectedSpeaker === val ? '#666' : '#222'}`, background: selectedSpeaker === val ? '#2a2a2a' : 'transparent', color: selectedSpeaker === val ? '#f0f0f0' : '#555', cursor:'pointer' }}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -81,7 +111,7 @@ export function ScriptPicker({
 
       <button onClick={onProduce}
         style={{ width:'100%', padding:'14px', fontSize:14, fontWeight:500, color:'#0c0c0c', background:'#f0f0f0', border:'none', borderRadius:10, cursor:'pointer', fontFamily:"'Instrument Sans',sans-serif" }}>
-        Produce episode — {selectedDuration} version ↗
+        Produce episode — {selectedDuration} {selectedSpeaker !== 'both' ? `(${selectedSpeaker === 'a' ? 'Solo A' : 'Solo B'})` : ''} ↗
       </button>
     </div>
   )
