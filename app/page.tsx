@@ -17,10 +17,11 @@ export default function Home() {
   const [displayed, setDisplayed] = useState('')
   const [typing, setTyping] = useState(true)
 
-  const isWorking  = g.step === 'working' || g.step === 'producing'
-  const isPicking  = g.step === 'picking'
-  const isComplete = g.step === 'complete'
-  const isFailed   = g.step === 'failed'
+  const isConfiguring = g.step === 'configuring'
+  const isWorking     = g.step === 'working' || g.step === 'producing'
+  const isPicking     = g.step === 'picking'
+  const isComplete    = g.step === 'complete'
+  const isFailed      = g.step === 'failed'
 
   // Typewriter effect
   useEffect(() => {
@@ -50,9 +51,9 @@ export default function Home() {
     text: '#f5f5f5', muted: '#888', subtle: '#444',
     accent: '#f5f5f5', accentFg: '#0a0a0a',
   } : {
-    bg: '#ffffff', nav: 'rgba(255,255,255,0.92)', surface: '#f7f7f7',
-    surface2: '#efefef', border: '#e8e8e8', border2: '#ddd',
-    text: '#0a0a0a', muted: '#666', subtle: '#bbb',
+    bg: '#ffffff', nav: 'rgba(255,255,255,0.92)', surface: '#f0f0f0',
+    surface2: '#efefef', border: '#d0d0d0', border2: '#bbb',
+    text: '#0a0a0a', muted: '#444', subtle: '#666',
     accent: '#0a0a0a', accentFg: '#ffffff',
   }
 
@@ -84,8 +85,8 @@ export default function Home() {
         .f2 { animation: fadeUp .5s ease .12s both; }
         .f3 { animation: fadeUp .5s ease .18s both; }
 
-        .nav-link { font-size: 13px; color: ${c.muted}; padding: 6px 12px; border-radius: 6px; transition: color .15s; }
-        .nav-link:hover { color: ${c.text}; }
+        .nav-link { font-size: 13px; color: ${dark ? c.muted : c.text}; padding: 6px 12px; border-radius: 6px; transition: color .15s, background .15s; }
+        .nav-link:hover { color: ${c.text}; background: ${dark ? 'transparent' : c.surface}; }
 
         .card { background: ${c.surface}; border: 1px solid ${c.border}; border-radius: 12px; transition: border-color .2s; }
         .card:hover { border-color: ${c.border2}; }
@@ -149,7 +150,7 @@ export default function Home() {
 
         <h1 className="f0" style={{ fontSize: 'clamp(38px, 6vw, 68px)', fontWeight: 600, letterSpacing: '-2px', lineHeight: 1.1, marginBottom: 20 }}>
           Create studio-quality<br />
-          <span suppressHydrationWarning={true} style={{ color: c.muted }}>
+          <span suppressHydrationWarning={true} style={{ color: dark ? c.muted : c.text }}>
             {displayed}
             <span style={{ animation: 'blink 1s step-end infinite', borderRight: `2px solid ${c.text}`, marginLeft: 2 }}>&nbsp;</span>
           </span>
@@ -191,6 +192,53 @@ export default function Home() {
               {isFailed && g.error && <p style={{ padding: '0 18px 12px', fontSize: 12, color: '#f87171' }}>{g.error}</p>}
             </>}
 
+            {isConfiguring && <div style={{ padding: '14px 18px 18px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                <button onClick={g.reset} style={{ fontSize: 11, color: c.muted, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0, transition: 'color .15s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = c.text)}
+                  onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>← Back</button>
+                <span style={{ fontSize: 12, color: c.muted, fontWeight: 500 }}>Configure your episode</span>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Duration</p>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
+                  {['30sec', '1min', '2min', '5min', '10min', '15min', '20min', '30min', '45min', '60min'].map(d => (
+                    <button key={d} onClick={() => g.setSelectedDuration(d)}
+                      style={{ fontSize: 11, padding: '4px 10px', borderRadius: 5, border: `1px solid ${g.selectedDuration === d ? c.border2 : c.border}`, background: g.selectedDuration === d ? c.surface2 : 'transparent', color: g.selectedDuration === d ? c.text : c.muted, cursor: 'pointer', transition: 'all .15s' }}>
+                      {d}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  placeholder="Or type custom: e.g. 3min, 90sec"
+                  value={g.selectedDuration}
+                  onChange={e => g.setSelectedDuration(e.target.value)}
+                  style={{ width: '100%', fontSize: 12, padding: '7px 12px', borderRadius: 6, border: `1px solid ${c.border}`, background: c.surface, color: c.text, fontFamily: 'inherit', outline: 'none' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: 18 }}>
+                <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Speaker format</p>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  {[['both', 'A + B (Conversation)'], ['a', 'Solo A'], ['b', 'Solo B']].map(([val, label]) => (
+                    <button key={val} onClick={() => g.setSelectedSpeaker(val)}
+                      style={{ fontSize: 11, padding: '5px 12px', borderRadius: 6, border: `1px solid ${g.selectedSpeaker === val ? c.border2 : c.border}`, background: g.selectedSpeaker === val ? c.surface2 : 'transparent', color: g.selectedSpeaker === val ? c.text : c.muted, cursor: 'pointer', transition: 'all .15s' }}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button onClick={g.startGeneration}
+                style={{ width: '100%', padding: '12px', fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, border: 'none', borderRadius: 8, cursor: 'pointer', transition: 'opacity .15s' }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+                Start Generation →
+              </button>
+            </div>}
+
             {isWorking && <div style={{ padding: '14px 18px 18px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
                 <span style={{ fontSize: 12, color: c.muted, fontWeight: 500 }}>{g.step === 'working' ? 'Researching + writing...' : 'Producing...'}</span>
@@ -201,13 +249,13 @@ export default function Home() {
 
             {isPicking && g.scripts.length > 0 && <div style={{ padding: '14px 18px 18px' }}>
               <p style={{ fontSize: 12, color: c.muted, fontWeight: 500, marginBottom: 12 }}>Choose your angle</p>
-              <ScriptPicker scripts={g.scripts} evaluations={g.evaluations} winner={g.winner} selectedAngle={g.selectedAngle} selectedDuration={g.selectedDuration} onSelectAngle={g.setSelectedAngle} onSelectDuration={g.setSelectedDuration} onProduce={g.produce} selectedSpeaker={g.selectedSpeaker} onSelectSpeaker={g.setSelectedSpeaker} />
+              <ScriptPicker scripts={g.scripts} evaluations={g.evaluations} winner={g.winner} selectedAngle={g.selectedAngle} onSelectAngle={g.setSelectedAngle} onProduce={g.produce} />
             </div>}
 
             {isComplete && g.result && <EpisodeResult result={g.result} onReset={g.reset} />}
           </div>
 
-          {g.step === 'idle' && <p className="f3" style={{ marginTop: 12, fontSize: 11, color: c.subtle, textAlign: 'center', letterSpacing: .3 }}>
+          {g.step === 'idle' && <p className="f3" style={{ marginTop: 12, fontSize: 11, color: c.muted, textAlign: 'center', letterSpacing: .3 }}>
             No auto-posting · You own every episode · Claude · ElevenLabs · Replicate
           </p>}
         </div>
@@ -219,7 +267,7 @@ export default function Home() {
           {[['1 session','Weeks of work compressed'],['5 scripts','Written + scored per topic'],['Your call','You review before publishing'],['Studio grade','ElevenLabs + AI visuals']].map(([v,l],i,a) => (
             <div key={v} style={{ padding: '28px 24px', textAlign: 'center', borderRight: i < a.length-1 ? `1px solid ${c.border}` : 'none' }}>
               <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 4 }}>{v}</div>
-              <div style={{ fontSize: 12, color: c.muted }}>{l}</div>
+              <div style={{ fontSize: 12, color: dark ? c.muted : c.text }}>{l}</div>
             </div>
           ))}
         </div>
@@ -229,7 +277,7 @@ export default function Home() {
       <div style={{ overflow: 'hidden', borderBottom: `1px solid ${c.border}`, padding: '11px 0', background: c.surface }}>
         <div style={{ display: 'flex', width: 'max-content', animation: 'marquee 22s linear infinite' }}>
           {[...Array(2)].flatMap(() => ['Research Agent','Script × 5','Claude Sonnet 4','ElevenLabs','Replicate','SEO Package','Human in the loop','Zero auto-post','Multi-provider AI','Studio quality']).map((s,i) => (
-            <span key={i} style={{ fontSize: 11, color: c.subtle, padding: '0 22px', borderRight: `1px solid ${c.border}`, whiteSpace: 'nowrap', fontWeight: 500, letterSpacing: .3 }}>{s}</span>
+            <span key={i} style={{ fontSize: 11, color: c.muted, padding: '0 22px', borderRight: `1px solid ${c.border}`, whiteSpace: 'nowrap', fontWeight: 500, letterSpacing: .3 }}>{s}</span>
           ))}
         </div>
       </div>
@@ -333,12 +381,12 @@ export default function Home() {
         </div>
         <div style={{ display: 'flex', gap: 0 }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
-            <a key={l} href={h} style={{ fontSize: 12, color: c.subtle, padding: '4px 10px', transition: 'color .15s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = c.muted)}
-              onMouseLeave={e => (e.currentTarget.style.color = c.subtle)}>{l}</a>
+            <a key={l} href={h} style={{ fontSize: 12, color: c.muted, padding: '4px 10px', transition: 'color .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = c.text)}
+              onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>{l}</a>
           ))}
         </div>
-        <span style={{ fontSize: 11, color: c.subtle }}>© 2025 SceneForge</span>
+        <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
       </footer>
 
       <ChatBox />
