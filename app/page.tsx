@@ -201,7 +201,7 @@ export default function Home() {
 
             {isPicking && g.scripts.length > 0 && <div style={{ padding: '14px 18px 18px' }}>
               <p style={{ fontSize: 12, color: c.muted, fontWeight: 500, marginBottom: 12 }}>Choose your angle</p>
-              <ScriptPicker scripts={g.scripts} evaluations={g.evaluations} winner={g.winner} selectedAngle={g.selectedAngle} selectedDuration={g.selectedDuration} onSelectAngle={g.setSelectedAngle} onSelectDuration={g.setSelectedDuration} onProduce={g.produce} />
+              <ScriptPicker scripts={g.scripts} evaluations={g.evaluations} winner={g.winner} selectedAngle={g.selectedAngle} selectedDuration={g.selectedDuration} onSelectAngle={g.setSelectedAngle} onSelectDuration={g.setSelectedDuration} onProduce={g.produce} selectedSpeaker={g.selectedSpeaker} onSelectSpeaker={g.setSelectedSpeaker} />
             </div>}
 
             {isComplete && g.result && <EpisodeResult result={g.result} onReset={g.reset} />}
