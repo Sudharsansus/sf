@@ -13,7 +13,7 @@ import { seoWorker } from '@/lib/workers/seo.worker'
 import { emitEvent } from '@/lib/events'
 import { captureError, events as analyticsEvents } from '@/lib/observability'
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 const STALE_LOCK_MS = 5 * 60 * 1000
 

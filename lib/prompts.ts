@@ -122,9 +122,9 @@ OUTPUT SCHEMA:
 
 RULES:
 - Improve hooks, tighten dialog, add more concrete examples
-- 20min: 15-20 lines, punchy
-- 30min: 25-35 lines, deeper examples
-- 45min: 45-55 lines, full exploration`
+- 20min: 8-10 lines, punchy
+- 30min: 12-15 lines, deeper examples
+- 45min: 18-22 lines, full exploration`
 
 // ── SEO AGENT ────────────────────────────────────────────────────────────────
 export const SEO_PROMPT = `You are SceneForge's SEO and content agent. Given an episode script and topic, generate all distribution content.
