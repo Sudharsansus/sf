@@ -16,7 +16,10 @@ import { logger } from '@/lib/logger'
 export const maxDuration = 300
 
 const Body = z.object({
-  topic: z.string().min(3).max(200)
+  topic:    z.string().min(3).max(200),
+  voiceA:   z.string().optional(),
+  voiceB:   z.string().optional(),
+  language: z.string().optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -56,7 +59,10 @@ export async function POST(req: NextRequest) {
     // ── VALIDATE INPUT ───────────────────────────────────────────────────────
     const parsed = Body.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: 'Topic must be 3-200 characters' }, { status: 400 })
-    const topic = sanitizeInput(parsed.data.topic)
+    const topic    = sanitizeInput(parsed.data.topic)
+    const voiceA   = parsed.data.voiceA
+    const voiceB   = parsed.data.voiceB
+    const language = parsed.data.language || 'en'
 
     // ── CREDIT CHECK + ATOMIC DEDUCTION ──────────────────────────────────────
     const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
@@ -89,13 +95,14 @@ export async function POST(req: NextRequest) {
     const [episode] = await db.insert(episodes).values({
       userId: user.id, topic, title: topic, shareId,
       status: 'processing', agentStep: 'research',
-      idempotencyKey: idemKey
+      idempotencyKey: idemKey,
+      metadata: { voiceA, voiceB, language }
     }).returning()
 
     // ── STEP 1: RESEARCH (Groq — fast + cheap) ───────────────────────────────
     let researchData: any = { summary: topic, key_facts: [], angles: [], hook: topic }
     try {
-      researchData = await runResearchAgent(topic)
+      researchData = await runResearchAgent(topic, language)
       await db.update(episodes).set({ researchData, agentStep: 'research_done' }).where(eq(episodes.id, episode.id))
     } catch (e: any) {
       logger.warn('Research failed, using stub', { error: e.message })
@@ -106,7 +113,7 @@ export async function POST(req: NextRequest) {
     let allScripts: any
     try {
       await db.update(episodes).set({ agentStep: 'scripts' }).where(eq(episodes.id, episode.id))
-      allScripts = await runScriptAgent(topic, researchData)
+      allScripts = await runScriptAgent(topic, researchData, language)
       await db.update(episodes).set({ allScripts, agentStep: 'scripts_done' }).where(eq(episodes.id, episode.id))
     } catch (e: any) {
       logger.error('Script agent failed', { error: e.message })

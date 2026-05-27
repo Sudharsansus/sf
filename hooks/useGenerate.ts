@@ -43,7 +43,7 @@ export function useGenerate() {
     setStep('configuring')
   }
 
-  async function startGeneration() {
+  async function startGeneration(voiceA?: string, voiceB?: string, language?: string) {
     if (step !== 'configuring') return
     setStep('working')
 
@@ -54,7 +54,7 @@ export function useGenerate() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idemKey },
-        body: JSON.stringify({ topic: topic.trim() })
+        body: JSON.stringify({ topic: topic.trim(), voiceA, voiceB, language })
       })
       const data = await res.json()
 

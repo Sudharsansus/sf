@@ -1,11 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { ProfileMenu } from '@/components/ui/ProfileMenu'
 
 const PLANS = [
-  { id: 'starter', name: 'Starter', credits: 50, price: '$9', desc: 'Perfect for testing the waters' },
-  { id: 'pro', name: 'Pro', credits: 200, price: '$29', desc: 'For regular creators' },
-  { id: 'enterprise', name: 'Enterprise', credits: 1000, price: '$99', desc: 'Unlimited production scale' },
+  { id: 'starter', name: 'Starter',  credits: 30,   price: '$19',  desc: 'Great for trying it out',     perEp: '$0.63/ep' },
+  { id: 'pro',     name: 'Pro',      credits: 100,  price: '$29',  desc: 'Most popular for creators',   perEp: '$0.29/ep', badge: 'MOST POPULAR' },
+  { id: 'studio',  name: 'Studio',   credits: 400,  price: '$79',  desc: 'For serious producers',       perEp: '$0.20/ep' },
+  { id: 'agency',  name: 'Agency',   credits: 1500, price: '$199', desc: 'For teams and agencies',      perEp: '$0.13/ep' },
 ]
 
 export default function DashboardPage() {
@@ -69,19 +71,7 @@ export default function DashboardPage() {
               onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
               {dark ? '○' : '●'}
             </button>
-            {session ? (
-              <>
-                <span style={{ fontSize: 13, color: c.muted, padding: '0 8px' }}>{session.user?.email}</span>
-                <a href="/api/auth/signout" className="nav-link">Sign out</a>
-              </>
-            ) : (
-              <>
-                <a href="/login" className="nav-link">Sign in</a>
-                <a href="/login" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '7px 16px', borderRadius: 7, transition: 'opacity .15s' }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>Get started</a>
-              </>
-            )}
+            <ProfileMenu c={c} />
           </div>
         </div>
       </nav>
@@ -138,14 +128,18 @@ export default function DashboardPage() {
         {/* PLANS */}
         <div style={{ marginBottom: 36 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, letterSpacing: -.3, marginBottom: 16 }}>Get more credits</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
             {PLANS.map(p => (
-              <div key={p.id} style={{ border: `1px solid ${c.border}`, borderRadius: 12, padding: '24px 22px', transition: 'border-color .2s' }}
+              <div key={p.id} style={{ border: `1px solid ${p.badge ? c.border2 : c.border}`, borderRadius: 12, padding: '24px 22px', transition: 'border-color .2s', position: 'relative' }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = c.border2)}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = c.border)}>
+                onMouseLeave={e => (e.currentTarget.style.borderColor = p.badge ? c.border2 : c.border)}>
+                {p.badge && (
+                  <div style={{ position: 'absolute', top: 12, right: 12, fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#fb923c', background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.3)', padding: '2px 7px', borderRadius: 4 }}>{p.badge}</div>
+                )}
                 <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{p.name}</div>
                 <div style={{ fontSize: 32, fontWeight: 600, letterSpacing: -1.2, lineHeight: 1, marginBottom: 6 }}>{p.price}</div>
-                <div style={{ fontSize: 12, color: c.muted, marginBottom: 4 }}>{p.credits} credits</div>
+                <div style={{ fontSize: 12, color: c.muted, marginBottom: 2 }}>{p.credits} credits</div>
+                <div style={{ fontSize: 11, color: c.subtle, marginBottom: 4 }}>{p.perEp}</div>
                 <div style={{ fontSize: 11, color: c.subtle, marginBottom: 20 }}>{p.desc}</div>
                 <button style={{ width: '100%', fontSize: 13, fontWeight: 500, color: c.accentFg, background: c.accent, border: 'none', padding: '9px', borderRadius: 7, cursor: 'pointer', transition: 'opacity .15s' }}
                   onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}

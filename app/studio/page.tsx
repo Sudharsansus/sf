@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { ProfileMenu } from '@/components/ui/ProfileMenu'
 
 export default function StudioPage() {
   const { data: session } = useSession()
@@ -56,27 +57,12 @@ export default function StudioPage() {
             ))}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {credits !== null && (
-              <span style={{ fontSize: 12, color: c.muted, padding: '4px 10px', border: `1px solid ${c.border}`, borderRadius: 6 }}>{credits} credits</span>
-            )}
             <button onClick={() => setDark(!dark)} style={{ width: 30, height: 30, borderRadius: 6, background: 'transparent', border: `1px solid ${c.border}`, color: c.muted, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .15s' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = c.text; e.currentTarget.style.color = c.text }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
               {dark ? '○' : '●'}
             </button>
-            {session ? (
-              <>
-                <span style={{ fontSize: 13, color: c.muted, padding: '0 8px' }}>{session.user?.email}</span>
-                <a href="/api/auth/signout" className="nav-link">Sign out</a>
-              </>
-            ) : (
-              <>
-                <a href="/login" className="nav-link">Sign in</a>
-                <a href="/login" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '7px 16px', borderRadius: 7, transition: 'opacity .15s' }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>Get started</a>
-              </>
-            )}
+            <ProfileMenu c={c} />
           </div>
         </div>
       </nav>

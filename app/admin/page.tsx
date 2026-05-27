@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { ProfileMenu } from '@/components/ui/ProfileMenu'
 
 interface User { id: string; email: string; plan: string; credits: number; role: string; createdAt: string }
 interface WaitlistEntry { id: string; email: string; name?: string; createdAt: string }
@@ -91,8 +92,7 @@ export default function AdminPage() {
               onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
               {dark ? '○' : '●'}
             </button>
-            {session && <span style={{ fontSize: 13, color: c.muted, padding: '0 8px' }}>{session.user?.email}</span>}
-            <a href="/api/auth/signout" className="nav-link">Sign out</a>
+            <ProfileMenu c={c} />
           </div>
         </div>
       </nav>

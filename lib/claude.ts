@@ -34,12 +34,19 @@ export const AllScriptsSchema = z.object({
 export type SingleScript = z.infer<typeof SingleScriptSchema>
 export type AllScripts = z.infer<typeof AllScriptsSchema>
 
+const LANGUAGES_MAP: Record<string, string> = {
+  hi: 'Hindi', ta: 'Tamil', es: 'Spanish', fr: 'French',
+  de: 'German', pt: 'Portuguese', ja: 'Japanese',
+  ko: 'Korean', ar: 'Arabic', it: 'Italian', zh: 'Chinese'
+}
+
 // ── RESEARCH AGENT — cheap (Groq) ─────────────────────────────────────────────
-export async function runResearchAgent(topic: string) {
-  logger.info('Research agent', { topic, provider: 'groq→openai→claude' })
+export async function runResearchAgent(topic: string, language = 'en') {
+  logger.info('Research agent', { topic, language, provider: 'groq→openai→claude' })
+  const langInstruction = language !== 'en' ? ` Write your response in ${LANGUAGES_MAP[language] || language} language.` : ''
   const { data } = await safeGenerate({
     system: RESEARCH_PROMPT,
-    user: `Research this topic thoroughly: ${topic}`,
+    user: `Research this topic thoroughly: ${topic}.${langInstruction}`,
     taskType: 'research',
     maxTokens: 2048
   })
@@ -47,12 +54,15 @@ export async function runResearchAgent(topic: string) {
 }
 
 // ── SCRIPT AGENT — premium (Claude) ──────────────────────────────────────────
-export async function runScriptAgent(topic: string, research: any): Promise<AllScripts> {
-  logger.info('Script agent', { topic, provider: 'claude→openai→groq' })
+export async function runScriptAgent(topic: string, research: any, language = 'en'): Promise<AllScripts> {
+  logger.info('Script agent', { topic, language, provider: 'claude→openai→groq' })
+  const langInstruction = language !== 'en'
+    ? `\n\nIMPORTANT: Write the entire script in ${LANGUAGES_MAP[language] || language} language. All dialog lines must be in ${LANGUAGES_MAP[language] || language}.`
+    : ''
   const { data } = await safeGenerate(
     {
       system: SCRIPTS_PROMPT,
-      user: `Topic: ${topic}\n\nResearch:\n${JSON.stringify(research, null, 2)}`,
+      user: `Topic: ${topic}\n\nResearch:\n${JSON.stringify(research, null, 2)}${langInstruction}`,
       taskType: 'scripts',
       maxTokens: 4000
     },

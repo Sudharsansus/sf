@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { ProfileMenu } from '@/components/ui/ProfileMenu'
 import { useGenerate } from '@/hooks/useGenerate'
 import { WorkflowTimeline } from '@/components/workflow/WorkflowTimeline'
 import { ScriptPicker } from '@/components/studio/ScriptPicker'
@@ -8,6 +9,40 @@ import { EpisodeResult } from '@/components/studio/EpisodeResult'
 import { ChatBox } from '@/components/studio/ChatBox'
 
 const ROTATING_WORDS = ['podcasts', 'YouTube videos', 'newsletters', 'scripts', 'narrations', 'episodes']
+
+const VOICES = [
+  { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel',    gender: 'F', accent: 'American' },
+  { id: 'AZnzlk1XvdvUeBnXmlld', name: 'Domi',      gender: 'F', accent: 'American' },
+  { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella',     gender: 'F', accent: 'American' },
+  { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni',    gender: 'M', accent: 'American' },
+  { id: 'MF3mGyEYCl7XYWbV9V6O', name: 'Elli',      gender: 'F', accent: 'American' },
+  { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh',      gender: 'M', accent: 'American' },
+  { id: 'VR6AewLTigWG4xSOukaG', name: 'Arnold',    gender: 'M', accent: 'American' },
+  { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam',      gender: 'M', accent: 'American' },
+  { id: 'yoZ06aMxZJJ28mfd3POQ', name: 'Sam',       gender: 'M', accent: 'American' },
+  { id: 'jBpfuIE2acCO8z3wKNLl', name: 'Gigi',      gender: 'F', accent: 'American' },
+  { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel',    gender: 'M', accent: 'British' },
+  { id: 'N2lVS1w4EtoT3dr4eOWO', name: 'Callum',    gender: 'M', accent: 'British' },
+  { id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte', gender: 'F', accent: 'British' },
+  { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'Alice',     gender: 'F', accent: 'British' },
+  { id: 'iP95p4xoKVk53GoZ742B', name: 'Chris',     gender: 'M', accent: 'American' },
+  { id: 'nPczCjzI2devNBz1zQrb', name: 'Brian',     gender: 'M', accent: 'American' },
+]
+
+const LANGUAGES = [
+  { code: 'en', name: 'English',    flag: '🇺🇸' },
+  { code: 'hi', name: 'Hindi',      flag: '🇮🇳' },
+  { code: 'ta', name: 'Tamil',      flag: '🇮🇳' },
+  { code: 'es', name: 'Spanish',    flag: '🇪🇸' },
+  { code: 'fr', name: 'French',     flag: '🇫🇷' },
+  { code: 'de', name: 'German',     flag: '🇩🇪' },
+  { code: 'pt', name: 'Portuguese', flag: '🇧🇷' },
+  { code: 'ja', name: 'Japanese',   flag: '🇯🇵' },
+  { code: 'ko', name: 'Korean',     flag: '🇰🇷' },
+  { code: 'ar', name: 'Arabic',     flag: '🇸🇦' },
+  { code: 'it', name: 'Italian',    flag: '🇮🇹' },
+  { code: 'zh', name: 'Chinese',    flag: '🇨🇳' },
+]
 
 export default function Home() {
   const g = useGenerate()
@@ -18,6 +53,17 @@ export default function Home() {
   const [typing, setTyping] = useState(true)
   const [previewAudio, setPreviewAudio] = useState<string | null>(null)
   const [previewLoading, setPreviewLoading] = useState<'A' | 'B' | null>(null)
+  const [credits, setCredits] = useState<number | null>(null)
+  const [voiceA, setVoiceA] = useState('21m00Tcm4TlvDq8ikWAM')
+  const [voiceB, setVoiceB] = useState('AZnzlk1XvdvUeBnXmlld')
+  const [previewingVoice, setPreviewingVoice] = useState<string | null>(null)
+  const [language, setLanguage] = useState('en')
+
+  useEffect(() => {
+    if (session) {
+      fetch('/api/credits').then(r => r.json()).then(d => setCredits(d.credits ?? null))
+    }
+  }, [session])
 
   async function playVoicePreview(voice: 'A' | 'B') {
     setPreviewLoading(voice)
@@ -40,6 +86,26 @@ export default function Home() {
     } finally {
       setPreviewLoading(null)
     }
+  }
+
+  async function playVoicePreviewById(voiceId: string, slot: 'A' | 'B') {
+    setPreviewingVoice(voiceId)
+    setPreviewAudio(null)
+    try {
+      const res = await fetch('/api/voice-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voiceId })
+      })
+      const data = await res.json()
+      if (data.audio) {
+        const audioUrl = `data:audio/mpeg;base64,${data.audio}`
+        setPreviewAudio(audioUrl)
+        const audio = new Audio(audioUrl)
+        audio.play()
+      }
+    } catch (e) { console.error(e) }
+    finally { setPreviewingVoice(null) }
   }
 
   const isConfiguring = g.step === 'configuring'
@@ -154,21 +220,7 @@ export default function Home() {
               onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
               {dark ? '○' : '●'}
             </button>
-            {session ? (
-              <>
-                <span style={{ fontSize: 13, color: c.muted, padding: '0 12px' }}>{session.user?.email}</span>
-                <a href="/api/auth/signout" className="nav-link">Sign out</a>
-              </>
-            ) : (
-              <>
-                <a href="/login" className="nav-link">Sign in</a>
-                <a href="/login" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '7px 16px', borderRadius: 7, transition: 'opacity .15s' }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-                  Get started
-                </a>
-              </>
-            )}
+            <ProfileMenu c={c} />
           </div>
         </div>
       </nav>
@@ -209,15 +261,21 @@ export default function Home() {
                   💡 After writing your topic, you'll choose voice, speakers, and duration before generation starts.
                 </span>
               </div>
+              {credits === 0 && g.step === 'idle' && (
+                <div style={{ padding: '10px 14px', background: 'rgba(251,146,60,0.08)', border: '1px solid rgba(251,146,60,0.3)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 14px 14px' }}>
+                  <span style={{ fontSize: 12, color: '#fb923c' }}>⚡ No credits remaining</span>
+                  <a href="/dashboard" style={{ fontSize: 12, fontWeight: 600, color: '#fb923c', border: '1px solid rgba(251,146,60,0.4)', padding: '4px 12px', borderRadius: 6 }}>Buy credits →</a>
+                </div>
+              )}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 14px', borderTop: `1px solid ${c.border}` }}>
                 <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                   {['Research', 'Scripts ×5', 'Voice', 'Visuals', 'SEO'].map(tag => (
                     <span key={tag} style={{ fontSize: 10, color: c.subtle, padding: '2px 8px', borderRadius: 4, border: `1px solid ${c.border}`, fontWeight: 500, letterSpacing: .2 }}>{tag}</span>
                   ))}
                 </div>
-                <button onClick={g.generate} disabled={!g.topic.trim()}
-                  style={{ fontSize: 13, fontWeight: 500, padding: '7px 18px', borderRadius: 7, background: g.topic.trim() ? c.accent : c.surface2, color: g.topic.trim() ? c.accentFg : c.subtle, transition: 'all .15s' }}
-                  onMouseEnter={e => { if (g.topic.trim()) e.currentTarget.style.opacity = '.85' }}
+                <button onClick={g.generate} disabled={!g.topic.trim() || credits === 0}
+                  style={{ fontSize: 13, fontWeight: 500, padding: '7px 18px', borderRadius: 7, background: g.topic.trim() && credits !== 0 ? c.accent : c.surface2, color: g.topic.trim() && credits !== 0 ? c.accentFg : c.subtle, transition: 'all .15s' }}
+                  onMouseEnter={e => { if (g.topic.trim() && credits !== 0) e.currentTarget.style.opacity = '.85' }}
                   onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}>
                   Create episode →
                 </button>
@@ -233,25 +291,55 @@ export default function Home() {
                 <span style={{ fontSize: 12, color: c.muted, fontWeight: 500 }}>Configure your episode</span>
               </div>
 
-              {/* VOICE PREVIEW */}
+              {/* VOICE SELECTOR */}
               <div style={{ marginBottom: 18 }}>
-                <p style={{ fontSize: 11, color: c.muted, marginBottom: 10, fontWeight: 500 }}>Preview Voices</p>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-                  {(['A', 'B'] as const).map(v => (
-                    <button key={v} onClick={() => playVoicePreview(v)} disabled={previewLoading !== null}
-                      style={{ flex: 1, fontSize: 12, padding: '8px 12px', borderRadius: 7, border: `1px solid ${c.border}`, background: c.surface, color: c.text, cursor: previewLoading ? 'wait' : 'pointer', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
-                      onMouseEnter={e => { if (!previewLoading) e.currentTarget.style.borderColor = c.border2 }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = c.border }}>
-                      {previewLoading === v
-                        ? <span style={{ width: 10, height: 10, borderRadius: '50%', border: `2px solid ${c.muted}`, borderTopColor: c.text, display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
-                        : '▶'}
-                      {previewLoading === v ? 'Loading…' : `Play Voice ${v}`}
+                <p style={{ fontSize: 11, color: c.muted, marginBottom: 10, fontWeight: 500 }}>Voice A (Speaker 1)</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 8 }}>
+                  {VOICES.map(v => (
+                    <button key={v.id} onClick={() => setVoiceA(v.id)}
+                      style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${voiceA === v.id ? c.text : c.border}`, background: voiceA === v.id ? c.surface2 : 'transparent', color: voiceA === v.id ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: voiceA === v.id ? 600 : 400, textAlign: 'center' }}>
+                      <div style={{ fontSize: 9, color: c.subtle, marginBottom: 1 }}>{v.gender} · {v.accent}</div>
+                      {v.name}
+                      <button onClick={(e) => { e.stopPropagation(); playVoicePreviewById(v.id, 'A') }}
+                        style={{ display: 'block', width: '100%', marginTop: 3, fontSize: 9, color: c.subtle, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}>
+                        {previewingVoice === v.id ? '◌' : '▶'}
+                      </button>
                     </button>
                   ))}
                 </div>
+
+                <p style={{ fontSize: 11, color: c.muted, marginBottom: 10, fontWeight: 500, marginTop: 12 }}>Voice B (Speaker 2)</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 8 }}>
+                  {VOICES.map(v => (
+                    <button key={v.id} onClick={() => setVoiceB(v.id)}
+                      style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${voiceB === v.id ? c.text : c.border}`, background: voiceB === v.id ? c.surface2 : 'transparent', color: voiceB === v.id ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: voiceB === v.id ? 600 : 400, textAlign: 'center' }}>
+                      <div style={{ fontSize: 9, color: c.subtle, marginBottom: 1 }}>{v.gender} · {v.accent}</div>
+                      {v.name}
+                      <button onClick={(e) => { e.stopPropagation(); playVoicePreviewById(v.id, 'B') }}
+                        style={{ display: 'block', width: '100%', marginTop: 3, fontSize: 9, color: c.subtle, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}>
+                        {previewingVoice === v.id ? '◌' : '▶'}
+                      </button>
+                    </button>
+                  ))}
+                </div>
+
                 {previewAudio && (
-                  <audio controls src={previewAudio} style={{ width: '100%', height: 32, accentColor: c.text }} />
+                  <audio controls src={previewAudio} style={{ width: '100%', height: 28, marginTop: 6 }} />
                 )}
+              </div>
+
+              {/* LANGUAGE */}
+              <div style={{ marginBottom: 16 }}>
+                <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Language</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
+                  {LANGUAGES.map(lang => (
+                    <button key={lang.code} onClick={() => setLanguage(lang.code)}
+                      style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${language === lang.code ? c.text : c.border}`, background: language === lang.code ? c.surface2 : 'transparent', color: language === lang.code ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: language === lang.code ? 600 : 400, textAlign: 'center' }}>
+                      <div style={{ fontSize: 14, marginBottom: 2 }}>{lang.flag}</div>
+                      {lang.name}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* SPEAKER FORMAT */}
@@ -288,7 +376,7 @@ export default function Home() {
                 />
               </div>
 
-              <button onClick={g.startGeneration}
+              <button onClick={() => g.startGeneration(voiceA, voiceB, language)}
                 style={{ width: '100%', padding: '12px', fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, border: 'none', borderRadius: 8, cursor: 'pointer', transition: 'opacity .15s' }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '.85')}
                 onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>

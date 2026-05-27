@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useSession, signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
+import { ProfileMenu } from '@/components/ui/ProfileMenu'
 
 export default function EpisodesPage() {
   const { data: session } = useSession()
@@ -58,14 +59,7 @@ export default function EpisodesPage() {
             <button onClick={() => setDark(!dark)} style={{ width: 30, height: 30, borderRadius: 6, background: 'transparent', border: `1px solid ${c.border}`, color: c.muted, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {dark ? '○' : '●'}
             </button>
-            {session ? (
-              <>
-                <span style={{ fontSize: 13, color: c.muted, padding: '0 8px' }}>{session.user?.email}</span>
-                <button onClick={() => signOut()} style={{ fontSize: 13, color: c.muted, background: 'transparent', padding: '6px 12px', borderRadius: 6 }}>Sign out</button>
-              </>
-            ) : (
-              <a href="/login" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '7px 16px', borderRadius: 7 }}>Sign in</a>
-            )}
+            <ProfileMenu c={c} />
           </div>
         </div>
       </nav>

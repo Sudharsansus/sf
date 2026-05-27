@@ -6,12 +6,14 @@ const VOICE_B = process.env.ELEVENLABS_VOICE_B || 'AZnzlk1XvdvUeBnXmlld'
 
 export async function POST(req: NextRequest) {
   try {
-    const { voice } = await req.json()
-    const voiceId = voice === 'A' ? VOICE_A : VOICE_B
+    const { voice, voiceId: directVoiceId } = await req.json()
+    const resolvedId = directVoiceId || (voice === 'A' ? VOICE_A : VOICE_B)
 
-    const previewText = voice === 'A'
-      ? "Hi, I'm your first speaker. I'll be asking the questions and guiding our conversation today."
-      : "And I'm your second speaker. I'll be providing the insights and expertise throughout the episode."
+    const previewText = voice === 'B'
+      ? "And I'm your second speaker. I'll be providing the insights and expertise throughout the episode."
+      : "Hi, I'm your speaker. I'll be guiding our conversation and bringing this topic to life today."
+
+    const voiceId = resolvedId
 
     const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
