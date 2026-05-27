@@ -1,26 +1,119 @@
+'use client'
+import { useState } from 'react'
+import { useSession } from 'next-auth/react'
+
 export default function TermsPage() {
-  const S = { h1: { fontFamily:"'DM Serif Display',serif", fontSize:44, fontStyle:'italic', letterSpacing:-1.5, marginBottom:8 } as any,
-    h2: { fontFamily:"'DM Serif Display',serif", fontSize:24, fontStyle:'italic', letterSpacing:-0.5, margin:'32px 0 12px' } as any,
-    p: { fontSize:14, color:'#888', lineHeight:1.75, marginBottom:12 } as any }
+  const { data: session } = useSession()
+  const [dark, setDark] = useState(true)
+
+  const c = dark ? {
+    bg: '#0a0a0a', nav: 'rgba(10,10,10,0.92)', surface: '#141414',
+    surface2: '#1a1a1a', border: '#222', border2: '#2a2a2a',
+    text: '#f5f5f5', muted: '#888', subtle: '#444',
+    accent: '#f5f5f5', accentFg: '#0a0a0a',
+  } : {
+    bg: '#ffffff', nav: 'rgba(255,255,255,0.92)', surface: '#f0f0f0',
+    surface2: '#efefef', border: '#d0d0d0', border2: '#bbb',
+    text: '#0a0a0a', muted: '#444', subtle: '#666',
+    accent: '#0a0a0a', accentFg: '#ffffff',
+  }
+
   return (
-    <div style={{ background:'#0c0c0c', minHeight:'100vh', fontFamily:"'Instrument Sans',sans-serif", color:'#f0f0f0', padding:'80px 32px' }}>
-      <div style={{ maxWidth:680, margin:'0 auto' }}>
-        <a href="/" style={{ fontSize:11, color:'#444', fontFamily:'monospace', letterSpacing:0.5, display:'block', marginBottom:32 }}>← SCENEFORGE</a>
-        <h1 style={S.h1}>Terms of Service</h1>
-        <p style={{ ...S.p, marginBottom:32 }}>Last updated: {new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })}</p>
-        <h2 style={S.h2}>Content ownership</h2>
-        <p style={S.p}>You own all episodes you generate with SceneForge. The scripts, audio, and thumbnails are yours. We claim no ownership over your content.</p>
-        <h2 style={S.h2}>Credits system</h2>
-        <p style={S.p}>Credits are consumed when you generate an episode. 1 credit = 1 full episode (research + scripts + audio + thumbnails). Credits are non-refundable once an episode is successfully generated.</p>
-        <p style={S.p}>If generation fails due to a platform error, credits are automatically refunded to your account.</p>
-        <h2 style={S.h2}>Acceptable use</h2>
-        <p style={S.p}>You may not use SceneForge to generate content that is illegal, hateful, sexually explicit, or designed to deceive. We reserve the right to terminate accounts that violate these rules.</p>
-        <h2 style={S.h2}>Service availability</h2>
-        <p style={S.p}>We aim for high availability but cannot guarantee 100% uptime. We are not liable for losses caused by service interruptions.</p>
-        <h2 style={S.h2}>Contact</h2>
-        <p style={S.p}>Questions? Email us at hello@sceneforge.ai</p>
-      </div>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:wght@400;500&display=swap');`}</style>
+    <div style={{ background: c.bg, minHeight: '100vh', color: c.text, fontFamily: "'Inter', -apple-system, sans-serif", transition: 'background .3s, color .3s' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+        .nav-link { font-size: 13px; color: ${dark ? c.muted : c.text}; padding: 6px 12px; border-radius: 6px; transition: color .15s, background .15s; }
+        .nav-link:hover { color: ${c.text}; background: ${dark ? 'transparent' : c.surface}; }
+      `}</style>
+
+      {/* NAV */}
+      <nav style={{ position: 'sticky', top: 0, zIndex: 50, borderBottom: `1px solid ${c.border}`, backdropFilter: 'blur(16px)', background: c.nav, transition: 'background .3s' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px', height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+            <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SceneForge</span>
+          </a>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {[['Studio','/studio'],['Work','/episodes'],['Dashboard','/dashboard']].map(([l,h]) => (
+              <a key={l} href={h} className="nav-link">{l}</a>
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button onClick={() => setDark(!dark)} style={{ width: 30, height: 30, borderRadius: 6, background: 'transparent', border: `1px solid ${c.border}`, color: c.muted, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .15s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = c.text; e.currentTarget.style.color = c.text }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
+              {dark ? '○' : '●'}
+            </button>
+            {session ? (
+              <>
+                <span style={{ fontSize: 13, color: c.muted, padding: '0 8px' }}>{session.user?.email}</span>
+                <a href="/api/auth/signout" className="nav-link">Sign out</a>
+              </>
+            ) : (
+              <>
+                <a href="/login" className="nav-link">Sign in</a>
+                <a href="/login" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '7px 16px', borderRadius: 7, transition: 'opacity .15s' }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>Get started</a>
+              </>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* PROSE */}
+      <main style={{ maxWidth: 680, margin: '0 auto', padding: '64px 24px 100px' }}>
+        <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 16 }}>Legal</p>
+        <h1 style={{ fontSize: 'clamp(26px,3vw,40px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.15, marginBottom: 8 }}>Terms of Service</h1>
+        <p style={{ fontSize: 13, color: c.muted, marginBottom: 48 }}>Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+        {[
+          ['Content ownership', [
+            'You own all episodes you generate with SceneForge. The scripts, audio, and thumbnails are yours. We claim no ownership over your content.',
+          ]],
+          ['Credits system', [
+            'Credits are consumed when you generate an episode. 1 credit = 1 full episode (research + scripts + audio + thumbnails). Credits are non-refundable once an episode is successfully generated.',
+            'If generation fails due to a platform error, credits are automatically refunded to your account.',
+          ]],
+          ['Acceptable use', [
+            'You may not use SceneForge to generate content that is illegal, hateful, sexually explicit, or designed to deceive. We reserve the right to terminate accounts that violate these rules.',
+          ]],
+          ['Service availability', [
+            'We aim for high availability but cannot guarantee 100% uptime. We are not liable for losses caused by service interruptions.',
+          ]],
+          ['Contact', ['Questions? Email us at hello@sceneforge.ai']],
+        ].map(([heading, paras]) => (
+          <div key={String(heading)} style={{ marginBottom: 36 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, letterSpacing: -.2, marginBottom: 14, color: c.text }}>{heading}</h2>
+            {(paras as string[]).map((p, i) => (
+              <p key={i} style={{ fontSize: 14, color: c.muted, lineHeight: 1.75, marginBottom: 10 }}>{p}</p>
+            ))}
+          </div>
+        ))}
+      </main>
+
+      {/* FOOTER */}
+      <footer style={{ borderTop: `1px solid ${c.border}`, padding: '18px 24px', maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <div style={{ width: 18, height: 18, borderRadius: 5, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </div>
+          <span style={{ fontWeight: 600, fontSize: 13 }}>SceneForge</span>
+        </div>
+        <div style={{ display: 'flex' }}>
+          {[['Terms','/terms'],['Privacy','/privacy'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
+            <a key={l} href={h} style={{ fontSize: 12, color: c.muted, padding: '4px 10px', transition: 'color .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = c.text)}
+              onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>{l}</a>
+          ))}
+        </div>
+        <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
+      </footer>
     </div>
   )
 }

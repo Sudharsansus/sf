@@ -204,6 +204,11 @@ export default function Home() {
                   style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, color: c.text, lineHeight: 1.6, resize: 'none', fontWeight: 400 }}
                 />
               </div>
+              <div style={{ padding: '0 18px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 11, color: c.subtle }}>
+                  💡 After writing your topic, you'll choose voice, speakers, and duration before generation starts.
+                </span>
+              </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 14px', borderTop: `1px solid ${c.border}` }}>
                 <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                   {['Research', 'Scripts ×5', 'Voice', 'Visuals', 'SEO'].map(tag => (
