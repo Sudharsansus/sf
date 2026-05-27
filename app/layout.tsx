@@ -2,12 +2,12 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'SceneForge — AI Podcast Studio',
-  description: 'Turn any topic into a broadcast-quality podcast episode in 60 seconds. Powered by Claude + Wubble.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://sceneforge.vercel.app'),
+  title: 'SceneForge — AI Creator Production Studio',
+  description: 'Turn any topic into a broadcast-quality episode in minutes. Research, scripts, voice, visuals, and SEO — all in one workflow.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://sf-bice.vercel.app'),
   openGraph: {
-    title: 'SceneForge — AI Podcast Studio',
-    description: 'Turn any topic into a real podcast episode in 60 seconds.',
+    title: 'SceneForge — AI Creator Production Studio',
+    description: 'Turn any topic into a broadcast-ready episode in minutes.',
     type: 'website'
   },
   twitter: { card: 'summary_large_image' }
