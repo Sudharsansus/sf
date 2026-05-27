@@ -26,6 +26,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Sign in to generate episodes' }, { status: 401 })
     }
 
+    const body = await req.json()
+
     // ── IDEMPOTENCY ──────────────────────────────────────────────────────────
     // Client sends Idempotency-Key header. Same key = same response, no double-spend.
     const idemKey = req.headers.get('Idempotency-Key') || randomUUID()
@@ -52,7 +54,6 @@ export async function POST(req: NextRequest) {
     if (!success) return NextResponse.json({ error: 'Too many requests. Wait a minute.' }, { status: 429 })
 
     // ── VALIDATE INPUT ───────────────────────────────────────────────────────
-    const body = await req.json()
     const parsed = Body.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: 'Topic must be 3-200 characters' }, { status: 400 })
     const topic = sanitizeInput(parsed.data.topic)

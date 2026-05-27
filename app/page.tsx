@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import { useGenerate } from '@/hooks/useGenerate'
 import { WorkflowTimeline } from '@/components/workflow/WorkflowTimeline'
 import { ScriptPicker } from '@/components/studio/ScriptPicker'
@@ -10,6 +11,7 @@ const ROTATING_WORDS = ['podcasts', 'YouTube videos', 'newsletters', 'scripts', 
 
 export default function Home() {
   const g = useGenerate()
+  const { data: session } = useSession()
   const [dark, setDark] = useState(true)
   const [wordIndex, setWordIndex] = useState(0)
   const [displayed, setDisplayed] = useState('')
@@ -123,12 +125,21 @@ export default function Home() {
               onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
               {dark ? '○' : '●'}
             </button>
-            <a href="/login" className="nav-link">Sign in</a>
-            <a href="/login" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '7px 16px', borderRadius: 7, transition: 'opacity .15s' }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-              Get started
-            </a>
+            {session ? (
+              <>
+                <span style={{ fontSize: 13, color: c.muted, padding: '0 12px' }}>{session.user?.email}</span>
+                <a href="/api/auth/signout" className="nav-link">Sign out</a>
+              </>
+            ) : (
+              <>
+                <a href="/login" className="nav-link">Sign in</a>
+                <a href="/login" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '7px 16px', borderRadius: 7, transition: 'opacity .15s' }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+                  Get started
+                </a>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -138,7 +149,7 @@ export default function Home() {
 
         <h1 className="f0" style={{ fontSize: 'clamp(38px, 6vw, 68px)', fontWeight: 600, letterSpacing: '-2px', lineHeight: 1.1, marginBottom: 20 }}>
           Create studio-quality<br />
-          <span style={{ color: c.muted }}>
+          <span suppressHydrationWarning={true} style={{ color: c.muted }}>
             {displayed}
             <span style={{ animation: 'blink 1s step-end infinite', borderRight: `2px solid ${c.text}`, marginLeft: 2 }}>&nbsp;</span>
           </span>
@@ -174,7 +185,7 @@ export default function Home() {
                   style={{ fontSize: 13, fontWeight: 500, padding: '7px 18px', borderRadius: 7, background: g.topic.trim() ? c.accent : c.surface2, color: g.topic.trim() ? c.accentFg : c.subtle, transition: 'all .15s' }}
                   onMouseEnter={e => { if (g.topic.trim()) e.currentTarget.style.opacity = '.85' }}
                   onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}>
-                  Begin →
+                  Create episode →
                 </button>
               </div>
               {isFailed && g.error && <p style={{ padding: '0 18px 12px', fontSize: 12, color: '#f87171' }}>{g.error}</p>}
