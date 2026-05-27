@@ -16,6 +16,31 @@ export default function Home() {
   const [wordIndex, setWordIndex] = useState(0)
   const [displayed, setDisplayed] = useState('')
   const [typing, setTyping] = useState(true)
+  const [previewAudio, setPreviewAudio] = useState<string | null>(null)
+  const [previewLoading, setPreviewLoading] = useState<'A' | 'B' | null>(null)
+
+  async function playVoicePreview(voice: 'A' | 'B') {
+    setPreviewLoading(voice)
+    setPreviewAudio(null)
+    try {
+      const res = await fetch('/api/voice-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voice })
+      })
+      const data = await res.json()
+      if (data.audio) {
+        const audioUrl = `data:audio/mpeg;base64,${data.audio}`
+        setPreviewAudio(audioUrl)
+        const audio = new Audio(audioUrl)
+        audio.play()
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setPreviewLoading(null)
+    }
+  }
 
   const isConfiguring = g.step === 'configuring'
   const isWorking     = g.step === 'working' || g.step === 'producing'
@@ -78,6 +103,9 @@ export default function Home() {
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
 
         .f0 { animation: fadeUp .5s ease .0s both; }
@@ -193,42 +221,66 @@ export default function Home() {
             </>}
 
             {isConfiguring && <div style={{ padding: '14px 18px 18px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
                 <button onClick={g.reset} style={{ fontSize: 11, color: c.muted, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0, transition: 'color .15s' }}
                   onMouseEnter={e => (e.currentTarget.style.color = c.text)}
                   onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>← Back</button>
                 <span style={{ fontSize: 12, color: c.muted, fontWeight: 500 }}>Configure your episode</span>
               </div>
 
+              {/* VOICE PREVIEW */}
+              <div style={{ marginBottom: 18 }}>
+                <p style={{ fontSize: 11, color: c.muted, marginBottom: 10, fontWeight: 500 }}>Preview Voices</p>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+                  {(['A', 'B'] as const).map(v => (
+                    <button key={v} onClick={() => playVoicePreview(v)} disabled={previewLoading !== null}
+                      style={{ flex: 1, fontSize: 12, padding: '8px 12px', borderRadius: 7, border: `1px solid ${c.border}`, background: c.surface, color: c.text, cursor: previewLoading ? 'wait' : 'pointer', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                      onMouseEnter={e => { if (!previewLoading) e.currentTarget.style.borderColor = c.border2 }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = c.border }}>
+                      {previewLoading === v
+                        ? <span style={{ width: 10, height: 10, borderRadius: '50%', border: `2px solid ${c.muted}`, borderTopColor: c.text, display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+                        : '▶'}
+                      {previewLoading === v ? 'Loading…' : `Play Voice ${v}`}
+                    </button>
+                  ))}
+                </div>
+                {previewAudio && (
+                  <audio controls src={previewAudio} style={{ width: '100%', height: 32, accentColor: c.text }} />
+                )}
+              </div>
+
+              {/* SPEAKER FORMAT */}
               <div style={{ marginBottom: 16 }}>
+                <p style={{ fontSize: 11, color: c.muted, marginBottom: 10, fontWeight: 500 }}>Speaker Format</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+                  {([['both', '💬', 'A + B Conversation'], ['a', '🎙', 'Solo A'], ['b', '🎙', 'Solo B']] as const).map(([val, icon, label]) => (
+                    <button key={val} onClick={() => g.setSelectedSpeaker(val)}
+                      style={{ padding: '10px 8px', borderRadius: 8, border: `1px solid ${g.selectedSpeaker === val ? c.text : c.border}`, background: g.selectedSpeaker === val ? c.surface2 : 'transparent', color: g.selectedSpeaker === val ? c.text : c.muted, cursor: 'pointer', transition: 'all .15s', fontSize: 11, fontWeight: g.selectedSpeaker === val ? 600 : 400, textAlign: 'center', lineHeight: 1.5 }}>
+                      <div style={{ fontSize: 16, marginBottom: 3 }}>{icon}</div>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* DURATION */}
+              <div style={{ marginBottom: 18 }}>
                 <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Duration</p>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
                   {['30sec', '1min', '2min', '5min', '10min', '15min', '20min', '30min', '45min', '60min'].map(d => (
                     <button key={d} onClick={() => g.setSelectedDuration(d)}
-                      style={{ fontSize: 11, padding: '4px 10px', borderRadius: 5, border: `1px solid ${g.selectedDuration === d ? c.border2 : c.border}`, background: g.selectedDuration === d ? c.surface2 : 'transparent', color: g.selectedDuration === d ? c.text : c.muted, cursor: 'pointer', transition: 'all .15s' }}>
+                      style={{ fontSize: 11, padding: '4px 10px', borderRadius: 5, border: `1px solid ${g.selectedDuration === d ? c.text : c.border}`, background: g.selectedDuration === d ? c.surface2 : 'transparent', color: g.selectedDuration === d ? c.text : c.muted, cursor: 'pointer', transition: 'all .15s' }}>
                       {d}
                     </button>
                   ))}
                 </div>
                 <input
                   type="text"
-                  placeholder="Or type custom: e.g. 3min, 90sec"
+                  placeholder="Or type custom duration: e.g. 3min, 90sec"
                   value={g.selectedDuration}
                   onChange={e => g.setSelectedDuration(e.target.value)}
                   style={{ width: '100%', fontSize: 12, padding: '7px 12px', borderRadius: 6, border: `1px solid ${c.border}`, background: c.surface, color: c.text, fontFamily: 'inherit', outline: 'none' }}
                 />
-              </div>
-
-              <div style={{ marginBottom: 18 }}>
-                <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Speaker format</p>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  {[['both', 'A + B (Conversation)'], ['a', 'Solo A'], ['b', 'Solo B']].map(([val, label]) => (
-                    <button key={val} onClick={() => g.setSelectedSpeaker(val)}
-                      style={{ fontSize: 11, padding: '5px 12px', borderRadius: 6, border: `1px solid ${g.selectedSpeaker === val ? c.border2 : c.border}`, background: g.selectedSpeaker === val ? c.surface2 : 'transparent', color: g.selectedSpeaker === val ? c.text : c.muted, cursor: 'pointer', transition: 'all .15s' }}>
-                      {label}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <button onClick={g.startGeneration}
