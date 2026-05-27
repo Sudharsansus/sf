@@ -54,7 +54,7 @@ export async function runScriptAgent(topic: string, research: any): Promise<AllS
       system: SCRIPTS_PROMPT,
       user: `Topic: ${topic}\n\nResearch:\n${JSON.stringify(research, null, 2)}`,
       taskType: 'scripts',
-      maxTokens: 8000
+      maxTokens: 4000
     },
     AllScriptsSchema
   )

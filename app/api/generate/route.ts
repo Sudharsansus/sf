@@ -13,7 +13,7 @@ import { checkForAbuse } from '@/lib/abuse'
 import { events as analyticsEvents } from '@/lib/observability'
 import { logger } from '@/lib/logger'
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 const Body = z.object({
   topic: z.string().min(3).max(200)

@@ -49,7 +49,7 @@ OUTPUT SCHEMA:
 }
 
 RULES:
-- Each script: minimum 10 lines, maximum 20 lines
+- Each script: minimum 8 lines, maximum 12 lines
 - Each line: under 35 words
 - Dialog must feel like REAL conversation — not Q&A
 - Each angle must be genuinely different — not just different intro`
