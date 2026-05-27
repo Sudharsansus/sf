@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { db, projects, episodes, users } from '@/lib/db'
 import { getSession } from '@/lib/session'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { randomUUID } from 'crypto'
 
 export async function GET() {
@@ -22,7 +22,7 @@ export async function GET() {
     // For each project, count episodes
     const projectsWithCounts = await Promise.all(
       userProjects.map(async (p) => {
-        const count = await db.select({ count: db.sql<number>`count(*)` })
+        const count = await db.select({ count: sql<number>`count(*)` })
           .from(episodes)
           .where(eq(episodes.projectId, p.id))
         return { ...p, episodeCount: count[0]?.count || 0 }
