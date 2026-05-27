@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { streamGenerate } from '@/lib/ai'
 import { CHAT_PROMPT } from '@/lib/prompts'

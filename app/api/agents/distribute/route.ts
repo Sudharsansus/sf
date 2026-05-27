@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { db, episodes, users } from '@/lib/db'
 import { uploadVideo, refreshAccessToken } from '@/lib/youtube'

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { db, users, episodes, creditsLedger, workflowLocks } from '@/lib/db'
 import { runResearchAgent, runScriptAgent, runEvaluateAgent } from '@/lib/claude'
