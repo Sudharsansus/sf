@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db, episodes, users } from '@/lib/db'
 import { uploadVideo, refreshAccessToken } from '@/lib/youtube'
 import { createReelContainer, publishReel } from '@/lib/instagram'
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/session'
 import { eq } from 'drizzle-orm'
 import { logger } from '@/lib/logger'
 
@@ -12,7 +12,7 @@ export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
+    const session = await getSession()
     if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { episodeId, platforms } = await req.json()
@@ -84,3 +84,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }
+

@@ -1,11 +1,11 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/session'
 import { db, episodes, users } from '@/lib/db'
 import { eq, desc } from 'drizzle-orm'
 
 export async function GET(req: NextRequest) {
-  const session = await auth()
+  const session = await getSession()
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
@@ -31,4 +31,5 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ data: eps, page, limit })
 }
+
 

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { db, episodes, users, workflowLocks } from '@/lib/db'
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/session'
 import { eq } from 'drizzle-orm'
 import { logger } from '@/lib/logger'
 import { refineLimit } from '@/lib/redis'
@@ -19,7 +19,7 @@ const STALE_LOCK_MS = 5 * 60 * 1000
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
+    const session = await getSession()
     if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { success: rlOk } = await refineLimit.limit(session.user.email)
@@ -137,3 +137,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }
+

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/session'
 import { db, users, episodes, aiRequestLog, auditLogs } from '@/lib/db'
 import { isAdmin } from '@/lib/security'
 import { getAIStats } from '@/lib/ai'
@@ -9,7 +9,7 @@ import { eq, desc, sql, gte } from 'drizzle-orm'
 import { logger } from '@/lib/logger'
 
 export async function GET(req: NextRequest) {
-  const session = await auth()
+  const session = await getSession()
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
 
 // Grant/revoke admin, adjust credits
 export async function PATCH(req: NextRequest) {
-  const session = await auth()
+  const session = await getSession()
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const [admin] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
   if (!admin || !isAdmin(admin)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -75,3 +75,4 @@ export async function PATCH(req: NextRequest) {
 
   return NextResponse.json({ ok: true })
 }
+

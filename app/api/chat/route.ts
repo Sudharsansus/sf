@@ -5,12 +5,12 @@ import { streamGenerate } from '@/lib/ai'
 import { CHAT_PROMPT } from '@/lib/prompts'
 import { chatLimit, apiLimit } from '@/lib/redis'
 import { logger } from '@/lib/logger'
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/session'
 
 export async function POST(req: NextRequest) {
   try {
     // Auth users get per-user limit; anonymous get per-IP limit
-    const session = await auth()
+    const session = await getSession()
     const limitKey = session?.user?.email
       ? session.user.email
       : (req.headers.get('x-forwarded-for') || 'anon')
@@ -59,3 +59,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Chat failed' }, { status: 500 })
   }
 }
+

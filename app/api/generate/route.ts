@@ -5,7 +5,7 @@ import { db, users, episodes, creditsLedger, workflowLocks } from '@/lib/db'
 import { runResearchAgent, runScriptAgent, runEvaluateAgent } from '@/lib/claude'
 import { generateLimit } from '@/lib/redis'
 import { eq, sql } from 'drizzle-orm'
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/session'
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
 import { sanitizeInput, auditLog } from '@/lib/security'
@@ -21,7 +21,7 @@ const Body = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
+    const session = await getSession()
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Sign in to generate episodes' }, { status: 401 })
     }
@@ -156,3 +156,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: e.message || 'Internal error' }, { status: 500 })
   }
 }
+
