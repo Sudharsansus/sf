@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import type { StageKey } from '@/components/workflow/WorkflowTimeline'
 
-export type Step = 'idle' | 'working' | 'picking' | 'producing' | 'complete' | 'failed'
+export type Step = 'idle' | 'configuring' | 'working' | 'picking' | 'producing' | 'complete' | 'failed'
 
 export function useGenerate() {
   const [topic,            setTopic]            = useState('')
@@ -37,14 +37,18 @@ export function useGenerate() {
   }
 
   async function generate() {
-    if (!topic.trim() || step !== 'idle') return
+    if (!topic.trim() || (step !== 'idle' && step !== 'failed')) return
     setError(''); setResult(null); setScripts([]); setEvaluations([])
     setCompletedStages([]); setFailedStages([])
+    setStep('configuring')
+  }
+
+  async function startGeneration() {
+    if (step !== 'configuring') return
     setStep('working')
 
     const idemKey = `${Date.now()}-${Math.random().toString(36).slice(2)}`
 
-    // Animate through research → script stages
     setActiveStage('research')
     try {
       const res = await fetch('/api/generate', {
@@ -117,6 +121,6 @@ export function useGenerate() {
     selectedDuration, setSelectedDuration,
     selectedSpeaker, setSelectedSpeaker,
     result, error, episodeId, shareId,
-    generate, produce, reset
+    generate, startGeneration, produce, reset
   }
 }
