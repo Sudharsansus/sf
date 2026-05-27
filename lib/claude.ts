@@ -80,7 +80,7 @@ export async function runRefineAgent(script: SingleScript, topic: string) {
     system: REFINE_PROMPT,
     user: `Topic: ${topic}\n\nScript:\n${JSON.stringify(script, null, 2)}`,
     taskType: 'refine',
-    maxTokens: 3000
+    maxTokens: 2000
   })
   return data
 }
