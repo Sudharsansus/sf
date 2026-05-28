@@ -39,6 +39,17 @@ export default function EpisodesPage() {
         .nav-link:hover { color: ${c.text}; }
         .ep-row { transition: background .15s; border-bottom: 1px solid ${c.border}; }
         .ep-row:hover { background: ${c.surface} !important; }
+        @media (max-width: 768px) {
+          .ep-grid { grid-template-columns: 1fr !important; }
+          .stats-grid { grid-template-columns: 1fr 1fr !important; }
+          .plans-grid { grid-template-columns: 1fr 1fr !important; }
+          .platforms-grid { grid-template-columns: 1fr !important; }
+          nav .nav-center { display: none !important; }
+        }
+        @media (max-width: 480px) {
+          .plans-grid { grid-template-columns: 1fr !important; }
+          .stats-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* NAV */}
@@ -50,7 +61,7 @@ export default function EpisodesPage() {
             </div>
             <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SceneForge</span>
           </a>
-          <div style={{ display: 'flex', gap: 0 }}>
+          <div className="nav-center" style={{ display: 'flex', gap: 0 }}>
             {[['Studio','/studio'],['Work','/episodes'],['Dashboard','/dashboard']].map(([l,h]) => (
               <a key={l} href={h} className="nav-link" style={{ color: h === '/episodes' ? c.text : c.muted }}>{l}</a>
             ))}
@@ -99,7 +110,7 @@ export default function EpisodesPage() {
         {!loading && episodes.length > 0 && (
           <div style={{ border: `1px solid ${c.border}`, borderRadius: 12, overflow: 'hidden' }}>
             {episodes.map((ep: any, i: number) => (
-              <div key={ep.id} className="ep-row" style={{ padding: '18px 24px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 20, background: 'transparent' }}>
+              <div key={ep.id} className="ep-row ep-grid" style={{ padding: '18px 24px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 20, background: 'transparent' }}>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>{ep.title || ep.topic}</div>
                   <div style={{ display: 'flex', gap: 14, fontSize: 11, color: c.muted, fontFamily: 'monospace' }}>

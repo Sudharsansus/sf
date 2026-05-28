@@ -1,7 +1,7 @@
 'use client'
-
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useSession } from 'next-auth/react'
+import { ProfileMenu } from '@/components/ui/ProfileMenu'
 
 interface Project {
   id: string
@@ -12,129 +12,175 @@ interface Project {
 }
 
 export default function ProjectsPage() {
+  const { data: session } = useSession()
+  const [dark, setDark] = useState(true)
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [newProjectName, setNewProjectName] = useState('')
-  const [newProjectDesc, setNewProjectDesc] = useState('')
+  const [newName, setNewName] = useState('')
+  const [newDesc, setNewDesc] = useState('')
+  const [creating, setCreating] = useState(false)
 
-  useEffect(() => {
-    loadProjects()
-  }, [])
-
-  async function loadProjects() {
-    try {
-      const res = await fetch('/api/projects')
-      const data = await res.json()
-      setProjects(data)
-    } catch (error) {
-      console.error('Error loading projects:', error)
-    } finally {
-      setLoading(false)
-    }
+  const c = dark ? {
+    bg: '#0a0a0a', nav: 'rgba(10,10,10,0.92)', surface: '#141414',
+    surface2: '#1a1a1a', border: '#222', border2: '#2a2a2a',
+    text: '#f5f5f5', muted: '#888', subtle: '#444',
+    accent: '#f5f5f5', accentFg: '#0a0a0a',
+  } : {
+    bg: '#ffffff', nav: 'rgba(255,255,255,0.92)', surface: '#f0f0f0',
+    surface2: '#efefef', border: '#d0d0d0', border2: '#bbb',
+    text: '#0a0a0a', muted: '#444', subtle: '#666',
+    accent: '#0a0a0a', accentFg: '#ffffff',
   }
 
-  async function handleCreateProject() {
-    if (!newProjectName.trim()) return
+  useEffect(() => {
+    fetch('/api/projects').then(r => r.json()).then(d => {
+      setProjects(Array.isArray(d) ? d : [])
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [])
 
+  async function handleCreate() {
+    if (!newName.trim()) return
+    setCreating(true)
     try {
       const res = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newProjectName, description: newProjectDesc })
+        body: JSON.stringify({ name: newName.trim(), description: newDesc.trim() })
       })
-      const newProject = await res.json()
-      setProjects([...projects, newProject])
-      setNewProjectName('')
-      setNewProjectDesc('')
-      setShowForm(false)
-    } catch (error) {
-      console.error('Error creating project:', error)
-    }
+      const p = await res.json()
+      setProjects(prev => [p, ...prev])
+      setNewName(''); setNewDesc(''); setShowForm(false)
+    } catch (e) { console.error(e) }
+    finally { setCreating(false) }
   }
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '40px 20px' }}>
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8, color: '#f0f0f0' }}>Projects</h1>
-        <p style={{ fontSize: 14, color: '#888' }}>Organize your episodes into projects</p>
-      </div>
+    <div style={{ background: c.bg, minHeight: '100vh', color: c.text, fontFamily: "'Inter', -apple-system, sans-serif", transition: 'background .3s, color .3s' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        a { color: inherit; text-decoration: none; }
+        button, input, textarea { font-family: inherit; outline: none; }
+        .nav-link { font-size: 13px; color: ${c.muted}; padding: 6px 12px; border-radius: 6px; transition: color .15s; }
+        .nav-link:hover { color: ${c.text}; }
+        .proj-card { transition: border-color .2s, background .15s; }
+        .proj-card:hover { border-color: ${c.border2} !important; background: ${c.surface} !important; }
+        @media (max-width: 768px) { .nav-center { display: none !important; } }
+      `}</style>
 
-      {showForm && (
-        <div style={{ background: '#111', border: '1px solid #222', padding: 20, borderRadius: 12, marginBottom: 24 }}>
-          <input
-            type="text"
-            placeholder="Project name"
-            value={newProjectName}
-            onChange={(e) => setNewProjectName(e.target.value)}
-            style={{ width: '100%', fontSize: 14, padding: 12, borderRadius: 8, border: '1px solid #333', background: '#0a0a0a', color: '#f0f0f0', marginBottom: 12, fontFamily: 'inherit' }}
-          />
-          <textarea
-            placeholder="Description (optional)"
-            value={newProjectDesc}
-            onChange={(e) => setNewProjectDesc(e.target.value)}
-            style={{ width: '100%', fontSize: 14, padding: 12, borderRadius: 8, border: '1px solid #333', background: '#0a0a0a', color: '#f0f0f0', marginBottom: 12, fontFamily: 'inherit', minHeight: 80 }}
-          />
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button
-              onClick={handleCreateProject}
-              style={{ flex: 1, padding: 12, borderRadius: 8, background: '#f0f0f0', color: '#0c0c0c', border: 'none', cursor: 'pointer', fontWeight: 600 }}
-            >
-              Create Project
+      {/* NAV */}
+      <nav style={{ position: 'sticky', top: 0, zIndex: 50, borderBottom: `1px solid ${c.border}`, backdropFilter: 'blur(16px)', background: c.nav }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px', height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+            <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SceneForge</span>
+          </a>
+          <div className="nav-center" style={{ display: 'flex' }}>
+            {[['Studio','/studio'],['Work','/episodes'],['Dashboard','/dashboard']].map(([l,h]) => (
+              <a key={l} href={h} className="nav-link">{l}</a>
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button onClick={() => setDark(!dark)} style={{ width: 30, height: 30, borderRadius: 6, background: 'transparent', border: `1px solid ${c.border}`, color: c.muted, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+              {dark ? '○' : '●'}
             </button>
-            <button
-              onClick={() => setShowForm(false)}
-              style={{ flex: 1, padding: 12, borderRadius: 8, background: '#1a1a1a', color: '#888', border: '1px solid #333', cursor: 'pointer' }}
-            >
-              Cancel
-            </button>
+            <ProfileMenu c={c} />
           </div>
         </div>
-      )}
+      </nav>
 
-      {!showForm && (
-        <button
-          onClick={() => setShowForm(true)}
-          style={{ marginBottom: 24, padding: '12px 24px', borderRadius: 8, background: '#f0f0f0', color: '#0c0c0c', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
-        >
-          + New Project
-        </button>
-      )}
+      {/* CONTENT */}
+      <main style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 80px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Workspace</p>
+            <h1 style={{ fontSize: 'clamp(22px,3vw,34px)', fontWeight: 600, letterSpacing: -.6 }}>Projects</h1>
+          </div>
+          <button onClick={() => setShowForm(!showForm)}
+            style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, border: 'none', padding: '9px 18px', borderRadius: 8, cursor: 'pointer', transition: 'opacity .15s' }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
+            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+            + New project
+          </button>
+        </div>
 
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: 40, color: '#666' }}>Loading projects...</div>
-      ) : projects.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: 40, color: '#666' }}>No projects yet. Create one to get started!</div>
-      ) : (
-        <div style={{ display: 'grid', gap: 16 }}>
-          {projects.map((p) => (
-            <Link
-              key={p.id}
-              href={`/studio?projectId=${p.id}`}
-              style={{ display: 'block', textDecoration: 'none' }}
-            >
-              <div style={{ background: '#111', border: '1px solid #222', padding: 20, borderRadius: 12, cursor: 'pointer', transition: 'all 0.2s', textDecoration: 'none' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                  <div>
-                    <h3 style={{ fontSize: 18, fontWeight: 600, color: '#f0f0f0', margin: 0, marginBottom: 6 }}>{p.name}</h3>
-                    {p.description && (
-                      <p style={{ fontSize: 13, color: '#888', margin: 0, marginBottom: 8 }}>{p.description}</p>
-                    )}
-                    <p style={{ fontSize: 12, color: '#555', margin: 0 }}>{p.episodeCount} episodes</p>
-                  </div>
-                  <span style={{ fontSize: 12, color: '#555' }}>→</span>
+        {/* CREATE FORM */}
+        {showForm && (
+          <div style={{ border: `1px solid ${c.border}`, borderRadius: 12, padding: 24, marginBottom: 24, background: c.surface }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>New project</h3>
+            <input type="text" placeholder="Project name" value={newName} onChange={e => setNewName(e.target.value)}
+              style={{ width: '100%', fontSize: 13, padding: '10px 14px', borderRadius: 7, border: `1px solid ${c.border}`, background: c.bg, color: c.text, marginBottom: 10 }}
+              onFocus={e => (e.currentTarget.style.borderColor = c.border2)}
+              onBlur={e => (e.currentTarget.style.borderColor = c.border)} />
+            <textarea placeholder="Description (optional)" value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={2}
+              style={{ width: '100%', fontSize: 13, padding: '10px 14px', borderRadius: 7, border: `1px solid ${c.border}`, background: c.bg, color: c.text, marginBottom: 14, resize: 'none' }}
+              onFocus={e => (e.currentTarget.style.borderColor = c.border2)}
+              onBlur={e => (e.currentTarget.style.borderColor = c.border)} />
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={handleCreate} disabled={!newName.trim() || creating}
+                style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, border: 'none', padding: '9px 20px', borderRadius: 7, cursor: 'pointer', opacity: !newName.trim() || creating ? .5 : 1 }}>
+                {creating ? 'Creating…' : 'Create project'}
+              </button>
+              <button onClick={() => { setShowForm(false); setNewName(''); setNewDesc('') }}
+                style={{ fontSize: 13, color: c.muted, background: 'transparent', border: `1px solid ${c.border}`, padding: '9px 20px', borderRadius: 7, cursor: 'pointer' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* LOADING */}
+        {loading && (
+          <div style={{ padding: '48px 0', textAlign: 'center', color: c.subtle, fontSize: 13 }}>Loading…</div>
+        )}
+
+        {/* EMPTY */}
+        {!loading && projects.length === 0 && !showForm && (
+          <div style={{ border: `1px solid ${c.border}`, borderRadius: 12, padding: '64px 24px', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 16 }}>📁</div>
+            <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>No projects yet</h2>
+            <p style={{ fontSize: 13, color: c.muted, marginBottom: 24 }}>Organize your episodes into projects to keep things tidy.</p>
+            <button onClick={() => setShowForm(true)}
+              style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, border: 'none', padding: '10px 24px', borderRadius: 8, cursor: 'pointer' }}>
+              Create first project →
+            </button>
+          </div>
+        )}
+
+        {/* PROJECTS GRID */}
+        {!loading && projects.length > 0 && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+            {projects.map(p => (
+              <a key={p.id} href={`/studio?projectId=${p.id}`}
+                className="proj-card"
+                style={{ border: `1px solid ${c.border}`, borderRadius: 12, padding: '20px 22px', background: 'transparent', display: 'block', cursor: 'pointer' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                  <div style={{ fontSize: 22 }}>📁</div>
+                  <span style={{ fontSize: 11, color: c.subtle }}>{p.episodeCount} episodes</span>
                 </div>
-              </div>
-            </Link>
+                <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{p.name}</div>
+                {p.description && <div style={{ fontSize: 12, color: c.muted, lineHeight: 1.5, marginBottom: 8 }}>{p.description}</div>}
+                <div style={{ fontSize: 11, color: c.subtle, fontFamily: 'monospace' }}>{new Date(p.createdAt).toLocaleDateString()}</div>
+              </a>
+            ))}
+          </div>
+        )}
+      </main>
+
+      {/* FOOTER */}
+      <footer style={{ borderTop: `1px solid ${c.border}`, padding: '18px 24px', maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontWeight: 600, fontSize: 13 }}>SceneForge</span>
+        <div style={{ display: 'flex' }}>
+          {[['Terms','/terms'],['Privacy','/privacy']].map(([l,h]) => (
+            <a key={l} href={h} style={{ fontSize: 12, color: c.muted, padding: '4px 10px' }}>{l}</a>
           ))}
         </div>
-      )}
-
-      <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid #222' }}>
-        <Link href="/studio" style={{ color: '#555', textDecoration: 'none', fontSize: 14 }}>
-          ← Back to Studio
-        </Link>
-      </div>
+        <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
+      </footer>
     </div>
   )
 }

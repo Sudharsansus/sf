@@ -49,6 +49,17 @@ export default function DashboardPage() {
         .nav-link:hover { color: ${c.text}; background: ${dark ? 'transparent' : c.surface}; }
         .row-item { transition: background .15s; }
         .row-item:hover { background: ${c.surface} !important; }
+        @media (max-width: 768px) {
+          .ep-grid { grid-template-columns: 1fr !important; }
+          .stats-grid { grid-template-columns: 1fr 1fr !important; }
+          .plans-grid { grid-template-columns: 1fr 1fr !important; }
+          .platforms-grid { grid-template-columns: 1fr !important; }
+          nav .nav-center { display: none !important; }
+        }
+        @media (max-width: 480px) {
+          .plans-grid { grid-template-columns: 1fr !important; }
+          .stats-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* NAV */}
@@ -60,7 +71,7 @@ export default function DashboardPage() {
             </div>
             <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SceneForge</span>
           </a>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="nav-center" style={{ display: 'flex', alignItems: 'center' }}>
             {[['Studio','/studio'],['Work','/episodes'],['Dashboard','/dashboard']].map(([l,h]) => (
               <a key={l} href={h} className="nav-link">{l}</a>
             ))}
@@ -84,7 +95,7 @@ export default function DashboardPage() {
         </div>
 
         {/* STATS */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', border: `1px solid ${c.border}`, borderRadius: 12, overflow: 'hidden', marginBottom: 36 }}>
+        <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', border: `1px solid ${c.border}`, borderRadius: 12, overflow: 'hidden', marginBottom: 36 }}>
           {[
             [String(data?.credits ?? '—'), 'Credits remaining'],
             [String(episodes.length), 'Episodes generated'],
@@ -100,7 +111,7 @@ export default function DashboardPage() {
         {/* CONNECT PLATFORMS */}
         <div style={{ marginBottom: 36 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, letterSpacing: -.3, marginBottom: 16 }}>Connect platforms</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="platforms-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {[
               { key: 'youtube', label: '▶ YouTube', href: '/api/youtube' },
               { key: 'instagram', label: '📸 Instagram', href: '/api/instagram' },
@@ -128,7 +139,7 @@ export default function DashboardPage() {
         {/* PLANS */}
         <div style={{ marginBottom: 36 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, letterSpacing: -.3, marginBottom: 16 }}>Get more credits</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+          <div className="plans-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
             {PLANS.map(p => (
               <div key={p.id} style={{ border: `1px solid ${p.badge ? c.border2 : c.border}`, borderRadius: 12, padding: '24px 22px', transition: 'border-color .2s', position: 'relative' }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = c.border2)}

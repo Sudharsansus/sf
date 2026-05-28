@@ -40,6 +40,17 @@ export default function StudioPage() {
         .nav-link:hover { color: ${c.text}; background: ${dark ? 'transparent' : c.surface}; }
         .row-item { transition: background .15s; }
         .row-item:hover { background: ${c.surface2} !important; }
+        @media (max-width: 768px) {
+          .ep-grid { grid-template-columns: 1fr !important; }
+          .stats-grid { grid-template-columns: 1fr 1fr !important; }
+          .plans-grid { grid-template-columns: 1fr 1fr !important; }
+          .platforms-grid { grid-template-columns: 1fr !important; }
+          nav .nav-center { display: none !important; }
+        }
+        @media (max-width: 480px) {
+          .plans-grid { grid-template-columns: 1fr !important; }
+          .stats-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* NAV */}
@@ -51,7 +62,7 @@ export default function StudioPage() {
             </div>
             <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SceneForge</span>
           </a>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="nav-center" style={{ display: 'flex', alignItems: 'center' }}>
             {[['Studio','/studio'],['Work','/episodes'],['Dashboard','/dashboard']].map(([l,h]) => (
               <a key={l} href={h} className="nav-link">{l}</a>
             ))}
@@ -94,7 +105,7 @@ export default function StudioPage() {
               </div>
             ) : (
               episodes.map((ep: any, i: number) => (
-                <div key={ep.id} className="row-item"
+                <div key={ep.id} className="row-item ep-grid"
                   style={{ background: c.bg, padding: '18px 24px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 20, borderBottom: i < episodes.length - 1 ? `1px solid ${c.border}` : 'none' }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 500, color: c.text, marginBottom: 5 }}>{ep.title || ep.topic}</div>

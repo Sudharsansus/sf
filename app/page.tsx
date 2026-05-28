@@ -194,6 +194,24 @@ export default function Home() {
 
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: ${c.border2}; border-radius: 2px; }
+
+        @media (max-width: 768px) {
+          .hero-title { font-size: 36px !important; }
+          .console-wrap { max-width: 100% !important; }
+          .numbers-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .workflow-grid { grid-template-columns: 40px 1fr !important; }
+          .features-grid { grid-template-columns: 1fr !important; }
+          .pricing-grid { grid-template-columns: 1fr 1fr !important; }
+          .cta-grid { grid-template-columns: 1fr !important; padding: 36px 28px !important; }
+          .cta-buttons { flex-direction: row !important; }
+          .footer-inner { flex-wrap: wrap !important; gap: 12px !important; }
+        }
+        @media (max-width: 480px) {
+          .pricing-grid { grid-template-columns: 1fr !important; }
+          .numbers-grid { grid-template-columns: 1fr 1fr !important; }
+          .voice-grid { grid-template-columns: repeat(3,1fr) !important; }
+          .lang-grid { grid-template-columns: repeat(3,1fr) !important; }
+        }
       `}</style>
 
       {/* NAV */}
@@ -228,7 +246,7 @@ export default function Home() {
       {/* HERO */}
       <section style={{ maxWidth: 720, margin: '0 auto', padding: '88px 24px 64px', textAlign: 'center' }}>
 
-        <h1 className="f0" style={{ fontSize: 'clamp(38px, 6vw, 68px)', fontWeight: 600, letterSpacing: '-2px', lineHeight: 1.1, marginBottom: 20 }}>
+        <h1 className="f0 hero-title" style={{ fontSize: 'clamp(38px, 6vw, 68px)', fontWeight: 600, letterSpacing: '-2px', lineHeight: 1.1, marginBottom: 20 }}>
           Create studio-quality<br />
           <span suppressHydrationWarning={true} style={{ color: dark ? c.muted : c.text }}>
             {displayed}
@@ -294,7 +312,7 @@ export default function Home() {
               {/* VOICE SELECTOR */}
               <div style={{ marginBottom: 18 }}>
                 <p style={{ fontSize: 11, color: c.muted, marginBottom: 10, fontWeight: 500 }}>Voice A (Speaker 1)</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 8 }}>
+                <div className="voice-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 8 }}>
                   {VOICES.map(v => (
                     <button key={v.id} onClick={() => setVoiceA(v.id)}
                       style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${voiceA === v.id ? c.text : c.border}`, background: voiceA === v.id ? c.surface2 : 'transparent', color: voiceA === v.id ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: voiceA === v.id ? 600 : 400, textAlign: 'center' }}>
@@ -309,7 +327,7 @@ export default function Home() {
                 </div>
 
                 <p style={{ fontSize: 11, color: c.muted, marginBottom: 10, fontWeight: 500, marginTop: 12 }}>Voice B (Speaker 2)</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 8 }}>
+                <div className="voice-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 8 }}>
                   {VOICES.map(v => (
                     <button key={v.id} onClick={() => setVoiceB(v.id)}
                       style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${voiceB === v.id ? c.text : c.border}`, background: voiceB === v.id ? c.surface2 : 'transparent', color: voiceB === v.id ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: voiceB === v.id ? 600 : 400, textAlign: 'center' }}>
@@ -331,7 +349,7 @@ export default function Home() {
               {/* LANGUAGE */}
               <div style={{ marginBottom: 16 }}>
                 <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Language</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
+                <div className="lang-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
                   {LANGUAGES.map(lang => (
                     <button key={lang.code} onClick={() => setLanguage(lang.code)}
                       style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${language === lang.code ? c.text : c.border}`, background: language === lang.code ? c.surface2 : 'transparent', color: language === lang.code ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: language === lang.code ? 600 : 400, textAlign: 'center' }}>
@@ -408,7 +426,7 @@ export default function Home() {
 
       {/* NUMBERS */}
       <div style={{ borderTop: `1px solid ${c.border}`, borderBottom: `1px solid ${c.border}` }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="numbers-grid" style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)' }}>
           {[['1 session','Weeks of work compressed'],['5 scripts','Written + scored per topic'],['Your call','You review before publishing'],['Studio grade','ElevenLabs + AI visuals']].map(([v,l],i,a) => (
             <div key={v} style={{ padding: '28px 24px', textAlign: 'center', borderRight: i < a.length-1 ? `1px solid ${c.border}` : 'none' }}>
               <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 4 }}>{v}</div>
@@ -461,7 +479,7 @@ export default function Home() {
           <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Why SceneForge</p>
           <h2 style={{ fontSize: 'clamp(22px,3vw,34px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.2 }}>Not a generator. A production system.</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: c.border, borderRadius: 10, overflow: 'hidden' }}>
+        <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: c.border, borderRadius: 10, overflow: 'hidden' }}>
           {[
             ['You stay in control','No auto-posting. No spam. You decide what goes live and when — every time.'],
             ['Quality over quantity','Five scripts, scored on 10 metrics. You pick the best angle, not the first one.'],
@@ -479,6 +497,54 @@ export default function Home() {
         </div>
       </section>
 
+      {/* PRICING */}
+      <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 36, gap: 24, flexWrap: 'wrap' }}>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Pricing</p>
+            <h2 style={{ fontSize: 'clamp(22px,3vw,34px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.2 }}>Simple, transparent pricing.</h2>
+          </div>
+          <p style={{ fontSize: 13, color: c.muted, lineHeight: 1.65, maxWidth: 240 }}>Start free. No card required. Upgrade when you're ready.</p>
+        </div>
+
+        <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+          {[
+            { name: 'Free', price: '$0', sub: 'forever', credits: 3, perEp: '', desc: 'Try it out', features: ['3 episodes', 'All AI features', 'Audio + visuals', 'SEO package'], cta: 'Start free', href: '/login', badge: '' },
+            { name: 'Starter', price: '$19', sub: '/month', credits: 30, perEp: '$0.63/ep', desc: 'For new creators', features: ['30 episodes/mo', 'All voices', 'All languages', 'YouTube upload'], cta: 'Get Starter', href: '/login', badge: '' },
+            { name: 'Pro', price: '$29', sub: '/month', credits: 100, perEp: '$0.29/ep', desc: 'Most popular', features: ['100 episodes/mo', 'All voices', 'All languages', 'Priority support'], cta: 'Get Pro', href: '/login', badge: 'MOST POPULAR' },
+            { name: 'Studio', price: '$79', sub: '/month', credits: 400, perEp: '$0.20/ep', desc: 'For serious producers', features: ['400 episodes/mo', 'All voices', 'All languages', 'Team access soon'], cta: 'Get Studio', href: '/login', badge: '' },
+          ].map(p => (
+            <div key={p.name} style={{ border: `1px solid ${p.badge ? c.border2 : c.border}`, borderRadius: 12, padding: '24px 22px', position: 'relative', transition: 'border-color .2s', background: p.badge ? c.surface : 'transparent' }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = c.border2)}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = p.badge ? c.border2 : c.border)}>
+              {p.badge && (
+                <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#fb923c', background: dark ? '#0a0a0a' : '#fff', border: '1px solid rgba(251,146,60,0.4)', padding: '2px 10px', borderRadius: 4, whiteSpace: 'nowrap' }}>{p.badge}</div>
+              )}
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{p.name}</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 2, marginBottom: 2 }}>
+                <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: -1.2, lineHeight: 1 }}>{p.price}</span>
+                <span style={{ fontSize: 12, color: c.muted }}>{p.sub}</span>
+              </div>
+              <div style={{ fontSize: 11, color: c.subtle, marginBottom: 4 }}>{p.credits} credits{p.perEp ? ` · ${p.perEp}` : ''}</div>
+              <div style={{ fontSize: 11, color: c.muted, marginBottom: 20 }}>{p.desc}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 22 }}>
+                {p.features.map(f => (
+                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, color: c.muted }}>
+                    <span style={{ color: '#4ade80', fontSize: 10, flexShrink: 0 }}>✓</span>
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <a href={p.href} style={{ display: 'block', width: '100%', fontSize: 13, fontWeight: 500, color: p.badge ? c.accentFg : c.text, background: p.badge ? c.accent : 'transparent', border: `1px solid ${p.badge ? c.accent : c.border}`, padding: '9px', borderRadius: 7, textAlign: 'center', transition: 'all .15s', boxSizing: 'border-box' }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '.8' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}>
+                {p.cta}
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* QUOTE */}
       <section style={{ maxWidth: 640, margin: '80px auto 0', padding: '0 24px' }}>
         <div className="card" style={{ padding: '32px 36px' }}>
@@ -491,7 +557,7 @@ export default function Home() {
 
       {/* CTA */}
       <section style={{ maxWidth: 1080, margin: '80px auto 0', padding: '0 24px 100px' }}>
-        <div className="card" style={{ padding: '60px 52px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 48 }}>
+        <div className="card cta-grid" style={{ padding: '60px 52px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 48 }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 14 }}>Begin production</p>
             <h2 style={{ fontSize: 'clamp(26px,3.5vw,44px)', fontWeight: 600, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 14 }}>
@@ -499,7 +565,7 @@ export default function Home() {
             </h2>
             <p style={{ fontSize: 14, color: c.muted, lineHeight: 1.7, maxWidth: 360 }}>10 free credits on sign up. No card required. Research, scripts, voice, visuals, and SEO — done.</p>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
+          <div className="cta-buttons" style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
             <a href="/login" style={{ fontWeight: 500, fontSize: 14, color: c.accentFg, background: c.accent, padding: '12px 32px', borderRadius: 8, textAlign: 'center', whiteSpace: 'nowrap', transition: 'opacity .15s' }}
               onMouseEnter={e => (e.currentTarget.style.opacity = '.85')}
               onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
@@ -515,7 +581,7 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer style={{ borderTop: `1px solid ${c.border}`, padding: '18px 24px', maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <footer className="footer-inner" style={{ borderTop: `1px solid ${c.border}`, padding: '18px 24px', maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           <div style={{ width: 18, height: 18, borderRadius: 5, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
