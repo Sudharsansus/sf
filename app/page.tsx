@@ -581,13 +581,13 @@ export default function Home() {
           <p style={{ fontSize: 14, color: c.muted, marginBottom: 28 }}>Start free. No card required. Upgrade when you're ready.</p>
 
           {/* MONTHLY / YEARLY TOGGLE */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', background: c.surface, border: `1px solid ${c.border}`, borderRadius: 10, padding: 4, gap: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', background: dark ? 'rgba(255,255,255,0.06)' : c.surface, border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : c.border}`, borderRadius: 10, padding: 4, gap: 2 }}>
             <button onClick={() => setYearly(false)}
-              style={{ fontSize: 13, fontWeight: 500, padding: '7px 20px', borderRadius: 7, border: 'none', background: !yearly ? c.accent : 'transparent', color: !yearly ? c.accentFg : c.muted, cursor: 'pointer', transition: 'all .2s' }}>
+              style={{ fontSize: 13, fontWeight: 500, padding: '7px 20px', borderRadius: 7, border: 'none', background: !yearly ? c.accent : 'transparent', color: !yearly ? c.accentFg : (dark ? '#aaa' : c.muted), cursor: 'pointer', transition: 'all .2s' }}>
               Monthly
             </button>
             <button onClick={() => setYearly(true)}
-              style={{ fontSize: 13, fontWeight: 500, padding: '7px 20px', borderRadius: 7, border: 'none', background: yearly ? c.accent : 'transparent', color: yearly ? c.accentFg : c.muted, cursor: 'pointer', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 6 }}>
+              style={{ fontSize: 13, fontWeight: 500, padding: '7px 20px', borderRadius: 7, border: 'none', background: yearly ? c.accent : 'transparent', color: yearly ? c.accentFg : (dark ? '#aaa' : c.muted), cursor: 'pointer', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 6 }}>
               Yearly
               <span style={{ fontSize: 10, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', padding: '1px 6px', borderRadius: 4 }}>-20%</span>
             </button>
@@ -609,15 +609,15 @@ export default function Home() {
                 <div style={{ position: 'absolute', top: -11, left: '50%', transform: 'translateX(-50%)', fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#f97316', background: dark ? '#0a0a0a' : '#fff', border: '1px solid rgba(249,115,22,0.5)', padding: '2px 10px', borderRadius: 20, whiteSpace: 'nowrap' }}>{p.desc}</div>
               )}
               {!p.badge && (
-                <div style={{ fontSize: 10, fontWeight: 600, color: c.subtle, marginBottom: 10, letterSpacing: .3 }}>{p.desc}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: dark ? '#aaa' : c.subtle, marginBottom: 10, letterSpacing: .3 }}>{p.desc}</div>
               )}
               {p.badge && <div style={{ marginBottom: 10 }} />}
-              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>{p.name}</div>
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8, color: dark ? '#fff' : c.text }}>{p.name}</div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginBottom: 4 }}>
-                <span style={{ fontSize: 36, fontWeight: 700, letterSpacing: -1.5, lineHeight: 1 }}>{yearly ? p.yearly : p.monthly}</span>
+                <span style={{ fontSize: 36, fontWeight: 700, letterSpacing: -1.5, lineHeight: 1, color: dark ? '#fff' : c.text }}>{yearly ? p.yearly : p.monthly}</span>
                 {p.id !== 'free' && <span style={{ fontSize: 12, color: c.muted }}>/month</span>}
               </div>
-              <div style={{ fontSize: 11, color: c.subtle, marginBottom: 20 }}>
+              <div style={{ fontSize: 11, color: dark ? '#888' : c.subtle, marginBottom: 20 }}>
                 {p.id === 'free' ? 'Forever free' : `${p.credits} credits · ${p.perEp}`}
               </div>
               <a href="/login" style={{ display: 'block', textAlign: 'center', fontSize: 13, fontWeight: 500, padding: '10px', borderRadius: 8, border: `1px solid ${p.badge ? '#f97316' : c.border}`, background: p.badge ? '#f97316' : 'transparent', color: p.badge ? '#fff' : c.text, transition: 'opacity .15s', boxSizing: 'border-box' as const }}
@@ -630,11 +630,11 @@ export default function Home() {
         </div>
 
         {/* COMPARISON TABLE */}
-        <div style={{ border: `1px solid ${c.border}`, borderRadius: 14, overflow: 'hidden', marginBottom: 40 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', background: c.surface, borderBottom: `1px solid ${c.border}` }}>
-            <div style={{ padding: '14px 20px', fontSize: 12, fontWeight: 600, color: c.muted }}>Features</div>
+        <div style={{ border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : c.border}`, borderRadius: 14, overflow: 'hidden', marginBottom: 40, background: dark ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', background: dark ? 'rgba(255,255,255,0.06)' : c.surface, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
+            <div style={{ padding: '14px 20px', fontSize: 13, fontWeight: 600, color: dark ? '#fff' : c.muted }}>Features</div>
             {['Free','Starter','Pro','Studio'].map(name => (
-              <div key={name} style={{ padding: '14px 12px', fontSize: 12, fontWeight: 600, color: c.text, textAlign: 'center', borderLeft: `1px solid ${c.border}` }}>{name}</div>
+              <div key={name} style={{ padding: '14px 12px', fontSize: 13, fontWeight: 700, color: dark ? '#ffffff' : c.text, textAlign: 'center', borderLeft: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>{name}</div>
             ))}
           </div>
           {[
@@ -651,18 +651,18 @@ export default function Home() {
             ['Priority support',        false, false, true,  true],
             ['Team access',             false, false, false, true],
           ].map(([feature, ...vals], i, arr) => (
-            <div key={String(feature)} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', borderBottom: i < arr.length - 1 ? `1px solid ${c.border}` : 'none', transition: 'background .15s' }}
-              onMouseEnter={e => (e.currentTarget.style.background = c.surface)}
+            <div key={String(feature)} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', borderBottom: i < arr.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` : 'none', transition: 'background .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.04)' : c.surface)}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-              <div style={{ padding: '13px 20px', fontSize: 13, color: c.muted }}>{String(feature)}</div>
+              <div style={{ padding: '13px 20px', fontSize: 13, color: dark ? '#d0d0d0' : c.text, fontWeight: 400 }}>{String(feature)}</div>
               {(vals as boolean[]).map((v, vi) => (
-                <div key={vi} style={{ padding: '13px 12px', textAlign: 'center', borderLeft: `1px solid ${c.border}` }}>
+                <div key={vi} style={{ padding: '13px 12px', textAlign: 'center', borderLeft: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
                   {v ? (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: 'rgba(74,222,128,0.15)', border: '1px solid rgba(74,222,128,0.3)' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: 'rgba(74,222,128,0.2)', border: '1px solid rgba(74,222,128,0.5)' }}>
                       <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#4ade80" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </span>
                   ) : (
-                    <span style={{ color: c.subtle, fontSize: 14 }}>—</span>
+                    <span style={{ color: dark ? 'rgba(255,255,255,0.2)' : c.subtle, fontSize: 14 }}>—</span>
                   )}
                 </div>
               ))}
