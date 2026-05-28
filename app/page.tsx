@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { Nav } from '@/components/ui/Nav'
 import { useGenerate } from '@/hooks/useGenerate'
@@ -82,6 +82,7 @@ export default function Home() {
   const [plan, setPlan] = useState('free')
   const [isListening, setIsListening] = useState(false)
   const [speechSupported, setSpeechSupported] = useState(false)
+  const recognitionRef = useRef<any>(null)
 
   useEffect(() => {
     if (session) {
@@ -93,28 +94,86 @@ export default function Home() {
   }, [session])
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      setSpeechSupported(true)
-    }
+    const supported = typeof window !== 'undefined' &&
+      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
+    setSpeechSupported(supported)
   }, [])
 
   function startVoiceInput() {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    if (!SpeechRecognition) return
-    const recognition = new SpeechRecognition()
-    recognition.continuous = false
-    recognition.interimResults = true
-    recognition.lang = 'en-US'
-    recognition.start()
-    setIsListening(true)
-    recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((r: any) => r[0].transcript)
-        .join('')
-      g.setTopic(transcript)
+    // Toggle off if already listening
+    if (isListening) {
+      recognitionRef.current?.stop()
+      setIsListening(false)
+      return
     }
-    recognition.onend = () => setIsListening(false)
-    recognition.onerror = () => setIsListening(false)
+
+    if (typeof window === 'undefined') return
+
+    const SpeechRecognition = (window as any).SpeechRecognition
+      || (window as any).webkitSpeechRecognition
+
+    if (!SpeechRecognition) {
+      alert('Voice input not supported. Please use Chrome or Edge browser.')
+      return
+    }
+
+    // Request mic permission before constructing recognition
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(() => {
+        const recognition = new SpeechRecognition()
+        recognitionRef.current = recognition
+
+        recognition.continuous = false
+        recognition.interimResults = true
+        recognition.maxAlternatives = 1
+        recognition.lang = 'en-US'
+
+        recognition.onstart = () => {
+          setIsListening(true)
+        }
+
+        recognition.onresult = (event: any) => {
+          let interim = ''
+          let final = ''
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const t = event.results[i][0].transcript
+            if (event.results[i].isFinal) final += t
+            else interim += t
+          }
+          g.setTopic(final || interim)
+        }
+
+        recognition.onspeechend = () => {
+          recognition.stop()
+        }
+
+        recognition.onerror = (event: any) => {
+          setIsListening(false)
+          if (event.error === 'not-allowed') {
+            alert('Microphone blocked. Go to browser settings → Site settings → Microphone → Allow for this site.')
+          } else if (event.error === 'no-speech') {
+            // silently ignore
+          } else {
+            console.error('Speech error:', event.error)
+          }
+        }
+
+        recognition.onend = () => {
+          setIsListening(false)
+        }
+
+        recognition.start()
+      })
+      .catch((err: any) => {
+        setIsListening(false)
+        if (err.name === 'NotAllowedError') {
+          alert('Microphone permission denied. Click the lock icon in your browser address bar and allow microphone access.')
+        } else if (err.name === 'NotFoundError') {
+          alert('No microphone found. Please connect a microphone and try again.')
+        } else {
+          alert('Could not access microphone: ' + err.message)
+        }
+      })
   }
 
   async function playVoicePreview(voice: 'A' | 'B') {
@@ -443,43 +502,36 @@ export default function Home() {
                   style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 16, color: c.text, lineHeight: 1.6, resize: 'none', fontWeight: 500, letterSpacing: -0.2 }}
                 />
                 <button
-                  onClick={startVoiceInput}
-                  disabled={!speechSupported || isListening}
-                  title={!speechSupported ? 'Voice not supported in this browser' : isListening ? 'Listening...' : 'Click to speak'}
+                  onClick={() => startVoiceInput()}
+                  title={isListening ? 'Click to stop listening' : 'Click to speak your topic'}
                   style={{
-                    background: isListening ? 'rgba(239,68,68,0.15)' : 'transparent',
-                    border: `1px solid ${isListening ? 'rgba(239,68,68,0.5)' : dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                    background: isListening ? 'rgba(249,115,22,0.15)' : 'transparent',
+                    border: `1px solid ${isListening ? '#f97316' : dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
                     borderRadius: 8,
                     padding: '6px 8px',
-                    cursor: speechSupported ? 'pointer' : 'not-allowed',
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                     transition: 'all .2s',
                     marginTop: 2,
+                    position: 'relative' as const,
+                    outline: isListening ? '2px solid rgba(249,115,22,0.3)' : 'none',
+                    outlineOffset: 2,
                   }}>
-                  {isListening ? (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="6" fill="#ef4444">
-                        <animate attributeName="r" values="6;9;6" dur="1s" repeatCount="indefinite"/>
-                        <animate attributeName="opacity" values="1;0.5;1" dur="1s" repeatCount="indefinite"/>
-                      </circle>
-                    </svg>
-                  ) : (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                      <line x1="12" y1="19" x2="12" y2="22"/>
-                      <line x1="8" y1="22" x2="16" y2="22"/>
-                    </svg>
-                  )}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isListening ? '#f97316' : dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="22"/>
+                    <line x1="8" y1="22" x2="16" y2="22"/>
+                  </svg>
                 </button>
               </div>
               {isListening && (
-                <div style={{ padding: '0 18px 8px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444', display: 'inline-block', animation: 'pulse 1s ease-in-out infinite' }} />
-                  <span style={{ fontSize: 11, color: '#ef4444' }}>Listening… speak your topic</span>
+                <div style={{ padding: '0 18px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f97316', display: 'inline-block', animation: 'pulse 1s ease-in-out infinite' }} />
+                  <span style={{ fontSize: 11, color: '#f97316' }}>Listening… speak now. Click mic to stop.</span>
                 </div>
               )}
               <div style={{ padding: '0 18px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
