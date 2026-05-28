@@ -175,25 +175,34 @@ export default function Home() {
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
-        @keyframes float1 {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          25%  { transform: translate(40px, -60px) scale(1.06); }
-          50%  { transform: translate(80px, -20px) scale(0.97); }
-          75%  { transform: translate(20px, 40px) scale(1.04); }
-          100% { transform: translate(0px, 0px) scale(1); }
+        @keyframes moveBlob1 {
+          0%   { transform: translate(0px, 0px); }
+          20%  { transform: translate(300px, 150px); }
+          40%  { transform: translate(500px, -100px); }
+          60%  { transform: translate(200px, 300px); }
+          80%  { transform: translate(-100px, 200px); }
+          100% { transform: translate(0px, 0px); }
         }
-        @keyframes float2 {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          25%  { transform: translate(-60px, 50px) scale(1.08); }
-          50%  { transform: translate(-20px, 80px) scale(0.95); }
-          75%  { transform: translate(-50px, 20px) scale(1.05); }
-          100% { transform: translate(0px, 0px) scale(1); }
+        @keyframes moveBlob2 {
+          0%   { transform: translate(0px, 0px); }
+          20%  { transform: translate(-200px, 200px); }
+          40%  { transform: translate(-400px, -150px); }
+          60%  { transform: translate(-100px, -300px); }
+          80%  { transform: translate(150px, -100px); }
+          100% { transform: translate(0px, 0px); }
         }
-        @keyframes float3 {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          33%  { transform: translate(50px, 60px) scale(1.10); }
-          66%  { transform: translate(-40px, 30px) scale(0.93); }
-          100% { transform: translate(0px, 0px) scale(1); }
+        @keyframes moveBlob3 {
+          0%   { transform: translate(0px, 0px); }
+          25%  { transform: translate(200px, -200px); }
+          50%  { transform: translate(-300px, -100px); }
+          75%  { transform: translate(-100px, 250px); }
+          100% { transform: translate(0px, 0px); }
+        }
+        @keyframes moveBlob4 {
+          0%   { transform: translate(0px, 0px); }
+          33%  { transform: translate(-250px, -200px); }
+          66%  { transform: translate(300px, -150px); }
+          100% { transform: translate(0px, 0px); }
         }
 
         .f0 { animation: fadeUp .5s ease .0s both; }
@@ -236,81 +245,96 @@ export default function Home() {
         }
       `}</style>
 
-      {/* ANIMATED BACKGROUND */}
+      {/* ANIMATED MOVING BLOBS */}
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-        
-        {/* Blob 1 — purple top left */}
+
+        {/* Blob 1 — purple — starts top left, travels across */}
         <div style={{
           position: 'absolute',
-          top: '-20%',
-          left: '-15%',
-          width: 900,
-          height: 900,
+          top: '5%',
+          left: '5%',
+          width: 500,
+          height: 500,
           borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(139,92,246,0.45) 0%, rgba(139,92,246,0.20) 35%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(139,92,246,0.20) 0%, rgba(139,92,246,0.08) 35%, transparent 65%)',
-          animation: 'float1 10s ease-in-out infinite',
-          filter: 'blur(20px)',
+            ? 'radial-gradient(circle, rgba(139,92,246,0.55) 0%, rgba(139,92,246,0.25) 40%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(139,92,246,0.10) 40%, transparent 70%)',
+          animation: 'moveBlob1 20s ease-in-out infinite',
+          filter: 'blur(15px)',
           willChange: 'transform',
         }} />
 
-        {/* Blob 2 — orange top right */}
+        {/* Blob 2 — orange — starts top right, travels left */}
         <div style={{
           position: 'absolute',
-          top: '-15%',
-          right: '-15%',
-          width: 850,
-          height: 850,
+          top: '0%',
+          right: '5%',
+          width: 550,
+          height: 550,
           borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(249,115,22,0.40) 0%, rgba(249,115,22,0.18) 35%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(249,115,22,0.18) 0%, rgba(249,115,22,0.07) 35%, transparent 65%)',
-          animation: 'float2 13s ease-in-out infinite',
-          filter: 'blur(20px)',
+            ? 'radial-gradient(circle, rgba(249,115,22,0.50) 0%, rgba(249,115,22,0.22) 40%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(249,115,22,0.22) 0%, rgba(249,115,22,0.08) 40%, transparent 70%)',
+          animation: 'moveBlob2 25s ease-in-out infinite',
+          filter: 'blur(15px)',
           willChange: 'transform',
         }} />
 
-        {/* Blob 3 — blue/indigo center */}
+        {/* Blob 3 — blue — starts center, moves diagonally */}
         <div style={{
           position: 'absolute',
-          top: '30%',
-          left: '20%',
-          width: 700,
-          height: 700,
+          top: '40%',
+          left: '40%',
+          width: 450,
+          height: 450,
           borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(99,102,241,0.35) 0%, rgba(99,102,241,0.15) 35%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0.06) 35%, transparent 65%)',
-          animation: 'float3 16s ease-in-out infinite',
-          filter: 'blur(20px)',
+            ? 'radial-gradient(circle, rgba(59,130,246,0.45) 0%, rgba(59,130,246,0.20) 40%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(59,130,246,0.20) 0%, rgba(59,130,246,0.08) 40%, transparent 70%)',
+          animation: 'moveBlob3 18s ease-in-out infinite',
+          filter: 'blur(15px)',
           willChange: 'transform',
         }} />
 
-        {/* Blob 4 — pink bottom right */}
+        {/* Blob 4 — pink — starts bottom, moves up */}
         <div style={{
           position: 'absolute',
-          bottom: '-10%',
+          bottom: '5%',
+          left: '30%',
+          width: 480,
+          height: 480,
+          borderRadius: '50%',
+          background: dark
+            ? 'radial-gradient(circle, rgba(236,72,153,0.45) 0%, rgba(236,72,153,0.20) 40%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(236,72,153,0.20) 0%, rgba(236,72,153,0.08) 40%, transparent 70%)',
+          animation: 'moveBlob4 22s ease-in-out infinite',
+          filter: 'blur(15px)',
+          willChange: 'transform',
+        }} />
+
+        {/* Blob 5 — green — extra movement bottom right */}
+        <div style={{
+          position: 'absolute',
+          bottom: '10%',
           right: '10%',
-          width: 650,
-          height: 650,
+          width: 400,
+          height: 400,
           borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(236,72,153,0.35) 0%, rgba(236,72,153,0.15) 35%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(236,72,153,0.06) 35%, transparent 65%)',
-          animation: 'float1 14s ease-in-out infinite reverse',
-          filter: 'blur(20px)',
+            ? 'radial-gradient(circle, rgba(74,222,128,0.35) 0%, rgba(74,222,128,0.15) 40%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(74,222,128,0.15) 0%, rgba(74,222,128,0.06) 40%, transparent 70%)',
+          animation: 'moveBlob1 28s ease-in-out infinite reverse',
+          filter: 'blur(15px)',
           willChange: 'transform',
         }} />
 
-        {/* Dark scrim — makes text readable without killing blobs */}
+        {/* Dark scrim to keep text readable */}
         <div style={{
           position: 'absolute',
           inset: 0,
           background: dark
-            ? 'rgba(8,8,8,0.55)'
-            : 'rgba(255,255,255,0.60)',
-          backdropFilter: 'none',
+            ? 'rgba(8,8,8,0.50)'
+            : 'rgba(255,255,255,0.55)',
         }} />
       </div>
 
