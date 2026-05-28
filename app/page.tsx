@@ -141,7 +141,7 @@ export default function Home() {
   const c = dark ? {
     bg: '#0a0a0a', nav: 'rgba(10,10,10,0.92)', surface: '#141414',
     surface2: '#1a1a1a', border: '#222', border2: '#2a2a2a',
-    text: '#f5f5f5', muted: '#888', subtle: '#444',
+    text: '#f5f5f5', muted: '#aaa', subtle: '#777',
     accent: '#f5f5f5', accentFg: '#0a0a0a',
   } : {
     bg: '#ffffff', nav: 'rgba(255,255,255,0.92)', surface: '#f0f0f0',
@@ -242,7 +242,7 @@ export default function Home() {
           height: 800,
           borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(139,92,246,0.6) 0%, rgba(139,92,246,0.3) 30%, transparent 65%)'
+            ? 'radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(139,92,246,0.10) 30%, transparent 65%)'
             : 'radial-gradient(circle, rgba(139,92,246,0.35) 0%, rgba(139,92,246,0.15) 30%, transparent 65%)',
           animation: 'float1 10s ease-in-out infinite',
           filter: 'blur(8px)',
@@ -258,7 +258,7 @@ export default function Home() {
           height: 750,
           borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(249,115,22,0.55) 0%, rgba(249,115,22,0.25) 30%, transparent 65%)'
+            ? 'radial-gradient(circle, rgba(249,115,22,0.20) 0%, rgba(249,115,22,0.08) 30%, transparent 65%)'
             : 'radial-gradient(circle, rgba(249,115,22,0.30) 0%, rgba(249,115,22,0.12) 30%, transparent 65%)',
           animation: 'float2 13s ease-in-out infinite',
           filter: 'blur(8px)',
@@ -274,7 +274,7 @@ export default function Home() {
           height: 650,
           borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(59,130,246,0.45) 0%, rgba(59,130,246,0.20) 30%, transparent 65%)'
+            ? 'radial-gradient(circle, rgba(59,130,246,0.18) 0%, rgba(59,130,246,0.07) 30%, transparent 65%)'
             : 'radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.10) 30%, transparent 65%)',
           animation: 'float3 16s ease-in-out infinite',
           filter: 'blur(8px)',
@@ -290,7 +290,7 @@ export default function Home() {
           height: 600,
           borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(236,72,153,0.45) 0%, rgba(236,72,153,0.20) 30%, transparent 65%)'
+            ? 'radial-gradient(circle, rgba(236,72,153,0.18) 0%, rgba(236,72,153,0.07) 30%, transparent 65%)'
             : 'radial-gradient(circle, rgba(236,72,153,0.25) 0%, rgba(236,72,153,0.10) 30%, transparent 65%)',
           animation: 'float1 14s ease-in-out infinite reverse',
           filter: 'blur(8px)',
@@ -302,7 +302,7 @@ export default function Home() {
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'rgba(10,10,10,0.45)',
+            background: 'rgba(10,10,10,0.72)',
           }} />
         )}
 
@@ -516,7 +516,7 @@ export default function Home() {
       <div style={{ overflow: 'hidden', borderBottom: `1px solid ${c.border}`, padding: '11px 0', background: c.surface }}>
         <div style={{ display: 'flex', width: 'max-content', animation: 'marquee 22s linear infinite' }}>
           {[...Array(2)].flatMap(() => ['Research Agent','Script × 5','Claude Sonnet 4','ElevenLabs','Replicate','SEO Package','Human in the loop','Zero auto-post','Multi-provider AI','Studio quality']).map((s,i) => (
-            <span key={i} style={{ fontSize: 11, color: c.muted, padding: '0 22px', borderRight: `1px solid ${c.border}`, whiteSpace: 'nowrap', fontWeight: 500, letterSpacing: .3 }}>{s}</span>
+            <span key={i} style={{ fontSize: 11, color: dark ? '#bbb' : c.muted, padding: '0 22px', borderRight: `1px solid ${c.border}`, whiteSpace: 'nowrap', fontWeight: 500, letterSpacing: .3 }}>{s}</span>
           ))}
         </div>
       </div>
@@ -541,7 +541,7 @@ export default function Home() {
             ['06','Packaging','YouTube, Instagram, Twitter, LinkedIn, blog, newsletter — all written and ready.'],
           ].map(([n,name,desc],i,arr) => (
             <div key={n} className="row-item" style={{ display: 'grid', gridTemplateColumns: '52px 148px 1fr', borderBottom: i < arr.length-1 ? `1px solid ${c.border}` : 'none' }}>
-              <div style={{ padding: '18px 0 18px 18px', fontSize: 10, color: c.subtle, fontWeight: 600, letterSpacing: .5 }}>{n}</div>
+              <div style={{ padding: '18px 0 18px 18px', fontSize: 10, color: dark ? '#888' : c.subtle, fontWeight: 600, letterSpacing: .5 }}>{n}</div>
               <div style={{ padding: '18px 14px', fontSize: 13, fontWeight: 600, color: c.text, borderLeft: `1px solid ${c.border}`, borderRight: `1px solid ${c.border}` }}>{name}</div>
               <div style={{ padding: '18px 22px', fontSize: 13, color: c.muted, lineHeight: 1.6 }}>{desc}</div>
             </div>
@@ -718,16 +718,16 @@ export default function Home() {
         </div>
         <div style={{ display: 'flex', gap: 0 }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['Changelog','/changelog'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
-            <a key={l} href={h} style={{ fontSize: 12, color: c.muted, padding: '4px 10px', transition: 'color .15s' }}
+            <a key={l} href={h} style={{ fontSize: 12, color: dark ? '#aaa' : c.muted, padding: '4px 10px', transition: 'color .15s' }}
               onMouseEnter={e => (e.currentTarget.style.color = c.text)}
-              onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>{l}</a>
+              onMouseLeave={e => (e.currentTarget.style.color = dark ? '#aaa' : c.muted)}>{l}</a>
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <a href="/onboarding" style={{ fontSize: 11, color: c.subtle, transition: 'color .15s' }}
+          <a href="/onboarding" style={{ fontSize: 11, color: dark ? '#888' : c.subtle, transition: 'color .15s' }}
             onMouseEnter={e => (e.currentTarget.style.color = c.text)}
-            onMouseLeave={e => (e.currentTarget.style.color = c.subtle)}>Quick start guide</a>
-          <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
+            onMouseLeave={e => (e.currentTarget.style.color = dark ? '#888' : c.subtle)}>Quick start guide</a>
+          <span style={{ fontSize: 11, color: dark ? '#aaa' : c.muted }}>© 2025 SceneForge</span>
         </div>
       </footer>
 
