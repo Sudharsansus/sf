@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { ProfileMenu } from '@/components/ui/ProfileMenu'
+import { Nav } from '@/components/ui/Nav'
 
 const PLANS = [
   { id: 'starter', name: 'Starter',  credits: 30,   price: '$19',  desc: 'Great for trying it out',     perEp: '$0.63/ep' },
@@ -63,48 +63,10 @@ export default function DashboardPage() {
       `}</style>
 
       {/* NAV */}
-      <nav style={{ position: 'sticky', top: 0, zIndex: 50, borderBottom: `1px solid ${c.border}`, backdropFilter: 'blur(16px)', background: c.nav, transition: 'background .3s' }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px', height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-            <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SceneForge</span>
-          </a>
-          <div className="nav-center" style={{ display: 'flex', alignItems: 'center' }}>
-            {[['Studio','/studio'],['Work','/episodes'],['Dashboard','/dashboard']].map(([l,h]) => (
-              <a key={l} href={h} className="nav-link">{l}</a>
-            ))}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <button onClick={() => setDark(!dark)} style={{ width: 30, height: 30, borderRadius: 6, background: 'transparent', border: `1px solid ${c.border}`, color: c.muted, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .15s' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = c.text; e.currentTarget.style.color = c.text }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
-              {dark ? (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3"/>
-                <line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/>
-                <line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-              </svg>
-            )}
-            </button>
-            <ProfileMenu c={c} />
-          </div>
-        </div>
-      </nav>
+      <Nav c={c} dark={dark} setDark={setDark} activePath="/dashboard" />
 
       {/* CONTENT */}
-      <main style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 80px' }}>
+      <main style={{ maxWidth: 1080, margin: '0 auto', padding: '88px 24px 80px' }}>
         <div style={{ marginBottom: 40 }}>
           <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Account</p>
           <h1 style={{ fontSize: 'clamp(26px,3vw,38px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.15 }}>Dashboard</h1>
@@ -152,23 +114,39 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* PLANS */}
         <div style={{ marginBottom: 36 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, letterSpacing: -.3, marginBottom: 16 }}>Get more credits</h2>
           <div className="plans-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
             {PLANS.map(p => (
-              <div key={p.id} style={{ border: `1px solid ${p.badge ? c.border2 : c.border}`, borderRadius: 12, padding: '24px 22px', transition: 'border-color .2s', position: 'relative' }}
+              <div key={p.id} style={{ border: `1px solid ${p.badge ? c.border2 : c.border}`, borderRadius: 12, padding: '24px 22px', transition: 'border-color .2s', position: 'relative', background: p.badge ? c.surface : 'transparent' }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = c.border2)}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = p.badge ? c.border2 : c.border)}>
                 {p.badge && (
-                  <div style={{ position: 'absolute', top: 12, right: 12, fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#fb923c', background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.3)', padding: '2px 7px', borderRadius: 4 }}>{p.badge}</div>
+                  <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#fb923c', background: c.bg, border: '1px solid rgba(251,146,60,0.4)', padding: '2px 10px', borderRadius: 4, whiteSpace: 'nowrap' }}>{p.badge}</div>
                 )}
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{p.name}</div>
-                <div style={{ fontSize: 32, fontWeight: 600, letterSpacing: -1.2, lineHeight: 1, marginBottom: 6 }}>{p.price}</div>
-                <div style={{ fontSize: 12, color: c.muted, marginBottom: 2 }}>{p.credits} credits</div>
-                <div style={{ fontSize: 11, color: c.subtle, marginBottom: 4 }}>{p.perEp}</div>
-                <div style={{ fontSize: 11, color: c.subtle, marginBottom: 20 }}>{p.desc}</div>
-                <button style={{ width: '100%', fontSize: 13, fontWeight: 500, color: c.accentFg, background: c.accent, border: 'none', padding: '9px', borderRadius: 7, cursor: 'pointer', transition: 'opacity .15s' }}
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{p.name}</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 2, marginBottom: 2 }}>
+                  <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: -1.2, lineHeight: 1 }}>{p.price}</span>
+                  <span style={{ fontSize: 12, color: c.muted }}>/mo</span>
+                </div>
+                <div style={{ fontSize: 11, color: c.subtle, marginBottom: 4 }}>{p.credits} credits · {p.perEp}</div>
+                <div style={{ fontSize: 11, color: c.muted, marginBottom: 16 }}>{p.desc}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 20 }}>
+                  {[
+                    `${p.credits} episodes/mo`,
+                    'All 16 voices',
+                    '12 languages',
+                    'Audio + thumbnails',
+                    'SEO package',
+                    p.id === 'agency' ? 'Team access' : 'YouTube upload',
+                  ].map(f => (
+                    <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: c.muted }}>
+                      <span style={{ color: '#4ade80', fontSize: 10, flexShrink: 0 }}>✓</span>
+                      {f}
+                    </div>
+                  ))}
+                </div>
+                <button style={{ width: '100%', fontSize: 13, fontWeight: 500, color: p.badge ? c.accentFg : c.text, background: p.badge ? c.accent : 'transparent', border: `1px solid ${p.badge ? c.accent : c.border}`, padding: '10px', borderRadius: 7, cursor: 'pointer', transition: 'opacity .15s' }}
                   onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
                   onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
                   Buy {p.name}

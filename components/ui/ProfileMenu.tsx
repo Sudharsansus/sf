@@ -87,7 +87,7 @@ export function ProfileMenu({ c }: Props) {
               <span style={{ fontSize: 12, fontWeight: 600, color: credits === 0 ? '#f87171' : c.text }}>{credits ?? '—'}</span>
             </div>
             <div style={{ height: 3, background: c.border, borderRadius: 2, overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${Math.min(((credits || 0) / 100) * 100, 100)}%`, background: credits === 0 ? '#f87171' : credits && credits < 5 ? '#fb923c' : '#4ade80', borderRadius: 2, transition: 'width .3s' }} />
+              <div style={{ height: '100%', width: `${Math.min(((credits || 0) / 30) * 100, 100)}%`, background: credits === 0 ? '#f87171' : credits && credits < 5 ? '#fb923c' : '#4ade80', borderRadius: 2, transition: 'width .3s' }} />
             </div>
             {credits === 0 && (
               <a href="/dashboard" onClick={() => setOpen(false)} style={{ display: 'block', marginTop: 8, fontSize: 11, fontWeight: 600, color: '#fb923c', textAlign: 'center', border: '1px solid rgba(251,146,60,0.3)', padding: '5px 0', borderRadius: 6 }}>⚡ Buy credits →</a>
