@@ -358,11 +358,28 @@ export default function Home() {
 
         {/* CONSOLE */}
         <div className="f2" style={{ maxWidth: 620, margin: '0 auto' }}>
-          <div className="card" style={{ borderColor: isWorking ? c.text : c.border }}>
+          <div style={{
+              borderRadius: 16,
+              border: `1px solid ${isWorking ? 'rgba(249,115,22,0.6)' : dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.12)'}`,
+              background: dark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.70)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              boxShadow: dark
+                ? '0 0 0 1px rgba(255,255,255,0.04), 0 20px 60px rgba(0,0,0,0.4)'
+                : '0 0 0 1px rgba(0,0,0,0.04), 0 20px 60px rgba(0,0,0,0.08)',
+              transition: 'border-color .3s, box-shadow .3s',
+            }}>
 
             {(g.step === 'idle' || isFailed) && <>
               <div style={{ padding: '16px 18px 10px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                <span style={{ color: c.muted, fontSize: 16, marginTop: 2, flexShrink: 0 }}>›</span>
+                <span style={{ color: dark ? 'rgba(255,255,255,0.3)' : c.subtle, display: 'flex', alignItems: 'center', marginTop: 3, flexShrink: 0 }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="22"/>
+                    <line x1="8" y1="22" x2="16" y2="22"/>
+                  </svg>
+                </span>
                 <textarea
                   value={g.topic}
                   onChange={e => g.setTopic(e.target.value)}
@@ -383,14 +400,24 @@ export default function Home() {
                   <a href="/dashboard" style={{ fontSize: 12, fontWeight: 600, color: '#fb923c', border: '1px solid rgba(251,146,60,0.4)', padding: '4px 12px', borderRadius: 6 }}>Buy credits →</a>
                 </div>
               )}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 14px', borderTop: `1px solid ${c.border}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 14px', borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}>
                 <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                   {['Research', 'Scripts ×5', 'Voice', 'Visuals', 'SEO'].map(tag => (
-                    <span key={tag} style={{ fontSize: 10, color: c.subtle, padding: '2px 8px', borderRadius: 4, border: `1px solid ${c.border}`, fontWeight: 500, letterSpacing: .2 }}>{tag}</span>
+                    <span key={tag} style={{ fontSize: 10, color: dark ? 'rgba(255,255,255,0.4)' : c.subtle, padding: '2px 8px', borderRadius: 4, border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`, fontWeight: 500, letterSpacing: .2 }}>{tag}</span>
                   ))}
                 </div>
                 <button onClick={g.generate} disabled={!g.topic.trim() || credits === 0}
-                  style={{ fontSize: 13, fontWeight: 500, padding: '7px 18px', borderRadius: 7, background: g.topic.trim() && credits !== 0 ? c.accent : c.surface2, color: g.topic.trim() && credits !== 0 ? c.accentFg : c.subtle, transition: 'all .15s' }}
+                  style={{
+                    fontSize: 13, fontWeight: 500, padding: '8px 18px', borderRadius: 8,
+                    background: g.topic.trim() && credits !== 0
+                      ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)'
+                      : dark ? 'rgba(255,255,255,0.06)' : c.surface2,
+                    color: g.topic.trim() && credits !== 0 ? '#fff' : c.subtle,
+                    border: 'none',
+                    boxShadow: g.topic.trim() && credits !== 0 ? '0 4px 16px rgba(249,115,22,0.4)' : 'none',
+                    transition: 'all .2s',
+                    cursor: g.topic.trim() && credits !== 0 ? 'pointer' : 'default',
+                  }}
                   onMouseEnter={e => { if (g.topic.trim() && credits !== 0) e.currentTarget.style.opacity = '.85' }}
                   onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}>
                   Create episode →

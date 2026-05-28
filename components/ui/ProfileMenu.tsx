@@ -96,16 +96,16 @@ export function ProfileMenu({ c }: Props) {
 
           <div style={{ padding: '6px 0' }}>
             {[
-              { icon: '🎙', label: 'Studio', href: '/studio' },
-              { icon: '📁', label: 'My Work', href: '/episodes' },
-              { icon: '📊', label: 'Analytics', href: '/analytics' },
-              { icon: '⚙️', label: 'Dashboard', href: '/dashboard' },
+              { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>, label: 'Studio', href: '/studio' },
+              { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>, label: 'My Work', href: '/episodes' },
+              { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>, label: 'Analytics', href: '/analytics' },
+              { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>, label: 'Dashboard', href: '/dashboard' },
             ].map(item => (
               <a key={item.label} href={item.href} onClick={() => setOpen(false)}
                 style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 16px', fontSize: 13, color: c.text, transition: 'background .12s', cursor: 'pointer' }}
                 onMouseEnter={e => (e.currentTarget.style.background = c.surface2)}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                <span style={{ fontSize: 14 }}>{item.icon}</span>
+                <span style={{ color: c.muted, display: 'flex', alignItems: 'center' }}>{item.icon}</span>
                 {item.label}
               </a>
             ))}
@@ -115,7 +115,10 @@ export function ProfileMenu({ c }: Props) {
             <div style={{ padding: '0 8px 8px' }}>
               <a href="/dashboard" onClick={() => setOpen(false)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px', borderRadius: 8, background: c.surface2, border: `1px solid ${c.border}`, fontSize: 12, fontWeight: 600, color: c.text, cursor: 'pointer' }}>
-                ⬆ Upgrade plan
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                  Upgrade plan
+                </span>
               </a>
             </div>
           )}
@@ -125,7 +128,9 @@ export function ProfileMenu({ c }: Props) {
               style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 16px', fontSize: 13, color: c.muted, background: 'transparent', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', transition: 'background .12s, color .12s' }}
               onMouseEnter={e => { e.currentTarget.style.background = c.surface2; e.currentTarget.style.color = c.text }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = c.muted }}>
-              <span style={{ fontSize: 14 }}>↪</span>
+              <span style={{ color: c.muted, display: 'flex', alignItems: 'center' }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              </span>
               Sign out
             </button>
           </div>

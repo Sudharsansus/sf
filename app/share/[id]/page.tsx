@@ -51,7 +51,7 @@ export default async function SharePage({ params }: { params: { id: string } }) 
       </nav>
 
       {/* HERO */}
-      <div className="share-pad" style={{ maxWidth: 1080, margin: '0 auto', padding: '52px 24px 0' }}>
+      <div className="share-pad" style={{ maxWidth: 1080, margin: '0 auto', padding: '88px 24px 0' }}>
 
         {/* THUMBNAIL + META */}
         <div className="share-grid" style={{ display: 'grid', gridTemplateColumns: thumbs.length > 0 ? '280px 1fr' : '1fr', gap: 40, marginBottom: 40, alignItems: 'start' }}>

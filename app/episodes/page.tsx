@@ -81,8 +81,18 @@ export default function EpisodesPage() {
 
         {/* LOADING */}
         {loading && (
-          <div style={{ border: `1px solid ${c.border}`, borderRadius: 12, padding: '48px 24px', textAlign: 'center', color: c.muted, fontSize: 13 }}>
-            Loading episodes…
+          <div style={{ border: `1px solid ${c.border}`, borderRadius: 12, overflow: 'hidden' }}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} style={{ padding: '18px 24px', borderBottom: i < 3 ? `1px solid ${c.border}` : 'none', display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 8, background: c.surface2, flexShrink: 0, animation: 'shimmer 1.5s ease-in-out infinite' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ height: 14, width: '45%', background: c.surface2, borderRadius: 4, marginBottom: 8, animation: 'shimmer 1.5s ease-in-out infinite' }} />
+                  <div style={{ height: 10, width: '25%', background: c.surface, borderRadius: 4, animation: 'shimmer 1.5s ease-in-out infinite' }} />
+                </div>
+                <div style={{ height: 28, width: 160, background: c.surface2, borderRadius: 6, animation: 'shimmer 1.5s ease-in-out infinite' }} />
+              </div>
+            ))}
+            <style>{`@keyframes shimmer { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
           </div>
         )}
 
@@ -90,8 +100,13 @@ export default function EpisodesPage() {
         {!loading && episodes.length > 0 && (
           <div style={{ border: `1px solid ${c.border}`, borderRadius: 12, overflow: 'hidden' }}>
             {episodes.map((ep: any, i: number) => (
-              <div key={ep.id} className="ep-row ep-grid" style={{ padding: '18px 24px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 20, background: 'transparent' }}>
-                <div>
+              <div key={ep.id} className="ep-row" style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 14, background: 'transparent' }}>
+                {ep.thumbnailUrls?.[0] ? (
+                  <img src={ep.thumbnailUrls[0]} alt="" style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover', border: `1px solid ${c.border}`, flexShrink: 0 }} />
+                ) : (
+                  <div style={{ width: 44, height: 44, borderRadius: 8, background: c.surface2, border: `1px solid ${c.border}`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🎙</div>
+                )}
+                <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>{ep.title || ep.topic}</div>
                   <div style={{ display: 'flex', gap: 14, fontSize: 11, color: c.muted, fontFamily: 'monospace' }}>
                     <span>{new Date(ep.createdAt).toLocaleDateString()}</span>
