@@ -96,7 +96,6 @@ export async function POST(req: NextRequest) {
       userId: user.id, topic, title: topic, shareId,
       status: 'processing', agentStep: 'research',
       idempotencyKey: idemKey,
-      metadata: { voiceA, voiceB, language }
     }).returning()
 
     // ── STEP 1: RESEARCH (Groq — fast + cheap) ───────────────────────────────

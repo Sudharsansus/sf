@@ -525,13 +525,18 @@ export default function Home() {
           <span style={{ fontWeight: 600, fontSize: 13 }}>SceneForge</span>
         </div>
         <div style={{ display: 'flex', gap: 0 }}>
-          {[['Terms','/terms'],['Privacy','/privacy'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
+          {[['Terms','/terms'],['Privacy','/privacy'],['Changelog','/changelog'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
             <a key={l} href={h} style={{ fontSize: 12, color: c.muted, padding: '4px 10px', transition: 'color .15s' }}
               onMouseEnter={e => (e.currentTarget.style.color = c.text)}
               onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>{l}</a>
           ))}
         </div>
-        <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <a href="/onboarding" style={{ fontSize: 11, color: c.subtle, transition: 'color .15s' }}
+            onMouseEnter={e => (e.currentTarget.style.color = c.text)}
+            onMouseLeave={e => (e.currentTarget.style.color = c.subtle)}>Quick start guide</a>
+          <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
+        </div>
       </footer>
 
       <ChatBox />

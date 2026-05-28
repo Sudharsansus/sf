@@ -19,9 +19,10 @@ export const authOptions = {
           email: user.email,
           name: user.name || undefined,
           image: user.image || undefined,
-          credits: 10,
+          credits: 3,
           plan: 'free'
         })
+        // New user — will be redirected to onboarding via callbackUrl
       }
       return true
     },
@@ -37,7 +38,7 @@ export const authOptions = {
       return session
     }
   },
-  pages: { signIn: '/login' }
+  pages: { signIn: '/login', newUser: '/onboarding' }
 }
 
 const handler = NextAuth(authOptions)
