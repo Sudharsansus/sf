@@ -1,5 +1,5 @@
 import { db, episodes } from '@/lib/db'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -16,8 +16,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function SharePage({ params }: { params: { id: string } }) {
   const [ep] = await db.select().from(episodes)
-    .where(eq(episodes.shareId, params.id))
-    .where(eq(episodes.isPublic, true))
+    .where(and(eq(episodes.shareId, params.id), eq(episodes.isPublic, true)))
     .limit(1)
   if (!ep) notFound()
   const script = ep.script as any
