@@ -1,29 +1,29 @@
 'use client'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 const STEPS = [
   {
-    icon: '🎙',
+    icon: <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>,
     title: 'Welcome to SceneForge',
     desc: 'You have 3 free credits to start. Each credit = 1 full episode with research, scripts, audio, visuals and SEO.',
     cta: 'Next →'
   },
   {
-    icon: '✍',
+    icon: <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>,
     title: 'Type any topic',
     desc: 'SceneForge researches it, writes 5 script variations scored on 10 metrics, and lets you pick the best angle.',
     cta: 'Next →'
   },
   {
-    icon: '🎧',
+    icon: <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
     title: 'Choose your voice',
     desc: 'Pick from 16 ElevenLabs voices for Speaker A and B. Preview them before generating. Select your language.',
     cta: 'Next →'
   },
   {
-    icon: '🚀',
+    icon: <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>,
     title: "You're ready",
     desc: 'Your episode will be ready in under 2 minutes. Audio, thumbnails, YouTube title, Instagram caption — all done.',
     cta: 'Start creating →'
@@ -62,7 +62,7 @@ export default function OnboardingPage() {
         </div>
 
         <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 16, padding: '40px 36px', textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 24 }}>{current.icon}</div>
+          <div style={{ color: c.text, display: 'flex', justifyContent: 'center', marginBottom: 24 }}>{current.icon}</div>
           <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: -.4, marginBottom: 12 }}>{current.title}</h1>
           <p style={{ fontSize: 14, color: c.muted, lineHeight: 1.75, marginBottom: 36 }}>{current.desc}</p>
 

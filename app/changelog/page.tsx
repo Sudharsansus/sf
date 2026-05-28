@@ -88,7 +88,9 @@ export default function ChangelogPage() {
                   <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {release.items.map((item, ii) => (
                       <li key={ii} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 14, color: c.muted, lineHeight: 1.6 }}>
-                        <span style={{ color: c.subtle, flexShrink: 0, marginTop: 2, fontSize: 10 }}>◆</span>
+                        <span style={{ color: c.subtle, flexShrink: 0, marginTop: 6, display: 'flex' }}>
+                          <svg width="6" height="6" viewBox="0 0 6 6" fill="currentColor"><circle cx="3" cy="3" r="3"/></svg>
+                        </span>
                         {item}
                       </li>
                     ))}

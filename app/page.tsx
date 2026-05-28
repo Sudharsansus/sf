@@ -45,6 +45,25 @@ const LANGUAGES = [
   { code: 'zh', name: 'Chinese',    flag: '🇨🇳' },
 ]
 
+const SUGGESTIONS = [
+  {
+    icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="15" x2="8" y2="15.01"/><line x1="12" y1="15" x2="12" y2="15.01"/><line x1="16" y1="15" x2="16" y2="15.01"/></svg>,
+    text: 'The future of AI agents',
+  },
+  {
+    icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+    text: 'How to build wealth in your 20s',
+  },
+  {
+    icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 2A6.5 6.5 0 0 1 16 8.5c0 3.58-2.92 6.5-6.5 6.5A6.5 6.5 0 0 1 3 8.5 6.5 6.5 0 0 1 9.5 2z"/><path d="M21.5 22l-4-4"/><path d="M9.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>,
+    text: 'Why sleep is your superpower',
+  },
+  {
+    icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M12 21a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2z"/></svg>,
+    text: 'India startup ecosystem 2025',
+  },
+]
+
 export default function Home() {
   const g = useGenerate()
   const { data: session } = useSession()
@@ -60,12 +79,43 @@ export default function Home() {
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null)
   const [language, setLanguage] = useState('en')
   const [yearly, setYearly] = useState(false)
+  const [plan, setPlan] = useState('free')
+  const [isListening, setIsListening] = useState(false)
+  const [speechSupported, setSpeechSupported] = useState(false)
 
   useEffect(() => {
     if (session) {
-      fetch('/api/credits').then(r => r.json()).then(d => setCredits(d.credits ?? null))
+      fetch('/api/credits').then(r => r.json()).then(d => {
+        setCredits(d.credits ?? null)
+        setPlan(d.plan ?? 'free')
+      })
     }
   }, [session])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      setSpeechSupported(true)
+    }
+  }, [])
+
+  function startVoiceInput() {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognition) return
+    const recognition = new SpeechRecognition()
+    recognition.continuous = false
+    recognition.interimResults = true
+    recognition.lang = 'en-US'
+    recognition.start()
+    setIsListening(true)
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results)
+        .map((r: any) => r[0].transcript)
+        .join('')
+      g.setTopic(transcript)
+    }
+    recognition.onend = () => setIsListening(false)
+    recognition.onerror = () => setIsListening(false)
+  }
 
   async function playVoicePreview(voice: 'A' | 'B') {
     setPreviewLoading(voice)
@@ -174,6 +224,10 @@ export default function Home() {
         }
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.3); }
         }
         @keyframes moveBlob1 {
           0%   { transform: translate(0px, 0px); }
@@ -357,7 +411,7 @@ export default function Home() {
         </p>
 
         {/* CONSOLE */}
-        <div className="f2" style={{ maxWidth: 620, margin: '0 auto' }}>
+        <div className="f2 console-wrap" style={{ maxWidth: 700, margin: '0 auto' }}>
           <div style={{
               borderRadius: 16,
               border: `1px solid ${isWorking ? 'rgba(249,115,22,0.6)' : dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.12)'}`,
@@ -384,27 +438,77 @@ export default function Home() {
                   value={g.topic}
                   onChange={e => g.setTopic(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); g.generate() } }}
-                  rows={2}
+                  rows={3}
                   placeholder="What's your episode about?"
-                  style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, color: c.text, lineHeight: 1.6, resize: 'none', fontWeight: 400 }}
+                  style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 16, color: c.text, lineHeight: 1.6, resize: 'none', fontWeight: 500, letterSpacing: -0.2 }}
                 />
+                <button
+                  onClick={startVoiceInput}
+                  disabled={!speechSupported || isListening}
+                  title={!speechSupported ? 'Voice not supported in this browser' : isListening ? 'Listening...' : 'Click to speak'}
+                  style={{
+                    background: isListening ? 'rgba(239,68,68,0.15)' : 'transparent',
+                    border: `1px solid ${isListening ? 'rgba(239,68,68,0.5)' : dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                    borderRadius: 8,
+                    padding: '6px 8px',
+                    cursor: speechSupported ? 'pointer' : 'not-allowed',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    transition: 'all .2s',
+                    marginTop: 2,
+                  }}>
+                  {isListening ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="6" fill="#ef4444">
+                        <animate attributeName="r" values="6;9;6" dur="1s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" values="1;0.5;1" dur="1s" repeatCount="indefinite"/>
+                      </circle>
+                    </svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                      <line x1="12" y1="19" x2="12" y2="22"/>
+                      <line x1="8" y1="22" x2="16" y2="22"/>
+                    </svg>
+                  )}
+                </button>
               </div>
+              {isListening && (
+                <div style={{ padding: '0 18px 8px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444', display: 'inline-block', animation: 'pulse 1s ease-in-out infinite' }} />
+                  <span style={{ fontSize: 11, color: '#ef4444' }}>Listening… speak your topic</span>
+                </div>
+              )}
               <div style={{ padding: '0 18px 10px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 11, color: c.subtle }}>
-                  💡 After writing your topic, you'll choose voice, speakers, and duration before generation starts.
+                <span style={{ fontSize: 11, color: c.subtle, display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1, opacity: 0.5 }}>
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  After writing your topic, you'll choose voice, speakers, and duration before generation starts.
                 </span>
               </div>
               {credits === 0 && g.step === 'idle' && (
                 <div style={{ padding: '10px 14px', background: 'rgba(251,146,60,0.08)', border: '1px solid rgba(251,146,60,0.3)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 14px 14px' }}>
-                  <span style={{ fontSize: 12, color: '#fb923c' }}>⚡ No credits remaining</span>
+                  <span style={{ fontSize: 12, color: '#fb923c', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    No credits remaining
+                  </span>
                   <a href="/dashboard" style={{ fontSize: 12, fontWeight: 600, color: '#fb923c', border: '1px solid rgba(251,146,60,0.4)', padding: '4px 12px', borderRadius: 6 }}>Buy credits →</a>
                 </div>
               )}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 14px', borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}>
-                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
                   {['Research', 'Scripts ×5', 'Voice', 'Visuals', 'SEO'].map(tag => (
                     <span key={tag} style={{ fontSize: 10, color: dark ? 'rgba(255,255,255,0.4)' : c.subtle, padding: '2px 8px', borderRadius: 4, border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`, fontWeight: 500, letterSpacing: .2 }}>{tag}</span>
                   ))}
+                  <span style={{ fontSize: 11, color: g.topic.length > 180 ? '#f87171' : c.subtle, marginLeft: 4 }}>
+                    {g.topic.length}/200
+                  </span>
                 </div>
                 <button onClick={g.generate} disabled={!g.topic.trim() || credits === 0}
                   style={{
@@ -472,27 +576,58 @@ export default function Home() {
               </div>
 
               {/* LANGUAGE */}
-              <div style={{ marginBottom: 16 }}>
-                <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Language</p>
-                <div className="lang-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
-                  {LANGUAGES.map(lang => (
-                    <button key={lang.code} onClick={() => setLanguage(lang.code)}
-                      style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${language === lang.code ? c.text : c.border}`, background: language === lang.code ? c.surface2 : 'transparent', color: language === lang.code ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: language === lang.code ? 600 : 400, textAlign: 'center' }}>
-                      <div style={{ fontSize: 14, marginBottom: 2 }}>{lang.flag}</div>
-                      {lang.name}
-                    </button>
-                  ))}
+              {credits !== null && credits <= 10 && plan === 'free' ? (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <p style={{ fontSize: 11, color: c.muted, fontWeight: 500 }}>Language</p>
+                    <span style={{ fontSize: 10, fontWeight: 600, color: '#f97316', background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)', padding: '2px 8px', borderRadius: 4 }}>PRO FEATURE</span>
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, opacity: 0.3, pointerEvents: 'none', filter: 'blur(1px)' }}>
+                      {LANGUAGES.map(lang => (
+                        <div key={lang.code} style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${c.border}`, textAlign: 'center', fontSize: 10 }}>
+                          <div style={{ fontSize: 14, marginBottom: 2 }}>{lang.flag}</div>
+                          {lang.name}
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={c.muted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
+                      <p style={{ fontSize: 12, color: c.muted, textAlign: 'center' }}>Available on Pro plan</p>
+                      <a href="/dashboard" style={{ fontSize: 11, fontWeight: 600, color: '#f97316', border: '1px solid rgba(249,115,22,0.4)', padding: '4px 12px', borderRadius: 6 }}>Upgrade →</a>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div style={{ marginBottom: 16 }}>
+                  <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Language</p>
+                  <div className="lang-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
+                    {LANGUAGES.map(lang => (
+                      <button key={lang.code} onClick={() => setLanguage(lang.code)}
+                        style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${language === lang.code ? c.text : c.border}`, background: language === lang.code ? c.surface2 : 'transparent', color: language === lang.code ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: language === lang.code ? 600 : 400, textAlign: 'center' }}>
+                        <div style={{ fontSize: 14, marginBottom: 2 }}>{lang.flag}</div>
+                        {lang.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* SPEAKER FORMAT */}
               <div style={{ marginBottom: 16 }}>
                 <p style={{ fontSize: 11, color: c.muted, marginBottom: 10, fontWeight: 500 }}>Speaker Format</p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-                  {([['both', '💬', 'A + B Conversation'], ['a', '🎙', 'Solo A'], ['b', '🎙', 'Solo B']] as const).map(([val, icon, label]) => (
+                  {([
+                    { val: 'both', label: 'A + B Conversation', icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
+                    { val: 'a',    label: 'Solo A',             icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> },
+                    { val: 'b',    label: 'Solo B',             icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg> },
+                  ] as const).map(({ val, label, icon }) => (
                     <button key={val} onClick={() => g.setSelectedSpeaker(val)}
                       style={{ padding: '10px 8px', borderRadius: 8, border: `1px solid ${g.selectedSpeaker === val ? c.text : c.border}`, background: g.selectedSpeaker === val ? c.surface2 : 'transparent', color: g.selectedSpeaker === val ? c.text : c.muted, cursor: 'pointer', transition: 'all .15s', fontSize: 11, fontWeight: g.selectedSpeaker === val ? 600 : 400, textAlign: 'center', lineHeight: 1.5 }}>
-                      <div style={{ fontSize: 16, marginBottom: 3 }}>{icon}</div>
+                      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 3 }}>{icon}</div>
                       {label}
                     </button>
                   ))}
@@ -542,6 +677,21 @@ export default function Home() {
 
             {isComplete && g.result && <EpisodeResult result={g.result} onReset={g.reset} />}
           </div>
+
+          {g.step === 'idle' && !session && (
+            <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <p style={{ width: '100%', textAlign: 'center', fontSize: 11, color: c.muted, marginBottom: 4 }}>Try these topics</p>
+              {SUGGESTIONS.map(s => (
+                <button key={s.text} onClick={() => g.setTopic(s.text)}
+                  style={{ fontSize: 12, color: c.muted, background: dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, padding: '6px 14px', borderRadius: 20, cursor: 'pointer', transition: 'all .15s', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', gap: 6 }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'; e.currentTarget.style.color = c.text }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'; e.currentTarget.style.color = c.muted }}>
+                  <span style={{ opacity: 0.6, display: 'flex', alignItems: 'center' }}>{s.icon}</span>
+                  {s.text}
+                </button>
+              ))}
+            </div>
+          )}
 
           {g.step === 'idle' && <p className="f3" style={{ marginTop: 12, fontSize: 11, color: c.muted, textAlign: 'center', letterSpacing: .3 }}>
             No auto-posting · You own every episode · Claude · ElevenLabs · Replicate

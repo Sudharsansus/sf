@@ -100,7 +100,9 @@ export default function StudioPage() {
                   {ep.thumbnailUrls?.[0] ? (
                     <img src={ep.thumbnailUrls[0]} alt="" style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover', border: `1px solid ${c.border}`, flexShrink: 0 }} />
                   ) : (
-                    <div style={{ width: 44, height: 44, borderRadius: 8, background: c.surface2, border: `1px solid ${c.border}`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🎙</div>
+                    <div style={{ width: 44, height: 44, borderRadius: 8, background: c.surface2, border: `1px solid ${c.border}`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.subtle }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.4 }}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                    </div>
                   )}
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 500, color: c.text, marginBottom: 5 }}>{ep.title || ep.topic}</div>
