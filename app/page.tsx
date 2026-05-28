@@ -176,18 +176,24 @@ export default function Home() {
           to { transform: rotate(360deg); }
         }
         @keyframes float1 {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(40px, -60px) scale(1.08); }
-          66% { transform: translate(-30px, 30px) scale(0.94); }
+          0%   { transform: translate(0px, 0px) scale(1); }
+          25%  { transform: translate(40px, -60px) scale(1.06); }
+          50%  { transform: translate(80px, -20px) scale(0.97); }
+          75%  { transform: translate(20px, 40px) scale(1.04); }
+          100% { transform: translate(0px, 0px) scale(1); }
         }
         @keyframes float2 {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(-50px, 40px) scale(1.1); }
-          66% { transform: translate(35px, -45px) scale(0.92); }
+          0%   { transform: translate(0px, 0px) scale(1); }
+          25%  { transform: translate(-60px, 50px) scale(1.08); }
+          50%  { transform: translate(-20px, 80px) scale(0.95); }
+          75%  { transform: translate(-50px, 20px) scale(1.05); }
+          100% { transform: translate(0px, 0px) scale(1); }
         }
         @keyframes float3 {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          50% { transform: translate(30px, 50px) scale(1.12); }
+          0%   { transform: translate(0px, 0px) scale(1); }
+          33%  { transform: translate(50px, 60px) scale(1.10); }
+          66%  { transform: translate(-40px, 30px) scale(0.93); }
+          100% { transform: translate(0px, 0px) scale(1); }
         }
 
         .f0 { animation: fadeUp .5s ease .0s both; }
@@ -231,39 +237,80 @@ export default function Home() {
       `}</style>
 
       {/* ANIMATED BACKGROUND */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+        
         {/* Blob 1 — purple top left */}
         <div style={{
-          position: 'absolute', top: '-10%', left: '-5%',
-          width: 600, height: 600, borderRadius: '50%',
+          position: 'absolute',
+          top: '-20%',
+          left: '-15%',
+          width: 900,
+          height: 900,
+          borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)',
-          animation: 'float1 12s ease-in-out infinite',
-          filter: 'blur(40px)',
+            ? 'radial-gradient(circle, rgba(139,92,246,0.45) 0%, rgba(139,92,246,0.20) 35%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(139,92,246,0.20) 0%, rgba(139,92,246,0.08) 35%, transparent 65%)',
+          animation: 'float1 10s ease-in-out infinite',
+          filter: 'blur(20px)',
+          willChange: 'transform',
         }} />
 
         {/* Blob 2 — orange top right */}
         <div style={{
-          position: 'absolute', top: '-5%', right: '-10%',
-          width: 700, height: 700, borderRadius: '50%',
+          position: 'absolute',
+          top: '-15%',
+          right: '-15%',
+          width: 850,
+          height: 850,
+          borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(249,115,22,0.06) 0%, transparent 70%)',
-          animation: 'float2 15s ease-in-out infinite',
-          filter: 'blur(50px)',
+            ? 'radial-gradient(circle, rgba(249,115,22,0.40) 0%, rgba(249,115,22,0.18) 35%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(249,115,22,0.18) 0%, rgba(249,115,22,0.07) 35%, transparent 65%)',
+          animation: 'float2 13s ease-in-out infinite',
+          filter: 'blur(20px)',
+          willChange: 'transform',
         }} />
 
-        {/* Blob 3 — blue center */}
+        {/* Blob 3 — blue/indigo center */}
         <div style={{
-          position: 'absolute', top: '20%', left: '30%',
-          width: 500, height: 500, borderRadius: '50%',
+          position: 'absolute',
+          top: '30%',
+          left: '20%',
+          width: 700,
+          height: 700,
+          borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)',
-          animation: 'float3 18s ease-in-out infinite',
-          filter: 'blur(60px)',
+            ? 'radial-gradient(circle, rgba(99,102,241,0.35) 0%, rgba(99,102,241,0.15) 35%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0.06) 35%, transparent 65%)',
+          animation: 'float3 16s ease-in-out infinite',
+          filter: 'blur(20px)',
+          willChange: 'transform',
+        }} />
+
+        {/* Blob 4 — pink bottom right */}
+        <div style={{
+          position: 'absolute',
+          bottom: '-10%',
+          right: '10%',
+          width: 650,
+          height: 650,
+          borderRadius: '50%',
+          background: dark
+            ? 'radial-gradient(circle, rgba(236,72,153,0.35) 0%, rgba(236,72,153,0.15) 35%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(236,72,153,0.06) 35%, transparent 65%)',
+          animation: 'float1 14s ease-in-out infinite reverse',
+          filter: 'blur(20px)',
+          willChange: 'transform',
+        }} />
+
+        {/* Dark scrim — makes text readable without killing blobs */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: dark
+            ? 'rgba(8,8,8,0.55)'
+            : 'rgba(255,255,255,0.60)',
+          backdropFilter: 'none',
         }} />
       </div>
 
@@ -271,7 +318,7 @@ export default function Home() {
       <Nav c={c} dark={dark} setDark={setDark} activePath="/" />
 
       {/* HERO */}
-      <section style={{ maxWidth: 720, margin: '0 auto', padding: '120px 24px 64px', textAlign: 'center' }}>
+      <section style={{ maxWidth: 720, margin: '0 auto', padding: '120px 24px 64px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
 
         <h1 className="f0 hero-title" style={{ fontSize: 'clamp(38px, 6vw, 68px)', fontWeight: 600, letterSpacing: '-2px', lineHeight: 1.1, marginBottom: 20 }}>
           Create studio-quality<br />
@@ -452,7 +499,7 @@ export default function Home() {
       </section>
 
       {/* NUMBERS */}
-      <div style={{ borderTop: `1px solid ${c.border}`, borderBottom: `1px solid ${c.border}` }}>
+      <div style={{ borderTop: `1px solid ${c.border}`, borderBottom: `1px solid ${c.border}`, position: 'relative', zIndex: 1 }}>
         <div className="numbers-grid" style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)' }}>
           {[['1 session','Weeks of work compressed'],['5 scripts','Written + scored per topic'],['Your call','You review before publishing'],['Studio grade','ElevenLabs + AI visuals']].map(([v,l],i,a) => (
             <div key={v} style={{ padding: '28px 24px', textAlign: 'center', borderRight: i < a.length-1 ? `1px solid ${c.border}` : 'none' }}>
@@ -464,7 +511,7 @@ export default function Home() {
       </div>
 
       {/* TICKER */}
-      <div style={{ overflow: 'hidden', borderBottom: `1px solid ${c.border}`, padding: '11px 0', background: c.surface }}>
+      <div style={{ overflow: 'hidden', borderBottom: `1px solid ${c.border}`, padding: '11px 0', background: c.surface, position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', width: 'max-content', animation: 'marquee 22s linear infinite' }}>
           {[...Array(2)].flatMap(() => ['Research Agent','Script × 5','Claude Sonnet 4','ElevenLabs','Replicate','SEO Package','Human in the loop','Zero auto-post','Multi-provider AI','Studio quality']).map((s,i) => (
             <span key={i} style={{ fontSize: 11, color: dark ? '#b0b0b0' : c.muted, padding: '0 22px', borderRight: `1px solid ${c.border}`, whiteSpace: 'nowrap', fontWeight: 500, letterSpacing: .3 }}>{s}</span>
@@ -473,7 +520,7 @@ export default function Home() {
       </div>
 
       {/* HOW IT WORKS */}
-      <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0' }}>
+      <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 36, gap: 24, flexWrap: 'wrap' }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Workflow</p>
@@ -501,7 +548,7 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0' }}>
+      <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0', position: 'relative', zIndex: 1 }}>
         <div style={{ marginBottom: 36 }}>
           <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Why SceneForge</p>
           <h2 style={{ fontSize: 'clamp(22px,3vw,34px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.2 }}>Not a generator. A production system.</h2>
@@ -525,7 +572,7 @@ export default function Home() {
       </section>
 
       {/* PRICING */}
-      <section id="pricing" style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0' }}>
+      <section id="pricing" style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 12 }}>Pricing</p>
           <h2 style={{ fontSize: 'clamp(22px,3vw,38px)', fontWeight: 600, letterSpacing: -.6, marginBottom: 16 }}>A perfect fit for everyone</h2>
@@ -623,7 +670,7 @@ export default function Home() {
       </section>
 
       {/* QUOTE */}
-      <section style={{ maxWidth: 640, margin: '80px auto 0', padding: '0 24px' }}>
+      <section style={{ maxWidth: 640, margin: '80px auto 0', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         <div className="card" style={{ padding: '32px 36px' }}>
           <p style={{ fontSize: 17, fontWeight: 400, lineHeight: 1.65, marginBottom: 16, color: c.text }}>
             "The research alone saves me three hours per episode. The script evaluation is the feature I didn't know I needed."
@@ -633,7 +680,7 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section style={{ maxWidth: 1080, margin: '80px auto 0', padding: '0 24px 100px' }}>
+      <section style={{ maxWidth: 1080, margin: '80px auto 0', padding: '0 24px 100px', position: 'relative', zIndex: 1 }}>
         <div className="card cta-grid" style={{ padding: '60px 52px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 48 }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 14 }}>Begin production</p>
@@ -658,7 +705,7 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="footer-inner" style={{ borderTop: `1px solid ${c.border}`, padding: '18px 24px', maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <footer className="footer-inner" style={{ borderTop: `1px solid ${c.border}`, padding: '18px 24px', maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           <div style={{ width: 18, height: 18, borderRadius: 5, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
