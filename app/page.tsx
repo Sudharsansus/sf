@@ -141,7 +141,7 @@ export default function Home() {
   const c = dark ? {
     bg: '#0a0a0a', nav: 'rgba(10,10,10,0.92)', surface: '#141414',
     surface2: '#1a1a1a', border: '#222', border2: '#2a2a2a',
-    text: '#f5f5f5', muted: '#aaa', subtle: '#777',
+    text: '#ffffff', muted: '#c0c0c0', subtle: '#999',
     accent: '#f5f5f5', accentFg: '#0a0a0a',
   } : {
     bg: '#ffffff', nav: 'rgba(255,255,255,0.92)', surface: '#f0f0f0',
@@ -233,87 +233,38 @@ export default function Home() {
       {/* ANIMATED BACKGROUND */}
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
 
-        {/* Blob 1 — big purple top left */}
+        {/* Blob 1 — purple top left */}
         <div style={{
-          position: 'absolute',
-          top: '-200px',
-          left: '-200px',
-          width: 800,
-          height: 800,
-          borderRadius: '50%',
+          position: 'absolute', top: '-10%', left: '-5%',
+          width: 600, height: 600, borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(139,92,246,0.25) 0%, rgba(139,92,246,0.10) 30%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(139,92,246,0.35) 0%, rgba(139,92,246,0.15) 30%, transparent 65%)',
-          animation: 'float1 10s ease-in-out infinite',
-          filter: 'blur(8px)',
-          mixBlendMode: dark ? 'screen' : 'multiply',
+            ? 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)',
+          animation: 'float1 12s ease-in-out infinite',
+          filter: 'blur(40px)',
         }} />
 
         {/* Blob 2 — orange top right */}
         <div style={{
-          position: 'absolute',
-          top: '-150px',
-          right: '-150px',
-          width: 750,
-          height: 750,
-          borderRadius: '50%',
+          position: 'absolute', top: '-5%', right: '-10%',
+          width: 700, height: 700, borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(249,115,22,0.20) 0%, rgba(249,115,22,0.08) 30%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(249,115,22,0.30) 0%, rgba(249,115,22,0.12) 30%, transparent 65%)',
-          animation: 'float2 13s ease-in-out infinite',
-          filter: 'blur(8px)',
-          mixBlendMode: dark ? 'screen' : 'multiply',
+            ? 'radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(249,115,22,0.06) 0%, transparent 70%)',
+          animation: 'float2 15s ease-in-out infinite',
+          filter: 'blur(50px)',
         }} />
 
-        {/* Blob 3 — blue center bottom */}
+        {/* Blob 3 — blue center */}
         <div style={{
-          position: 'absolute',
-          top: '40%',
-          left: '35%',
-          width: 650,
-          height: 650,
-          borderRadius: '50%',
+          position: 'absolute', top: '20%', left: '30%',
+          width: 500, height: 500, borderRadius: '50%',
           background: dark
-            ? 'radial-gradient(circle, rgba(59,130,246,0.18) 0%, rgba(59,130,246,0.07) 30%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.10) 30%, transparent 65%)',
-          animation: 'float3 16s ease-in-out infinite',
-          filter: 'blur(8px)',
-          mixBlendMode: dark ? 'screen' : 'multiply',
+            ? 'radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)',
+          animation: 'float3 18s ease-in-out infinite',
+          filter: 'blur(60px)',
         }} />
-
-        {/* Blob 4 — pink bottom left */}
-        <div style={{
-          position: 'absolute',
-          bottom: '-100px',
-          left: '10%',
-          width: 600,
-          height: 600,
-          borderRadius: '50%',
-          background: dark
-            ? 'radial-gradient(circle, rgba(236,72,153,0.18) 0%, rgba(236,72,153,0.07) 30%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(236,72,153,0.25) 0%, rgba(236,72,153,0.10) 30%, transparent 65%)',
-          animation: 'float1 14s ease-in-out infinite reverse',
-          filter: 'blur(8px)',
-          mixBlendMode: dark ? 'screen' : 'multiply',
-        }} />
-
-        {/* Dark overlay to keep bg dark in dark mode */}
-        {dark && (
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'rgba(10,10,10,0.72)',
-          }} />
-        )}
-
-        {/* Light overlay to keep bg light in light mode */}
-        {!dark && (
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'rgba(255,255,255,0.50)',
-          }} />
-        )}
       </div>
 
       {/* NAV */}
@@ -330,7 +281,7 @@ export default function Home() {
           </span>
         </h1>
 
-        <p className="f1" style={{ fontSize: 16, color: c.muted, lineHeight: 1.7, maxWidth: 440, margin: '0 auto 40px', fontWeight: 400 }}>
+        <p className="f1" style={{ fontSize: 16, color: c.muted, lineHeight: 1.7, maxWidth: 440, margin: '0 auto 40px', fontWeight: 500 }}>
           Research, scripts, voice, visuals, and SEO — one workflow, fully in your control.
         </p>
 
@@ -516,7 +467,7 @@ export default function Home() {
       <div style={{ overflow: 'hidden', borderBottom: `1px solid ${c.border}`, padding: '11px 0', background: c.surface }}>
         <div style={{ display: 'flex', width: 'max-content', animation: 'marquee 22s linear infinite' }}>
           {[...Array(2)].flatMap(() => ['Research Agent','Script × 5','Claude Sonnet 4','ElevenLabs','Replicate','SEO Package','Human in the loop','Zero auto-post','Multi-provider AI','Studio quality']).map((s,i) => (
-            <span key={i} style={{ fontSize: 11, color: dark ? '#bbb' : c.muted, padding: '0 22px', borderRight: `1px solid ${c.border}`, whiteSpace: 'nowrap', fontWeight: 500, letterSpacing: .3 }}>{s}</span>
+            <span key={i} style={{ fontSize: 11, color: dark ? '#b0b0b0' : c.muted, padding: '0 22px', borderRight: `1px solid ${c.border}`, whiteSpace: 'nowrap', fontWeight: 500, letterSpacing: .3 }}>{s}</span>
           ))}
         </div>
       </div>
@@ -543,7 +494,7 @@ export default function Home() {
             <div key={n} className="row-item" style={{ display: 'grid', gridTemplateColumns: '52px 148px 1fr', borderBottom: i < arr.length-1 ? `1px solid ${c.border}` : 'none' }}>
               <div style={{ padding: '18px 0 18px 18px', fontSize: 10, color: dark ? '#888' : c.subtle, fontWeight: 600, letterSpacing: .5 }}>{n}</div>
               <div style={{ padding: '18px 14px', fontSize: 13, fontWeight: 600, color: c.text, borderLeft: `1px solid ${c.border}`, borderRight: `1px solid ${c.border}` }}>{name}</div>
-              <div style={{ padding: '18px 22px', fontSize: 13, color: c.muted, lineHeight: 1.6 }}>{desc}</div>
+              <div style={{ padding: '18px 22px', fontSize: 13, color: dark ? '#b0b0b0' : c.muted, lineHeight: 1.6 }}>{desc}</div>
             </div>
           ))}
         </div>
@@ -567,7 +518,7 @@ export default function Home() {
             <div key={name} className="feat-card" style={{ background: c.bg, padding: '26px 22px' }}>
               <div className="feat-line" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: c.text, opacity: 0, transition: 'opacity .2s' }} />
               <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8, color: c.text }}>{name}</div>
-              <div style={{ fontSize: 12, color: c.muted, lineHeight: 1.65 }}>{body}</div>
+              <div style={{ fontSize: 12, color: dark ? '#b0b0b0' : c.muted, lineHeight: 1.65 }}>{body}</div>
             </div>
           ))}
         </div>
@@ -631,8 +582,8 @@ export default function Home() {
 
         {/* COMPARISON TABLE */}
         <div style={{ border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : c.border}`, borderRadius: 14, overflow: 'hidden', marginBottom: 40, background: dark ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', background: dark ? 'rgba(255,255,255,0.06)' : c.surface, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
-            <div style={{ padding: '14px 20px', fontSize: 13, fontWeight: 600, color: dark ? '#fff' : c.muted }}>Features</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', background: dark ? 'rgba(255,255,255,0.05)' : c.surface, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
+            <div style={{ padding: '14px 20px', fontSize: 13, fontWeight: 700, color: dark ? '#ffffff' : c.text }}>Features</div>
             {['Free','Starter','Pro','Studio'].map(name => (
               <div key={name} style={{ padding: '14px 12px', fontSize: 13, fontWeight: 700, color: dark ? '#ffffff' : c.text, textAlign: 'center', borderLeft: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>{name}</div>
             ))}
@@ -654,15 +605,15 @@ export default function Home() {
             <div key={String(feature)} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', borderBottom: i < arr.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` : 'none', transition: 'background .15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.04)' : c.surface)}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-              <div style={{ padding: '13px 20px', fontSize: 13, color: dark ? '#d0d0d0' : c.text, fontWeight: 400 }}>{String(feature)}</div>
+              <div style={{ padding: '13px 20px', fontSize: 13, color: dark ? '#d0d0d0' : c.text, fontWeight: 500 }}>{String(feature)}</div>
               {(vals as boolean[]).map((v, vi) => (
                 <div key={vi} style={{ padding: '13px 12px', textAlign: 'center', borderLeft: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
                   {v ? (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: 'rgba(74,222,128,0.2)', border: '1px solid rgba(74,222,128,0.5)' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: 'rgba(74,222,128,0.3)', border: '1px solid #4ade80' }}>
                       <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#4ade80" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </span>
                   ) : (
-                    <span style={{ color: dark ? 'rgba(255,255,255,0.2)' : c.subtle, fontSize: 14 }}>—</span>
+                    <span style={{ color: dark ? 'rgba(255,255,255,0.25)' : c.subtle, fontSize: 14 }}>—</span>
                   )}
                 </div>
               ))}
