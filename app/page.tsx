@@ -497,8 +497,8 @@ export default function Home() {
         <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 32 }}>
           {[
             { id: 'free',    name: 'Free',    monthly: '$0',  yearly: '$0',  credits: 3,    perEp: '',          desc: 'Best for Rookies',     badge: '' },
-            { id: 'starter', name: 'Starter', monthly: '$19', yearly: '$15', credits: 30,   perEp: '$0.63/ep',  desc: 'Best for Creators',    badge: 'POPULAR' },
-            { id: 'pro',     name: 'Pro',     monthly: '$29', yearly: '$23', credits: 100,  perEp: '$0.29/ep',  desc: 'Best for SMEs',        badge: '' },
+            { id: 'starter', name: 'Starter', monthly: '$19', yearly: '$15', credits: 30,   perEp: '$0.63/ep',  desc: 'Best for Creators',    badge: '' },
+            { id: 'pro',     name: 'Pro',     monthly: '$29', yearly: '$23', credits: 100,  perEp: '$0.29/ep',  desc: 'Best for SMEs',        badge: 'POPULAR' },
             { id: 'studio',  name: 'Studio',  monthly: '$79', yearly: '$63', credits: 400,  perEp: '$0.20/ep',  desc: 'Best for Enterprises', badge: '' },
           ].map(p => (
             <div key={p.id} style={{ border: `1px solid ${p.badge ? '#f97316' : c.border}`, borderRadius: 14, padding: '24px 20px', position: 'relative', background: p.badge ? (dark ? 'rgba(249,115,22,0.05)' : 'rgba(249,115,22,0.03)') : 'transparent', transition: 'border-color .2s' }}
