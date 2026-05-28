@@ -29,8 +29,7 @@ export async function POST(req: NextRequest) {
     if (user.plan === 'free') {
       const uploadedEpisodes = await db.select({ id: episodes.id })
         .from(episodes)
-        .where(eq(episodes.userId, user.id))
-        .where(eq(episodes.agentStep, 'audio_uploaded'))
+        .where(and(eq(episodes.userId, user.id), eq(episodes.agentStep, 'audio_uploaded')))
         .limit(1)
 
       if (uploadedEpisodes.length > 0) {
