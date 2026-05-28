@@ -58,6 +58,7 @@ export default function Home() {
   const [voiceB, setVoiceB] = useState('AZnzlk1XvdvUeBnXmlld')
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null)
   const [language, setLanguage] = useState('en')
+  const [yearly, setYearly] = useState(false)
 
   useEffect(() => {
     if (session) {
@@ -215,44 +216,32 @@ export default function Home() {
       `}</style>
 
       {/* NAV */}
-      <nav style={{ position: 'sticky', top: 0, zIndex: 50, borderBottom: `1px solid ${c.border}`, backdropFilter: 'blur(16px)', background: c.nav, transition: 'background .3s' }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px', height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <nav style={{ position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 50, width: 'calc(100% - 48px)', maxWidth: 980, background: dark ? 'rgba(14,14,14,0.85)' : 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: `1px solid ${c.border}`, borderRadius: 16, transition: 'background .3s, border-color .3s', boxShadow: dark ? '0 4px 32px rgba(0,0,0,0.4)' : '0 4px 32px rgba(0,0,0,0.08)' }}>
+        <div style={{ padding: '0 20px', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', color: 'inherit' }}>
             <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SceneForge</span>
-          </div>
+          </a>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-            {[['Studio','/studio'],['Work','/episodes'],['Dashboard','/dashboard']].map(([l,h]) => (
+            {[['Home','/'],['Studio','/studio'],['Pricing','/#pricing'],['Changelog','/changelog']].map(([l,h]) => (
               <a key={l} href={h} className="nav-link">{l}</a>
             ))}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <button onClick={() => setDark(!dark)} style={{ width: 30, height: 30, borderRadius: 6, background: 'transparent', border: `1px solid ${c.border}`, color: c.muted, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .15s' }}
+            <button onClick={() => setDark(!dark)} style={{ width: 30, height: 30, borderRadius: 6, background: 'transparent', border: `1px solid ${c.border}`, color: c.muted, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .15s', cursor: 'pointer' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = c.text; e.currentTarget.style.color = c.text }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
               {dark ? (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3"/>
-                <line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/>
-                <line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-              </svg>
-            )}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              )}
             </button>
             <ProfileMenu c={c} />
           </div>
@@ -260,7 +249,7 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section style={{ maxWidth: 720, margin: '0 auto', padding: '88px 24px 64px', textAlign: 'center' }}>
+      <section style={{ maxWidth: 720, margin: '0 auto', padding: '120px 24px 64px', textAlign: 'center' }}>
 
         <h1 className="f0 hero-title" style={{ fontSize: 'clamp(38px, 6vw, 68px)', fontWeight: 600, letterSpacing: '-2px', lineHeight: 1.1, marginBottom: 20 }}>
           Create studio-quality<br />
@@ -514,48 +503,98 @@ export default function Home() {
       </section>
 
       {/* PRICING */}
-      <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 36, gap: 24, flexWrap: 'wrap' }}>
-          <div>
-            <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Pricing</p>
-            <h2 style={{ fontSize: 'clamp(22px,3vw,34px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.2 }}>Simple, transparent pricing.</h2>
+      <section id="pricing" style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0' }}>
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 12 }}>Pricing</p>
+          <h2 style={{ fontSize: 'clamp(22px,3vw,38px)', fontWeight: 600, letterSpacing: -.6, marginBottom: 16 }}>A perfect fit for everyone</h2>
+          <p style={{ fontSize: 14, color: c.muted, marginBottom: 28 }}>Start free. No card required. Upgrade when you're ready.</p>
+
+          {/* MONTHLY / YEARLY TOGGLE */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', background: c.surface, border: `1px solid ${c.border}`, borderRadius: 10, padding: 4, gap: 2 }}>
+            <button onClick={() => setYearly(false)}
+              style={{ fontSize: 13, fontWeight: 500, padding: '7px 20px', borderRadius: 7, border: 'none', background: !yearly ? c.accent : 'transparent', color: !yearly ? c.accentFg : c.muted, cursor: 'pointer', transition: 'all .2s' }}>
+              Monthly
+            </button>
+            <button onClick={() => setYearly(true)}
+              style={{ fontSize: 13, fontWeight: 500, padding: '7px 20px', borderRadius: 7, border: 'none', background: yearly ? c.accent : 'transparent', color: yearly ? c.accentFg : c.muted, cursor: 'pointer', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 6 }}>
+              Yearly
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', padding: '1px 6px', borderRadius: 4 }}>-20%</span>
+            </button>
           </div>
-          <p style={{ fontSize: 13, color: c.muted, lineHeight: 1.65, maxWidth: 240 }}>Start free. No card required. Upgrade when you're ready.</p>
         </div>
 
-        <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+        {/* PLAN CARDS */}
+        <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 32 }}>
           {[
-            { name: 'Free', price: '$0', sub: 'forever', credits: 3, perEp: '', desc: 'Try it out', features: ['3 episodes', 'All AI features', 'Audio + visuals', 'SEO package'], cta: 'Start free', href: '/login', badge: '' },
-            { name: 'Starter', price: '$19', sub: '/month', credits: 30, perEp: '$0.63/ep', desc: 'For new creators', features: ['30 episodes/mo', 'All voices', 'All languages', 'YouTube upload'], cta: 'Get Starter', href: '/login', badge: '' },
-            { name: 'Pro', price: '$29', sub: '/month', credits: 100, perEp: '$0.29/ep', desc: 'Most popular', features: ['100 episodes/mo', 'All voices', 'All languages', 'Priority support'], cta: 'Get Pro', href: '/login', badge: 'MOST POPULAR' },
-            { name: 'Studio', price: '$79', sub: '/month', credits: 400, perEp: '$0.20/ep', desc: 'For serious producers', features: ['400 episodes/mo', 'All voices', 'All languages', 'Team access soon'], cta: 'Get Studio', href: '/login', badge: '' },
+            { id: 'free',    name: 'Free',    monthly: '$0',  yearly: '$0',  credits: 3,    perEp: '',          desc: 'Best for Rookies',     badge: '' },
+            { id: 'starter', name: 'Starter', monthly: '$19', yearly: '$15', credits: 30,   perEp: '$0.63/ep',  desc: 'Best for Creators',    badge: 'POPULAR' },
+            { id: 'pro',     name: 'Pro',     monthly: '$29', yearly: '$23', credits: 100,  perEp: '$0.29/ep',  desc: 'Best for SMEs',        badge: '' },
+            { id: 'studio',  name: 'Studio',  monthly: '$79', yearly: '$63', credits: 400,  perEp: '$0.20/ep',  desc: 'Best for Enterprises', badge: '' },
           ].map(p => (
-            <div key={p.name} style={{ border: `1px solid ${p.badge ? c.border2 : c.border}`, borderRadius: 12, padding: '24px 22px', position: 'relative', transition: 'border-color .2s', background: p.badge ? c.surface : 'transparent' }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = c.border2)}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = p.badge ? c.border2 : c.border)}>
+            <div key={p.id} style={{ border: `1px solid ${p.badge ? '#f97316' : c.border}`, borderRadius: 14, padding: '24px 20px', position: 'relative', background: p.badge ? (dark ? 'rgba(249,115,22,0.05)' : 'rgba(249,115,22,0.03)') : 'transparent', transition: 'border-color .2s' }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = p.badge ? '#f97316' : c.border2)}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = p.badge ? '#f97316' : c.border)}>
               {p.badge && (
-                <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#fb923c', background: dark ? '#0a0a0a' : '#fff', border: '1px solid rgba(251,146,60,0.4)', padding: '2px 10px', borderRadius: 4, whiteSpace: 'nowrap' }}>{p.badge}</div>
+                <div style={{ position: 'absolute', top: -11, left: '50%', transform: 'translateX(-50%)', fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#f97316', background: dark ? '#0a0a0a' : '#fff', border: '1px solid rgba(249,115,22,0.5)', padding: '2px 10px', borderRadius: 20, whiteSpace: 'nowrap' }}>{p.desc}</div>
               )}
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{p.name}</div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 2, marginBottom: 2 }}>
-                <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: -1.2, lineHeight: 1 }}>{p.price}</span>
-                <span style={{ fontSize: 12, color: c.muted }}>{p.sub}</span>
+              {!p.badge && (
+                <div style={{ fontSize: 10, fontWeight: 600, color: c.subtle, marginBottom: 10, letterSpacing: .3 }}>{p.desc}</div>
+              )}
+              {p.badge && <div style={{ marginBottom: 10 }} />}
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>{p.name}</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginBottom: 4 }}>
+                <span style={{ fontSize: 36, fontWeight: 700, letterSpacing: -1.5, lineHeight: 1 }}>{yearly ? p.yearly : p.monthly}</span>
+                {p.id !== 'free' && <span style={{ fontSize: 12, color: c.muted }}>/month</span>}
               </div>
-              <div style={{ fontSize: 11, color: c.subtle, marginBottom: 4 }}>{p.credits} credits{p.perEp ? ` · ${p.perEp}` : ''}</div>
-              <div style={{ fontSize: 11, color: c.muted, marginBottom: 20 }}>{p.desc}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 22 }}>
-                {p.features.map(f => (
-                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, color: c.muted }}>
-                    <span style={{ color: '#4ade80', fontSize: 10, flexShrink: 0 }}>✓</span>
-                    {f}
-                  </div>
-                ))}
+              <div style={{ fontSize: 11, color: c.subtle, marginBottom: 20 }}>
+                {p.id === 'free' ? 'Forever free' : `${p.credits} credits · ${p.perEp}`}
               </div>
-              <a href={p.href} style={{ display: 'block', width: '100%', fontSize: 13, fontWeight: 500, color: p.badge ? c.accentFg : c.text, background: p.badge ? c.accent : 'transparent', border: `1px solid ${p.badge ? c.accent : c.border}`, padding: '9px', borderRadius: 7, textAlign: 'center', transition: 'all .15s', boxSizing: 'border-box' }}
-                onMouseEnter={e => { e.currentTarget.style.opacity = '.8' }}
-                onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}>
-                {p.cta}
+              <a href="/login" style={{ display: 'block', textAlign: 'center', fontSize: 13, fontWeight: 500, padding: '10px', borderRadius: 8, border: `1px solid ${p.badge ? '#f97316' : c.border}`, background: p.badge ? '#f97316' : 'transparent', color: p.badge ? '#fff' : c.text, transition: 'opacity .15s', boxSizing: 'border-box' as const }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+                {p.id === 'free' ? 'Get Started Free' : `Get ${p.name}`}
               </a>
+            </div>
+          ))}
+        </div>
+
+        {/* COMPARISON TABLE */}
+        <div style={{ border: `1px solid ${c.border}`, borderRadius: 14, overflow: 'hidden', marginBottom: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', background: c.surface, borderBottom: `1px solid ${c.border}` }}>
+            <div style={{ padding: '14px 20px', fontSize: 12, fontWeight: 600, color: c.muted }}>Features</div>
+            {['Free','Starter','Pro','Studio'].map(name => (
+              <div key={name} style={{ padding: '14px 12px', fontSize: 12, fontWeight: 600, color: c.text, textAlign: 'center', borderLeft: `1px solid ${c.border}` }}>{name}</div>
+            ))}
+          </div>
+          {[
+            ['Research agent',          true,  true,  true,  true],
+            ['Script × 5 variations',   true,  true,  true,  true],
+            ['AI script evaluation',    true,  true,  true,  true],
+            ['16 voice options',        true,  true,  true,  true],
+            ['12 languages',            true,  true,  true,  true],
+            ['Audio rendering',         true,  true,  true,  true],
+            ['AI thumbnails',           false, true,  true,  true],
+            ['SEO package',             false, true,  true,  true],
+            ['YouTube auto-upload',     false, true,  true,  true],
+            ['Instagram scheduling',    false, false, true,  true],
+            ['Priority support',        false, false, true,  true],
+            ['Team access',             false, false, false, true],
+          ].map(([feature, ...vals], i, arr) => (
+            <div key={String(feature)} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', borderBottom: i < arr.length - 1 ? `1px solid ${c.border}` : 'none', transition: 'background .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.background = c.surface)}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+              <div style={{ padding: '13px 20px', fontSize: 13, color: c.muted }}>{String(feature)}</div>
+              {(vals as boolean[]).map((v, vi) => (
+                <div key={vi} style={{ padding: '13px 12px', textAlign: 'center', borderLeft: `1px solid ${c.border}` }}>
+                  {v ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: 'rgba(74,222,128,0.15)', border: '1px solid rgba(74,222,128,0.3)' }}>
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#4ade80" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </span>
+                  ) : (
+                    <span style={{ color: c.subtle, fontSize: 14 }}>—</span>
+                  )}
+                </div>
+              ))}
             </div>
           ))}
         </div>
