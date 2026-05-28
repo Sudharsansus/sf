@@ -84,8 +84,7 @@ export async function POST(req: NextRequest) {
     // the other gets an empty result set and is rejected without a refund needed.
     const updateResult = await db.update(users)
       .set({ credits: sql`${users.credits} - 1`, updatedAt: new Date() })
-      .where(eq(users.id, user.id))
-      .where(sql`${users.credits} > 0`)
+      .where(and(eq(users.id, user.id), sql`${users.credits} > 0`))
       .returning({ credits: users.credits })
 
     if (!updateResult.length) {

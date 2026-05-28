@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
 import { db, users, episodes, creditsLedger } from '@/lib/db'
-import { eq, sql } from 'drizzle-orm'
+import { eq, sql, and } from 'drizzle-orm'
 import { randomUUID } from 'crypto'
 import { transcribeToScript } from '@/lib/claude'
 import { uploadBuffer } from '@/lib/storage'
@@ -44,8 +44,7 @@ export async function POST(req: NextRequest) {
     // Deduct credit
     const updateResult = await db.update(users)
       .set({ credits: sql`${users.credits} - 1`, updatedAt: new Date() })
-      .where(eq(users.id, user.id))
-      .where(sql`${users.credits} > 0`)
+      .where(and(eq(users.id, user.id), sql`${users.credits} > 0`))
       .returning({ credits: users.credits })
 
     if (!updateResult.length)
