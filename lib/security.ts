@@ -42,6 +42,24 @@ export function isAdmin(user: { role?: string }): boolean {
   return user?.role === 'admin'
 }
 
+// ── OWNERSHIP ─────────────────────────────────────────────────────────────────
+export async function verifyEpisodeOwnership(
+  episodeId: string,
+  userId: string
+): Promise<boolean> {
+  try {
+    const { db, episodes } = await import('./db')
+    const { eq } = await import('drizzle-orm')
+    const [ep] = await db.select({ userId: episodes.userId })
+      .from(episodes)
+      .where(eq(episodes.id, episodeId))
+      .limit(1)
+    return ep?.userId === userId
+  } catch {
+    return false
+  }
+}
+
 // ── AUDIT LOG ─────────────────────────────────────────────────────────────────
 export async function auditLog(params: {
   userId?: string

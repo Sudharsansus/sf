@@ -22,6 +22,13 @@ export const chatLimit = new Ratelimit({
   redis, limiter: Ratelimit.slidingWindow(60, '1 m'), prefix: 'sf:chat:user'
 })
 
+// 20 enumeration-style lookups per minute per user (share/jobs/credits endpoints)
+export const enumLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(20, '1 m'),
+  prefix: 'sf:enum:user'
+})
+
 // ── PER-IP LIMITS (public + unauthenticated routes) ───────────────────────────
 // Prevents IP-level abuse of public endpoints
 export const ipLimit = new Ratelimit({
