@@ -17,9 +17,11 @@ export function sanitizeUser(u: any) {
 export function verifyHMAC(payload: string, signature: string, secret: string): boolean {
   try {
     const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex')
-    const a = Buffer.from(signature.replace(/^sha256=/, ''))
-    const b = Buffer.from(expected)
-    if (a.length !== b.length) return false
+    const sig = signature.replace(/^sha256=/, '').toLowerCase().trim()
+    const expectedHex = expected.toLowerCase()
+    // Pad/truncate to equal-length fixed buffers so timingSafeEqual never throws on mismatch length
+    const a = Buffer.from(sig.padEnd(64, '0').slice(0, 64), 'hex')
+    const b = Buffer.from(expectedHex.padEnd(64, '0').slice(0, 64), 'hex')
     return crypto.timingSafeEqual(a, b)
   } catch { return false }
 }

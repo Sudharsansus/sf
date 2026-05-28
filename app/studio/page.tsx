@@ -63,11 +63,18 @@ export default function StudioPage() {
             <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Studio</p>
             <h1 style={{ fontSize: 'clamp(26px,3vw,38px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.15 }}>Your episodes</h1>
           </div>
-          <a href="/" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '8px 18px', borderRadius: 7, transition: 'opacity .15s' }}
-            onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
-            onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-            New episode →
-          </a>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <a href="/upload" style={{ fontSize: 13, fontWeight: 500, color: c.muted, border: `1px solid ${c.border}`, padding: '8px 18px', borderRadius: 7, transition: 'all .15s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = c.border2; e.currentTarget.style.color = c.text }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = c.border; e.currentTarget.style.color = c.muted }}>
+              Upload file ↑
+            </a>
+            <a href="/" style={{ fontSize: 13, fontWeight: 500, background: c.accent, color: c.accentFg, padding: '8px 18px', borderRadius: 7, transition: 'opacity .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+              New episode →
+            </a>
+          </div>
         </div>
 
         {loading && (

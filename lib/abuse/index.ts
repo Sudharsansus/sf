@@ -43,12 +43,16 @@ export async function checkForAbuse(userId: string, topic: string): Promise<Abus
     }
   }
 
-  // 3. Velocity check — more than 20 requests in 10 minutes = likely automation
-  const velocityKey = `sf:velocity:${userId}:${Math.floor(Date.now() / 600000)}`
-  const count = await redis.incr(velocityKey)
-  if (count === 1) await redis.expire(velocityKey, 600)
-  if (count > 20) {
-    logger.warn('Velocity abuse detected', { userId, count })
+  // 3. Velocity check — sliding window via Ratelimit avoids off-by-one at bucket boundaries
+  const { Ratelimit } = await import('@upstash/ratelimit')
+  const velocityLimiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(20, '10 m'),
+    prefix: 'sf:abuse:velocity'
+  })
+  const { success: velocityOk } = await velocityLimiter.limit(userId)
+  if (!velocityOk) {
+    logger.warn('Velocity abuse detected', { userId })
     return { allowed: false, reason: 'Too many requests. Slow down.', severity: 'high' }
   }
 

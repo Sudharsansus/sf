@@ -106,3 +106,59 @@ export async function runSEOAgent(script: any, topic: string, title: string) {
   })
   return data
 }
+
+// ── TRANSCRIPTION — Groq Whisper ─────────────────────────────────────────────
+export async function transcribeAudio(audioBuffer: Buffer, mimeType: string): Promise<string> {
+  logger.info('Transcribing audio with Groq Whisper')
+  
+  const formData = new FormData()
+  const blob = new Blob([audioBuffer], { type: mimeType })
+  formData.append('file', blob, 'audio.mp3')
+  formData.append('model', 'whisper-large-v3')
+  formData.append('response_format', 'verbose_json')
+  formData.append('timestamp_granularities[]', 'segment')
+
+  const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.GROQ_API_KEY!}`,
+    },
+    body: formData
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Groq Whisper error ${res.status}: ${err}`)
+  }
+
+  const data = await res.json()
+  return data.text || ''
+}
+
+export async function transcribeToScript(audioBuffer: Buffer, mimeType: string): Promise<{ speaker: string; text: string }[]> {
+  const transcript = await transcribeAudio(audioBuffer, mimeType)
+  
+  // Split into lines of roughly 35 words each
+  const sentences = transcript.split(/[.!?]+/).filter(s => s.trim().length > 0)
+  const lines: { speaker: string; text: string }[] = []
+  
+  sentences.forEach((sentence, i) => {
+    const words = sentence.trim().split(' ')
+    const chunks: string[] = []
+    
+    for (let j = 0; j < words.length; j += 30) {
+      chunks.push(words.slice(j, j + 30).join(' '))
+    }
+    
+    chunks.forEach((chunk, ci) => {
+      if (chunk.trim()) {
+        lines.push({
+          speaker: (lines.length % 2 === 0) ? 'A' : 'B',
+          text: chunk.trim()
+        })
+      }
+    })
+  })
+  
+  return lines
+}

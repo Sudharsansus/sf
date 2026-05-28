@@ -30,6 +30,7 @@ export function Nav({ c, dark, setDark, activePath }: NavProps) {
           {[
             ['Home', '/'],
             ['Studio', '/studio'],
+            ['Upload', '/upload'],
             ['Work', '/episodes'],
             ['Dashboard', '/dashboard'],
             ['Pricing', '/#pricing'],

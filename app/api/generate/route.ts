@@ -33,7 +33,11 @@ export async function POST(req: NextRequest) {
 
     // ── IDEMPOTENCY ──────────────────────────────────────────────────────────
     // Client sends Idempotency-Key header. Same key = same response, no double-spend.
-    const idemKey = req.headers.get('Idempotency-Key') || randomUUID()
+    // Key is namespaced to the user so one user cannot replay another's key.
+    const clientKey = req.headers.get('Idempotency-Key')
+    const idemKey = clientKey
+      ? `${session.user.email}:${clientKey.slice(0, 64)}`
+      : randomUUID()
 
     // Check for existing episode with this idempotency key
     const [existingEp] = await db.select().from(episodes)
@@ -75,23 +79,24 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
     if (user.credits < 1) return NextResponse.json({ error: 'No credits remaining. Please upgrade.' }, { status: 402 })
 
-    // Atomic deduction — row-level check prevents race condition
+    // Atomic deduction — WHERE credits > 0 makes this race-condition-safe.
+    // If two requests arrive simultaneously only one will match and decrement;
+    // the other gets an empty result set and is rejected without a refund needed.
     const updateResult = await db.update(users)
       .set({ credits: sql`${users.credits} - 1`, updatedAt: new Date() })
       .where(eq(users.id, user.id))
+      .where(sql`${users.credits} > 0`)
       .returning({ credits: users.credits })
 
-    // If credits went negative somehow (race), refund and reject
-    if (updateResult[0]?.credits < 0) {
-      await db.update(users).set({ credits: sql`${users.credits} + 1` }).where(eq(users.id, user.id))
-      return NextResponse.json({ error: 'No credits remaining.' }, { status: 402 })
+    if (!updateResult.length) {
+      return NextResponse.json({ error: 'No credits remaining. Please upgrade.' }, { status: 402 })
     }
 
     await db.insert(creditsLedger).values({ userId: user.id, amount: -1, reason: 'generate_v2' })
     await auditLog({ userId: user.id, action: 'credit.deduct', resource: `user:${user.id}`, metadata: { amount: -1, reason: 'generate', topic } })
 
     // ── CREATE EPISODE (with idempotency key) ────────────────────────────────
-    const shareId = randomUUID().replace(/-/g, '').slice(0, 12)
+    const shareId = randomUUID().replace(/-/g, '')
     const [episode] = await db.insert(episodes).values({
       userId: user.id, topic, title: topic, shareId,
       status: 'processing', agentStep: 'research',

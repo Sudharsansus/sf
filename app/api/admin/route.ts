@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
 import { db, users, episodes, aiRequestLog, auditLogs, waitlist } from '@/lib/db'
-import { isAdmin } from '@/lib/security'
+import { isAdmin, auditLog } from '@/lib/security'
 import { getAIStats } from '@/lib/ai'
 import { eq, desc, sql, gte } from 'drizzle-orm'
 import { logger } from '@/lib/logger'
@@ -17,6 +17,16 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url)
   const view = searchParams.get('view') || 'overview'
+
+  await auditLog({
+    userId: user.id,
+    action: 'admin.data_access',
+    resource: `view:${view}`,
+    metadata: {
+      ip: req.headers.get('x-forwarded-for') || 'unknown',
+      userAgent: req.headers.get('user-agent') || 'unknown'
+    }
+  })
 
   if (view === 'overview') {
     const [

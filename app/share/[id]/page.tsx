@@ -15,8 +15,11 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 export default async function SharePage({ params }: { params: { id: string } }) {
-  const [ep] = await db.select().from(episodes).where(eq(episodes.shareId, params.id)).limit(1)
-  if (!ep || !ep.isPublic) notFound()
+  const [ep] = await db.select().from(episodes)
+    .where(eq(episodes.shareId, params.id))
+    .where(eq(episodes.isPublic, true))
+    .limit(1)
+  if (!ep) notFound()
   const script = ep.script as any
   const thumbs = (ep.thumbnailUrls as string[]) || []
   const seo = ep.seoData as any
