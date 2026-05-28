@@ -7,6 +7,7 @@ import { WorkflowTimeline } from '@/components/workflow/WorkflowTimeline'
 import { ScriptPicker } from '@/components/studio/ScriptPicker'
 import { EpisodeResult } from '@/components/studio/EpisodeResult'
 import { ChatBox } from '@/components/studio/ChatBox'
+import { AuthPopup } from '@/components/ui/AuthPopup'
 
 const ROTATING_WORDS = ['podcasts', 'YouTube videos', 'newsletters', 'scripts', 'narrations', 'episodes']
 
@@ -174,6 +175,20 @@ export default function Home() {
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
+        @keyframes float1 {
+          0%, 100% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(40px, -60px) scale(1.08); }
+          66% { transform: translate(-30px, 30px) scale(0.94); }
+        }
+        @keyframes float2 {
+          0%, 100% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(-50px, 40px) scale(1.1); }
+          66% { transform: translate(35px, -45px) scale(0.92); }
+        }
+        @keyframes float3 {
+          0%, 100% { transform: translate(0px, 0px) scale(1); }
+          50% { transform: translate(30px, 50px) scale(1.12); }
+        }
 
         .f0 { animation: fadeUp .5s ease .0s both; }
         .f1 { animation: fadeUp .5s ease .06s both; }
@@ -214,6 +229,92 @@ export default function Home() {
           .lang-grid { grid-template-columns: repeat(3,1fr) !important; }
         }
       `}</style>
+
+      {/* ANIMATED BACKGROUND */}
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '100vh', zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+
+        {/* Blob 1 — big purple top left */}
+        <div style={{
+          position: 'absolute',
+          top: '-200px',
+          left: '-200px',
+          width: 800,
+          height: 800,
+          borderRadius: '50%',
+          background: dark
+            ? 'radial-gradient(circle, rgba(139,92,246,0.6) 0%, rgba(139,92,246,0.3) 30%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(139,92,246,0.35) 0%, rgba(139,92,246,0.15) 30%, transparent 65%)',
+          animation: 'float1 10s ease-in-out infinite',
+          filter: 'blur(8px)',
+          mixBlendMode: dark ? 'screen' : 'multiply',
+        }} />
+
+        {/* Blob 2 — orange top right */}
+        <div style={{
+          position: 'absolute',
+          top: '-150px',
+          right: '-150px',
+          width: 750,
+          height: 750,
+          borderRadius: '50%',
+          background: dark
+            ? 'radial-gradient(circle, rgba(249,115,22,0.55) 0%, rgba(249,115,22,0.25) 30%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(249,115,22,0.30) 0%, rgba(249,115,22,0.12) 30%, transparent 65%)',
+          animation: 'float2 13s ease-in-out infinite',
+          filter: 'blur(8px)',
+          mixBlendMode: dark ? 'screen' : 'multiply',
+        }} />
+
+        {/* Blob 3 — blue center bottom */}
+        <div style={{
+          position: 'absolute',
+          top: '40%',
+          left: '35%',
+          width: 650,
+          height: 650,
+          borderRadius: '50%',
+          background: dark
+            ? 'radial-gradient(circle, rgba(59,130,246,0.45) 0%, rgba(59,130,246,0.20) 30%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.10) 30%, transparent 65%)',
+          animation: 'float3 16s ease-in-out infinite',
+          filter: 'blur(8px)',
+          mixBlendMode: dark ? 'screen' : 'multiply',
+        }} />
+
+        {/* Blob 4 — pink bottom left */}
+        <div style={{
+          position: 'absolute',
+          bottom: '-100px',
+          left: '10%',
+          width: 600,
+          height: 600,
+          borderRadius: '50%',
+          background: dark
+            ? 'radial-gradient(circle, rgba(236,72,153,0.45) 0%, rgba(236,72,153,0.20) 30%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(236,72,153,0.25) 0%, rgba(236,72,153,0.10) 30%, transparent 65%)',
+          animation: 'float1 14s ease-in-out infinite reverse',
+          filter: 'blur(8px)',
+          mixBlendMode: dark ? 'screen' : 'multiply',
+        }} />
+
+        {/* Dark overlay to keep bg dark in dark mode */}
+        {dark && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(10,10,10,0.45)',
+          }} />
+        )}
+
+        {/* Light overlay to keep bg light in light mode */}
+        {!dark && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(255,255,255,0.50)',
+          }} />
+        )}
+      </div>
 
       {/* NAV */}
       <Nav c={c} dark={dark} setDark={setDark} activePath="/" />
@@ -631,6 +732,7 @@ export default function Home() {
       </footer>
 
       <ChatBox />
+      <AuthPopup c={c} dark={dark} />
     </div>
   )
 }
