@@ -51,7 +51,7 @@ export function ProfileMenu({ c }: Props) {
         onMouseEnter={e => { e.currentTarget.style.background = c.surface; e.currentTarget.style.borderColor = c.border2 }}
         onMouseLeave={e => { if (!open) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = c.border } }}>
         {session.user?.image ? (
-          <img src={session.user.image} alt="" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover' }} />
+          <img src={session.user.image} alt="" referrerPolicy="no-referrer" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover' }} />
         ) : (
           <div style={{ width: 24, height: 24, borderRadius: '50%', background: c.surface2, border: `1px solid ${c.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 600, color: c.text }}>{initials}</div>
         )}
@@ -70,7 +70,7 @@ export function ProfileMenu({ c }: Props) {
           <div style={{ padding: '14px 16px', borderBottom: `1px solid ${c.border}` }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               {session.user?.image ? (
-                <img src={session.user.image} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
+                <img src={session.user.image} alt="" referrerPolicy="no-referrer" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
               ) : (
                 <div style={{ width: 36, height: 36, borderRadius: '50%', background: c.surface2, border: `1px solid ${c.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 600, color: c.text }}>{initials}</div>
               )}
