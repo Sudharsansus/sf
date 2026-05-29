@@ -36,7 +36,7 @@ export default function LoginPage() {
                 <path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <span style={{ fontWeight: 600, fontSize: 16, letterSpacing: -.3 }}>Sus</span>
+            <span style={{ fontWeight: 600, fontSize: 16, letterSpacing: -.3 }}>SUS</span>
           </a>
           <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: -.4, marginBottom: 6 }}>Welcome back</h1>
           <p style={{ fontSize: 13, color: c.muted }}>AI creator production studio</p>

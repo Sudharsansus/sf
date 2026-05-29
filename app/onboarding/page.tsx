@@ -6,14 +6,14 @@ import { useRouter } from 'next/navigation'
 const STEPS = [
   {
     icon: <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>,
-    title: 'Welcome to Sus',
+    title: 'Welcome to SUS',
     desc: 'You have 3 free credits to start. Each credit = 1 full episode with research, scripts, audio, visuals and SEO.',
     cta: 'Next →'
   },
   {
     icon: <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>,
     title: 'Type any topic',
-    desc: 'Sus researches it, writes 5 script variations scored on 10 metrics, and lets you pick the best angle.',
+    desc: 'SUS researches it, writes 5 script variations scored on 10 metrics, and lets you pick the best angle.',
     cta: 'Next →'
   },
   {
@@ -58,7 +58,7 @@ export default function OnboardingPage() {
           <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 14 }}>Sus</span>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>SUS</span>
         </div>
 
         <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: 16, padding: '40px 36px', textAlign: 'center' }}>

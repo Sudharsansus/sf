@@ -5,7 +5,7 @@ export async function captureError(
   error: Error,
   ctx?: { userId?: string; episodeId?: string; step?: string; provider?: string }
 ) {
-  console.error('[Sus Error]', error.message, ctx ?? '')
+  console.error('[SUS Error]', error.message, ctx ?? '')
 }
 
 export async function track(
@@ -14,7 +14,7 @@ export async function track(
   properties?: Record<string, any>
 ) {
   if (process.env.NODE_ENV === 'development') {
-    console.log('[Sus Track]', event, { userId, ...properties })
+    console.log('[SUS Track]', event, { userId, ...properties })
   }
 }
 

@@ -21,7 +21,7 @@ export default function NotFound() {
           <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 14 }}>Sus</span>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>SUS</span>
         </div>
         <div style={{ fontSize: 72, fontWeight: 600, letterSpacing: -4, lineHeight: 1, marginBottom: 16, color: c.subtle }}>404</div>
         <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: -.4, marginBottom: 10 }}>Page not found</h1>

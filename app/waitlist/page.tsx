@@ -61,10 +61,10 @@ export default function WaitlistPage() {
                 <path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <span style={{ fontWeight: 600, fontSize: 16, letterSpacing: -.3 }}>Sus</span>
+            <span style={{ fontWeight: 600, fontSize: 16, letterSpacing: -.3 }}>SUS</span>
           </a>
           <h1 style={{ fontSize: 24, fontWeight: 600, letterSpacing: -.5, marginBottom: 8 }}>Join the Waitlist</h1>
-          <p style={{ fontSize: 13, color: c.muted }}>Be the first to know when Sus launches</p>
+          <p style={{ fontSize: 13, color: c.muted }}>Be the first to know when SUS launches</p>
         </div>
 
         {/* FORM */}

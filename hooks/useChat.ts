@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react'
 
 export interface ChatMessage { role: 'user' | 'assistant'; content: string }
 
-export function useChat(initialMessage = "Hi! I'm Sus AI. Ask me for episode ideas or how the pipeline works.") {
+export function useChat(initialMessage = "Hi! I'm SUS AI. Ask me for episode ideas or how the pipeline works.") {
   const [messages,  setMessages]  = useState<ChatMessage[]>([{ role: 'assistant', content: initialMessage }])
   const [input,     setInput]     = useState('')
   const [loading,   setLoading]   = useState(false)

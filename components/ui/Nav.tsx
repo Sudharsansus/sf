@@ -23,7 +23,7 @@ export function Nav({ c, dark, setDark, activePath }: NavProps) {
           <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>Sus</span>
+          <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SUS</span>
         </a>
 
         <div className="nav-center-links" style={{ display: 'flex', alignItems: 'center' }}>

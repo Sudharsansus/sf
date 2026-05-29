@@ -28,7 +28,7 @@ export function ChatBox() {
                 <svg width="12" height="12" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke="#0a0a0a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: text }}>Sus AI</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: text }}>SUS AI</div>
                 <div style={{ fontSize: 10, color: '#444' }}>Powered by Claude</div>
               </div>
             </div>

@@ -189,7 +189,7 @@ export default function DashboardPage() {
           <div style={{ width: 18, height: 18, borderRadius: 5, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 13 }}>Sus</span>
+          <span style={{ fontWeight: 600, fontSize: 13 }}>SUS</span>
         </div>
         <div style={{ display: 'flex' }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
@@ -198,7 +198,7 @@ export default function DashboardPage() {
               onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>{l}</a>
           ))}
         </div>
-        <span style={{ fontSize: 11, color: c.muted }}>© 2025 Sus</span>
+        <span style={{ fontSize: 11, color: c.muted }}>© 2026 SUS</span>
       </footer>
     </div>
   )
