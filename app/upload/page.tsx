@@ -1,14 +1,17 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Nav } from '@/components/ui/Nav'
 
-export default function UploadPage() {
+function UploadPageInner() {
   const { data: session } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialTab = searchParams.get('tab') === 'audio' ? 'audio' : 'script'
   const [dark, setDark] = useState(true)
-  const [tab, setTab] = useState<'script' | 'audio'>('script')
+  const [tab, setTab] = useState<'script' | 'audio'>(initialTab)
   const [dragging, setDragging] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -208,5 +211,13 @@ export default function UploadPage() {
         </p>
       </main>
     </div>
+  )
+}
+
+export default function UploadPage() {
+  return (
+    <Suspense fallback={<div style={{ background: '#0a0a0a', minHeight: '100vh' }} />}>
+      <UploadPageInner />
+    </Suspense>
   )
 }

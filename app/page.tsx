@@ -730,6 +730,52 @@ export default function Home() {
             {isComplete && g.result && <EpisodeResult result={g.result} onReset={g.reset} />}
           </div>
 
+          {(g.step === 'idle' || g.step === 'failed') && (
+            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center' }}>
+              <div style={{ flex: 1, height: 1, background: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)', maxWidth: 120 }} />
+              <span style={{ fontSize: 11, color: c.subtle }}>or</span>
+              <div style={{ flex: 1, height: 1, background: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)', maxWidth: 120 }} />
+            </div>
+          )}
+
+          {(g.step === 'idle' || g.step === 'failed') && (
+            <div style={{ marginTop: 10, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a href="/upload?tab=script"
+                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: c.muted, background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`, padding: '9px 18px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; e.currentTarget.style.color = c.text; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'; e.currentTarget.style.color = c.muted; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                Upload script
+              </a>
+              <a href="/upload?tab=audio"
+                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: c.muted, background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`, padding: '9px 18px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; e.currentTarget.style.color = c.text; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'; e.currentTarget.style.color = c.muted; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                  <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
+                  <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                </svg>
+                Upload audio
+              </a>
+              <a href="/upload"
+                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: c.muted, background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`, padding: '9px 18px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; e.currentTarget.style.color = c.text; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'; e.currentTarget.style.color = c.muted; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                Edit existing script
+              </a>
+            </div>
+          )}
+
           {g.step === 'idle' && !session && (
             <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
               <p style={{ width: '100%', textAlign: 'center', fontSize: 11, color: c.muted, marginBottom: 4 }}>Try these topics</p>
