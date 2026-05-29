@@ -12,6 +12,7 @@ import { thumbWorker } from '@/lib/workers/thumb.worker'
 import { seoWorker } from '@/lib/workers/seo.worker'
 import { emitEvent } from '@/lib/events'
 import { captureError, events as analyticsEvents } from '@/lib/observability'
+import { checkGlobalBudget, checkUserHourlyCost, trackUserCost } from '@/lib/budget'
 
 export const maxDuration = 300
 
@@ -32,6 +33,16 @@ export async function POST(req: NextRequest) {
     if (!episode) return NextResponse.json({ error: 'Episode not found' }, { status: 404 })
     const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
     if (!user || episode.userId !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+    const globalOk = await checkGlobalBudget()
+    if (!globalOk) return NextResponse.json({
+      error: 'Service temporarily unavailable.'
+    }, { status: 503 })
+
+    const hourlyCheck = await checkUserHourlyCost(user.id, user.plan)
+    if (!hourlyCheck.allowed) return NextResponse.json({
+      error: hourlyCheck.reason
+    }, { status: 429 })
 
     // ── IDEMPOTENCY + STALE LOCK ──────────────────────────────────────────────
     const lockKey = `refine:${episodeId}:${selectedAngle}:${durationLabel || '30min'}`
@@ -128,6 +139,7 @@ export async function POST(req: NextRequest) {
     await db.update(workflowLocks).set({ status: 'complete', result: response as any, updatedAt: new Date() }).where(eq(workflowLocks.idempotencyKey, lockKey))
     await emitEvent('workflow.completed', { episodeId })
     await analyticsEvents.workflowComplete(user.id, episodeId, 0)
+    await trackUserCost(user.id, 0.20)
 
     return NextResponse.json(response)
 

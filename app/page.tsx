@@ -545,12 +545,33 @@ export default function Home() {
                 </span>
               </div>
               {credits === 0 && g.step === 'idle' && (
-                <div style={{ padding: '10px 14px', background: 'rgba(251,146,60,0.08)', border: '1px solid rgba(251,146,60,0.3)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0 14px 14px' }}>
-                  <span style={{ fontSize: 12, color: '#fb923c', display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    No credits remaining
-                  </span>
-                  <a href="/dashboard" style={{ fontSize: 12, fontWeight: 600, color: '#fb923c', border: '1px solid rgba(251,146,60,0.4)', padding: '4px 12px', borderRadius: 6 }}>Buy credits →</a>
+                <div style={{
+                  padding: '12px 14px',
+                  background: 'rgba(251,146,60,0.08)',
+                  border: '1px solid rgba(251,146,60,0.3)',
+                  borderRadius: 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  margin: '0 14px 14px'
+                }}>
+                  <div>
+                    <span style={{ fontSize: 12, color: '#fb923c', fontWeight: 600 }}>
+                      You've used all 3 free episodes
+                    </span>
+                    <p style={{ fontSize: 11, color: '#f97316', marginTop: 2, opacity: 0.8 }}>
+                      Upgrade to keep creating — from $19/mo
+                    </p>
+                  </div>
+                  <a href="/dashboard" style={{
+                    fontSize: 12, fontWeight: 600, color: '#fff',
+                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                    padding: '7px 14px', borderRadius: 7,
+                    whiteSpace: 'nowrap',
+                    boxShadow: '0 4px 12px rgba(249,115,22,0.4)'
+                  }}>
+                    Upgrade now →
+                  </a>
                 </div>
               )}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 14px', borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}>

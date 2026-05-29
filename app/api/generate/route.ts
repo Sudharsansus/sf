@@ -3,7 +3,8 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { db, users, episodes, creditsLedger, workflowLocks } from '@/lib/db'
 import { runResearchAgent, runScriptAgent, runEvaluateAgent } from '@/lib/claude'
-import { generateLimit } from '@/lib/redis'
+import { generateLimit, freeGenerateLimit } from '@/lib/redis'
+import { checkGlobalBudget, checkUserHourlyCost, trackUserCost, EPISODE_COST_USD } from '@/lib/budget'
 import { eq, sql, and } from 'drizzle-orm'
 import { getSession } from '@/lib/session'
 import { z } from 'zod'
@@ -56,10 +57,6 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // ── RATE LIMIT ───────────────────────────────────────────────────────────
-    const { success } = await generateLimit.limit(session.user.email)
-    if (!success) return NextResponse.json({ error: 'Too many requests. Wait a minute.' }, { status: 429 })
-
     // ── VALIDATE INPUT ───────────────────────────────────────────────────────
     const parsed = Body.safeParse(body)
     if (!parsed.success) return NextResponse.json({ error: 'Topic must be 3-200 characters' }, { status: 400 })
@@ -78,6 +75,32 @@ export async function POST(req: NextRequest) {
     }
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
     if (user.credits < 1) return NextResponse.json({ error: 'No credits remaining. Please upgrade.' }, { status: 402 })
+
+    // ── GUARD 1: Global daily budget ─────────────────────────────────────────
+    const globalOk = await checkGlobalBudget()
+    if (!globalOk) {
+      await db.update(users).set({ credits: sql`${users.credits} + 1` }).where(eq(users.id, user.id))
+      logger.error('Global budget exceeded')
+      return NextResponse.json({
+        error: 'Service temporarily unavailable. Try again tomorrow.'
+      }, { status: 503 })
+    }
+
+    // ── GUARD 2: Per-user hourly cost ────────────────────────────────────────
+    const hourlyCheck = await checkUserHourlyCost(user.id, user.plan)
+    if (!hourlyCheck.allowed) {
+      await db.update(users).set({ credits: sql`${users.credits} + 1` }).where(eq(users.id, user.id))
+      return NextResponse.json({ error: hourlyCheck.reason }, { status: 429 })
+    }
+
+    // ── GUARD 3: Plan-aware rate limit ───────────────────────────────────────
+    const limiter = user.plan === 'free' ? freeGenerateLimit : generateLimit
+    const { success: rlOk } = await limiter.limit(session.user.email)
+    if (!rlOk) return NextResponse.json({
+      error: user.plan === 'free'
+        ? 'Free users can generate 3 episodes per hour. Upgrade for more.'
+        : 'Too many requests. Please wait a moment.'
+    }, { status: 429 })
 
     // Atomic deduction — WHERE credits > 0 makes this race-condition-safe.
     // If two requests arrive simultaneously only one will match and decrement;
@@ -150,6 +173,8 @@ export async function POST(req: NextRequest) {
     }).where(eq(episodes.id, episode.id))
 
     logger.info('Generate complete — awaiting user selection', { episodeId: episode.id, winner: winnerAngle })
+
+    await trackUserCost(user.id, EPISODE_COST_USD[user.plan as keyof typeof EPISODE_COST_USD] || 0.28)
 
     return NextResponse.json({
       episodeId: episode.id,

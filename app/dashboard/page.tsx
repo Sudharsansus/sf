@@ -114,6 +114,25 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {data?.plan === 'free' && (
+          <div style={{ border: `1px solid ${c.border}`, borderRadius: 12, padding: '20px 22px', marginBottom: 20, background: c.surface, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Your free plan includes</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 20px' }}>
+                {['3 full episodes free', 'Claude AI scripts', 'ElevenLabs audio', 'AI thumbnails', 'SEO package', 'No card required'].map(f => (
+                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: c.muted }}>
+                    <span style={{ color: '#4ade80', fontSize: 10, flexShrink: 0 }}>✓</span>
+                    {f}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <a href="/dashboard" style={{ fontSize: 12, fontWeight: 600, color: '#fff', background: 'linear-gradient(135deg, #f97316, #ea580c)', padding: '8px 16px', borderRadius: 7, whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(249,115,22,0.3)' }}>
+              Upgrade →
+            </a>
+          </div>
+        )}
+
         <div style={{ marginBottom: 36 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, letterSpacing: -.3, marginBottom: 16 }}>Get more credits</h2>
           <div className="plans-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>

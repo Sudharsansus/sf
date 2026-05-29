@@ -29,6 +29,13 @@ export const enumLimit = new Ratelimit({
   prefix: 'sus:enum:user'
 })
 
+// 3 generations per hour for free users — stricter than paid
+export const freeGenerateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, '1 h'),
+  prefix: 'sus:gen:free'
+})
+
 // ── PER-IP LIMITS (public + unauthenticated routes) ───────────────────────────
 // Prevents IP-level abuse of public endpoints
 export const ipLimit = new Ratelimit({
