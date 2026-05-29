@@ -913,12 +913,13 @@ export default function Home() {
         </div>
 
         {/* PLAN CARDS */}
-        <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 32 }}>
+        <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 32 }}>
           {[
-            { id: 'free',    name: 'Free',    monthly: '$0',  yearly: '$0',  credits: 3,    perEp: '',          desc: 'Best for Rookies',     badge: '' },
-            { id: 'starter', name: 'Starter', monthly: '$19', yearly: '$15', credits: 30,   perEp: '$0.63/ep',  desc: 'Best for Creators',    badge: '' },
-            { id: 'pro',     name: 'Pro',     monthly: '$29', yearly: '$23', credits: 100,  perEp: '$0.29/ep',  desc: 'Best for SMEs',        badge: 'POPULAR' },
-            { id: 'studio',  name: 'Studio',  monthly: '$79', yearly: '$63', credits: 400,  perEp: '$0.20/ep',  desc: 'Best for Enterprises', badge: '' },
+            { id: 'free',    name: 'Free',    monthly: '$0',   yearly: '$0',   credits: 3,    perEp: '',          desc: 'Best for Rookies',  badge: '' },
+            { id: 'starter', name: 'Starter', monthly: '$19',  yearly: '$15',  credits: 20,   perEp: '$0.95/ep',  desc: 'Best for Creators', badge: '' },
+            { id: 'pro',     name: 'Pro',     monthly: '$49',  yearly: '$39',  credits: 100,  perEp: '$0.49/ep',  desc: 'Best for SMEs',     badge: 'POPULAR' },
+            { id: 'studio',  name: 'Studio',  monthly: '$99',  yearly: '$79',  credits: 300,  perEp: '$0.33/ep',  desc: 'Best for Studios',  badge: '' },
+            { id: 'agency',  name: 'Agency',  monthly: '$249', yearly: '$199', credits: 1000, perEp: '$0.25/ep',  desc: 'Best for Agencies', badge: '' },
           ].map(p => (
             <div key={p.id} style={{ border: `1px solid ${p.badge ? '#f97316' : c.border}`, borderRadius: 14, padding: '24px 20px', position: 'relative', background: p.badge ? (dark ? 'rgba(249,115,22,0.05)' : 'rgba(249,115,22,0.03)') : 'transparent', transition: 'border-color .2s' }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = p.badge ? '#f97316' : c.border2)}
@@ -949,27 +950,27 @@ export default function Home() {
 
         {/* COMPARISON TABLE */}
         <div style={{ border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : c.border}`, borderRadius: 14, overflow: 'hidden', marginBottom: 40, background: dark ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', background: dark ? 'rgba(255,255,255,0.05)' : c.surface, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr', background: dark ? 'rgba(255,255,255,0.05)' : c.surface, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
             <div style={{ padding: '14px 20px', fontSize: 13, fontWeight: 700, color: dark ? '#ffffff' : c.text }}>Features</div>
-            {['Free','Starter','Pro','Studio'].map(name => (
+            {['Free','Starter','Pro','Studio','Agency'].map(name => (
               <div key={name} style={{ padding: '14px 12px', fontSize: 13, fontWeight: 700, color: dark ? '#ffffff' : c.text, textAlign: 'center', borderLeft: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>{name}</div>
             ))}
           </div>
           {[
-            ['Research agent',          true,  true,  true,  true],
-            ['Script × 5 variations',   true,  true,  true,  true],
-            ['AI script evaluation',    true,  true,  true,  true],
-            ['16 voice options',        true,  true,  true,  true],
-            ['12 languages',            true,  true,  true,  true],
-            ['Audio rendering',         true,  true,  true,  true],
-            ['AI thumbnails',           false, true,  true,  true],
-            ['SEO package',             false, true,  true,  true],
-            ['YouTube auto-upload',     false, true,  true,  true],
-            ['Instagram scheduling',    false, false, true,  true],
-            ['Priority support',        false, false, true,  true],
-            ['Team access',             false, false, false, true],
+            ['Research agent',          true,  true,  true,  true,  true],
+            ['Script × 5 variations',   true,  true,  true,  true,  true],
+            ['AI script evaluation',    true,  true,  true,  true,  true],
+            ['16 voice options',        true,  true,  true,  true,  true],
+            ['12 languages',            true,  true,  true,  true,  true],
+            ['Audio rendering',         true,  true,  true,  true,  true],
+            ['AI thumbnails',           false, true,  true,  true,  true],
+            ['SEO package',             false, true,  true,  true,  true],
+            ['YouTube auto-upload',     false, true,  true,  true,  true],
+            ['Instagram scheduling',    false, false, true,  true,  true],
+            ['Priority support',        false, false, true,  true,  true],
+            ['Team access',             false, false, false, false, true],
           ].map(([feature, ...vals], i, arr) => (
-            <div key={String(feature)} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', borderBottom: i < arr.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` : 'none', transition: 'background .15s' }}
+            <div key={String(feature)} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr', borderBottom: i < arr.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` : 'none', transition: 'background .15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.04)' : c.surface)}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
               <div style={{ padding: '13px 20px', fontSize: 13, color: dark ? '#d0d0d0' : c.text, fontWeight: 500 }}>{String(feature)}</div>
@@ -1007,7 +1008,7 @@ export default function Home() {
             <h2 style={{ fontSize: 'clamp(26px,3.5vw,44px)', fontWeight: 600, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 14 }}>
               Your brief. Studio output.
             </h2>
-            <p style={{ fontSize: 14, color: c.muted, lineHeight: 1.7, maxWidth: 360 }}>10 free credits on sign up. No card required. Research, scripts, voice, visuals, and SEO — done.</p>
+            <p style={{ fontSize: 14, color: c.muted, lineHeight: 1.7, maxWidth: 360 }}>3 free credits on sign up. No card required. Research, scripts, voice, visuals, and SEO — done.</p>
           </div>
           <div className="cta-buttons" style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
             <a href="/login" style={{ fontWeight: 500, fontSize: 14, color: c.accentFg, background: c.accent, padding: '12px 32px', borderRadius: 8, textAlign: 'center', whiteSpace: 'nowrap', transition: 'opacity .15s' }}

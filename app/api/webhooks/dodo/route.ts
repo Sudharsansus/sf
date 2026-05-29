@@ -4,7 +4,7 @@ import { verifyHMAC } from '@/lib/security'
 import { eq, sql } from 'drizzle-orm'
 import { logger } from '@/lib/logger'
 
-const CREDITS: Record<string, number> = { starter: 30, pro: 100, studio: 400, agency: 1500 }
+const CREDITS: Record<string, number> = { starter: 20, pro: 100, studio: 300, agency: 1000 }
 const PLANS: Record<string, string> = { starter: 'starter', pro: 'pro', studio: 'studio', agency: 'agency' }
 
 export async function POST(req: NextRequest) {

@@ -4,10 +4,10 @@ import { useSession } from 'next-auth/react'
 import { Nav } from '@/components/ui/Nav'
 
 const PLANS = [
-  { id: 'starter', name: 'Starter',  credits: 30,   price: '$19',  desc: 'Great for trying it out',     perEp: '$0.63/ep' },
-  { id: 'pro',     name: 'Pro',      credits: 100,  price: '$29',  desc: 'Most popular for creators',   perEp: '$0.29/ep', badge: 'MOST POPULAR' },
-  { id: 'studio',  name: 'Studio',   credits: 400,  price: '$79',  desc: 'For serious producers',       perEp: '$0.20/ep' },
-  { id: 'agency',  name: 'Agency',   credits: 1500, price: '$199', desc: 'For teams and agencies',      perEp: '$0.13/ep' },
+  { id: 'starter', name: 'Starter', credits: 20,   price: '$19',  yearly: '$15',  perEp: '$0.95/ep', desc: 'Best for Creators' },
+  { id: 'pro',     name: 'Pro',     credits: 100,  price: '$49',  yearly: '$39',  perEp: '$0.49/ep', desc: 'Best for SMEs',    badge: 'MOST POPULAR' },
+  { id: 'studio',  name: 'Studio',  credits: 300,  price: '$99',  yearly: '$79',  perEp: '$0.33/ep', desc: 'Best for Studios' },
+  { id: 'agency',  name: 'Agency',  credits: 1000, price: '$249', yearly: '$199', perEp: '$0.25/ep', desc: 'Best for Agencies' },
 ]
 
 export default function DashboardPage() {
