@@ -11,6 +11,11 @@ import { AuthPopup } from '@/components/ui/AuthPopup'
 
 const ROTATING_WORDS = ['podcasts', 'YouTube videos', 'newsletters', 'scripts', 'narrations', 'episodes']
 
+const DURATION_CREDITS_MAP: Record<string, number> = {
+  '1min': 1, '2min': 2, '5min': 5, '10min': 10,
+  '15min': 15, '20min': 20, '30min': 30, '45min': 45, '60min': 60,
+}
+
 const VOICES = [
   { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel',    gender: 'F', accent: 'American' },
   { id: 'AZnzlk1XvdvUeBnXmlld', name: 'Domi',      gender: 'F', accent: 'American' },
@@ -557,7 +562,7 @@ export default function Home() {
                 }}>
                   <div>
                     <span style={{ fontSize: 12, color: '#fb923c', fontWeight: 600 }}>
-                      You've used all 3 free episodes
+                      You've used all 10 free minutes
                     </span>
                     <p style={{ fontSize: 11, color: '#f97316', marginTop: 2, opacity: 0.8 }}>
                       Upgrade to keep creating — from $19/mo
@@ -711,20 +716,48 @@ export default function Home() {
               <div style={{ marginBottom: 18 }}>
                 <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Duration</p>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
-                  {['30sec', '1min', '2min', '5min', '10min', '15min', '20min', '30min', '45min', '60min'].map(d => (
-                    <button key={d} onClick={() => g.setSelectedDuration(d)}
-                      style={{ fontSize: 11, padding: '4px 10px', borderRadius: 5, border: `1px solid ${g.selectedDuration === d ? c.text : c.border}`, background: g.selectedDuration === d ? c.surface2 : 'transparent', color: g.selectedDuration === d ? c.text : c.muted, cursor: 'pointer', transition: 'all .15s' }}>
-                      {d}
-                    </button>
-                  ))}
+                  {(['1min','2min','5min','10min','15min','20min','30min','45min','60min'] as const).map(d => {
+                    const creditsNeeded = DURATION_CREDITS_MAP[d]
+                    const canAfford = (credits ?? 0) >= creditsNeeded
+                    const isMaxForPlan = plan === 'free' && parseInt(d) > 5
+                    return (
+                      <button key={d}
+                        onClick={() => { if (!isMaxForPlan) g.setSelectedDuration(d) }}
+                        style={{
+                          fontSize: 11, padding: '6px 10px', borderRadius: 5,
+                          border: `1px solid ${g.selectedDuration === d ? c.text : isMaxForPlan ? 'rgba(255,255,255,0.05)' : c.border}`,
+                          background: g.selectedDuration === d ? c.surface2 : 'transparent',
+                          color: isMaxForPlan ? c.subtle : canAfford ? (g.selectedDuration === d ? c.text : c.muted) : '#f87171',
+                          cursor: isMaxForPlan ? 'not-allowed' : 'pointer',
+                          transition: 'all .15s',
+                          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+                          opacity: isMaxForPlan ? 0.3 : 1,
+                        }}>
+                        <span>{d}</span>
+                        <span style={{ fontSize: 9, opacity: 0.7 }}>
+                          {isMaxForPlan ? '🔒' : `${creditsNeeded}cr`}
+                        </span>
+                      </button>
+                    )
+                  })}
                 </div>
-                <input
-                  type="text"
-                  placeholder="Or type custom duration: e.g. 3min, 90sec"
-                  value={g.selectedDuration}
-                  onChange={e => g.setSelectedDuration(e.target.value)}
-                  style={{ width: '100%', fontSize: 12, padding: '7px 12px', borderRadius: 6, border: `1px solid ${c.border}`, background: c.surface, color: c.text, fontFamily: 'inherit', outline: 'none' }}
-                />
+                {g.selectedDuration && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '8px 12px', borderRadius: 7,
+                    background: dark ? 'rgba(255,255,255,0.04)' : c.surface,
+                    border: `1px solid ${c.border}`,
+                    marginTop: 8, fontSize: 12
+                  }}>
+                    <span style={{ color: c.muted }}>Episode cost</span>
+                    <span style={{ color: (credits ?? 0) >= (DURATION_CREDITS_MAP[g.selectedDuration] || 5) ? '#4ade80' : '#f87171', fontWeight: 600 }}>
+                      {DURATION_CREDITS_MAP[g.selectedDuration] || 5} credits
+                      <span style={{ color: c.subtle, fontWeight: 400, marginLeft: 6 }}>
+                        ({credits ?? 0} available)
+                      </span>
+                    </span>
+                  </div>
+                )}
               </div>
 
               <button onClick={() => g.startGeneration(voiceA, voiceB, language)}
@@ -915,11 +948,11 @@ export default function Home() {
         {/* PLAN CARDS */}
         <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 32 }}>
           {[
-            { id: 'free',    name: 'Free',    monthly: '$0',   yearly: '$0',   credits: 3,    perEp: '',          desc: 'Best for Rookies',  badge: '' },
-            { id: 'starter', name: 'Starter', monthly: '$19',  yearly: '$15',  credits: 20,   perEp: '$0.95/ep',  desc: 'Best for Creators', badge: '' },
-            { id: 'pro',     name: 'Pro',     monthly: '$49',  yearly: '$39',  credits: 100,  perEp: '$0.49/ep',  desc: 'Best for SMEs',     badge: 'POPULAR' },
-            { id: 'studio',  name: 'Studio',  monthly: '$99',  yearly: '$79',  credits: 300,  perEp: '$0.33/ep',  desc: 'Best for Studios',  badge: '' },
-            { id: 'agency',  name: 'Agency',  monthly: '$249', yearly: '$199', credits: 1000, perEp: '$0.25/ep',  desc: 'Best for Agencies', badge: '' },
+            { id: 'free',    name: 'Free',    monthly: '$0',   yearly: '$0',   credits: 10,   perMin: '',          desc: 'Best for Rookies',  badge: '' },
+            { id: 'starter', name: 'Starter', monthly: '$19',  yearly: '$15',  credits: 60,   perMin: '$0.32/min', desc: 'Best for Creators', badge: '' },
+            { id: 'pro',     name: 'Pro',     monthly: '$39',  yearly: '$31',  credits: 200,  perMin: '$0.20/min', desc: 'Best for SMEs',     badge: 'POPULAR' },
+            { id: 'studio',  name: 'Studio',  monthly: '$79',  yearly: '$63',  credits: 600,  perMin: '$0.13/min', desc: 'Best for Studios',  badge: '' },
+            { id: 'agency',  name: 'Agency',  monthly: '$199', yearly: '$159', credits: 2000, perMin: '$0.10/min', desc: 'Best for Agencies', badge: '' },
           ].map(p => (
             <div key={p.id} style={{ border: `1px solid ${p.badge ? '#f97316' : c.border}`, borderRadius: 14, padding: '24px 20px', position: 'relative', background: p.badge ? (dark ? 'rgba(249,115,22,0.05)' : 'rgba(249,115,22,0.03)') : 'transparent', transition: 'border-color .2s' }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = p.badge ? '#f97316' : c.border2)}
@@ -937,7 +970,7 @@ export default function Home() {
                 {p.id !== 'free' && <span style={{ fontSize: 12, color: c.muted }}>/month</span>}
               </div>
               <div style={{ fontSize: 11, color: dark ? '#888' : c.subtle, marginBottom: 20 }}>
-                {p.id === 'free' ? 'Forever free' : `${p.credits} credits · ${p.perEp}`}
+                {p.id === 'free' ? '10 min free · forever' : `${p.credits} min/mo · ${(p as any).perMin}`}
               </div>
               <a href="/login" style={{ display: 'block', textAlign: 'center', fontSize: 13, fontWeight: 500, padding: '10px', borderRadius: 8, border: `1px solid ${p.badge ? '#f97316' : c.border}`, background: p.badge ? '#f97316' : 'transparent', color: p.badge ? '#fff' : c.text, transition: 'opacity .15s', boxSizing: 'border-box' as const }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
@@ -1008,7 +1041,7 @@ export default function Home() {
             <h2 style={{ fontSize: 'clamp(26px,3.5vw,44px)', fontWeight: 600, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 14 }}>
               Your brief. Studio output.
             </h2>
-            <p style={{ fontSize: 14, color: c.muted, lineHeight: 1.7, maxWidth: 360 }}>3 free credits on sign up. No card required. Research, scripts, voice, visuals, and SEO — done.</p>
+            <p style={{ fontSize: 14, color: c.muted, lineHeight: 1.7, maxWidth: 360 }}>10 free minutes on sign up. No card required. Research, scripts, voice, visuals, and SEO — done.</p>
           </div>
           <div className="cta-buttons" style={{ display: 'flex', flexDirection: 'column', gap: 8, flexShrink: 0 }}>
             <a href="/login" style={{ fontWeight: 500, fontSize: 14, color: c.accentFg, background: c.accent, padding: '12px 32px', borderRadius: 8, textAlign: 'center', whiteSpace: 'nowrap', transition: 'opacity .15s' }}

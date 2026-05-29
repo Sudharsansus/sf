@@ -54,7 +54,7 @@ export function useGenerate() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idemKey },
-        body: JSON.stringify({ topic: topic.trim(), voiceA, voiceB, language })
+        body: JSON.stringify({ topic: topic.trim(), voiceA, voiceB, language, duration: selectedDuration })
       })
       const data = await res.json()
 

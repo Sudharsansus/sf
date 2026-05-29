@@ -83,7 +83,7 @@ export function ProfileMenu({ c }: Props) {
 
           <div style={{ padding: '12px 16px', borderBottom: `1px solid ${c.border}` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-              <span style={{ fontSize: 11, color: c.muted }}>Credits remaining</span>
+              <span style={{ fontSize: 11, color: c.muted }}>Minutes remaining</span>
               <span style={{ fontSize: 12, fontWeight: 600, color: credits === 0 ? '#f87171' : c.text }}>{credits ?? '—'}</span>
             </div>
             <div style={{ height: 3, background: c.border, borderRadius: 2, overflow: 'hidden' }}>

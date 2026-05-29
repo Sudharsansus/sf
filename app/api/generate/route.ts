@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db, users, episodes, creditsLedger, workflowLocks } from '@/lib/db'
 import { runResearchAgent, runScriptAgent, runEvaluateAgent } from '@/lib/claude'
 import { generateLimit, freeGenerateLimit } from '@/lib/redis'
-import { checkGlobalBudget, checkUserHourlyCost, trackUserCost, EPISODE_COST_USD } from '@/lib/budget'
+import { canAffordDuration, checkGlobalBudget, checkUserHourlyCost, trackUserCost, getCostForDuration, getPlan, trackGlobalCost } from '@/lib/budget'
 import { eq, sql, and } from 'drizzle-orm'
 import { getSession } from '@/lib/session'
 import { z } from 'zod'
@@ -21,6 +21,7 @@ const Body = z.object({
   voiceA:   z.string().optional(),
   voiceB:   z.string().optional(),
   language: z.string().optional(),
+  duration: z.string().optional().default('5min'),
 })
 
 export async function POST(req: NextRequest) {
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest) {
     const voiceA   = parsed.data.voiceA
     const voiceB   = parsed.data.voiceB
     const language = parsed.data.language || 'en'
+    const duration = parsed.data.duration || '5min'
 
     // ── CREDIT CHECK + ATOMIC DEDUCTION ──────────────────────────────────────
     const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
@@ -74,12 +76,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: abuseCheck.reason }, { status: 422 })
     }
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    if (user.credits < 1) return NextResponse.json({ error: 'No credits remaining. Please upgrade.' }, { status: 402 })
+
+    const affordCheck = canAffordDuration(user.credits, duration, user.plan)
+    if (!affordCheck.allowed) {
+      return NextResponse.json({
+        error: affordCheck.reason,
+        creditsRequired: affordCheck.required,
+        creditsAvailable: user.credits,
+        upgrade: user.credits < affordCheck.required
+      }, { status: 402 })
+    }
+    const creditsNeeded = affordCheck.required
 
     // ── GUARD 1: Global daily budget ─────────────────────────────────────────
     const globalOk = await checkGlobalBudget()
     if (!globalOk) {
-      await db.update(users).set({ credits: sql`${users.credits} + 1` }).where(eq(users.id, user.id))
       logger.error('Global budget exceeded')
       return NextResponse.json({
         error: 'Service temporarily unavailable. Try again tomorrow.'
@@ -89,7 +100,6 @@ export async function POST(req: NextRequest) {
     // ── GUARD 2: Per-user hourly cost ────────────────────────────────────────
     const hourlyCheck = await checkUserHourlyCost(user.id, user.plan)
     if (!hourlyCheck.allowed) {
-      await db.update(users).set({ credits: sql`${users.credits} + 1` }).where(eq(users.id, user.id))
       return NextResponse.json({ error: hourlyCheck.reason }, { status: 429 })
     }
 
@@ -102,20 +112,25 @@ export async function POST(req: NextRequest) {
         : 'Too many requests. Please wait a moment.'
     }, { status: 429 })
 
-    // Atomic deduction — WHERE credits > 0 makes this race-condition-safe.
-    // If two requests arrive simultaneously only one will match and decrement;
-    // the other gets an empty result set and is rejected without a refund needed.
+    // Atomic deduction — WHERE >= creditsNeeded is race-condition-safe.
     const updateResult = await db.update(users)
-      .set({ credits: sql`${users.credits} - 1`, updatedAt: new Date() })
-      .where(and(eq(users.id, user.id), sql`${users.credits} > 0`))
+      .set({ credits: sql`${users.credits} - ${creditsNeeded}`, updatedAt: new Date() })
+      .where(and(eq(users.id, user.id), sql`${users.credits} >= ${creditsNeeded}`))
       .returning({ credits: users.credits })
 
     if (!updateResult.length) {
-      return NextResponse.json({ error: 'No credits remaining. Please upgrade.' }, { status: 402 })
+      return NextResponse.json({
+        error: `Not enough credits. Need ${creditsNeeded}, have ${user.credits}.`,
+        upgrade: true
+      }, { status: 402 })
     }
 
-    await db.insert(creditsLedger).values({ userId: user.id, amount: -1, reason: 'generate_v2' })
-    await auditLog({ userId: user.id, action: 'credit.deduct', resource: `user:${user.id}`, metadata: { amount: -1, reason: 'generate', topic } })
+    await db.insert(creditsLedger).values({ userId: user.id, amount: -creditsNeeded, reason: `generate_${duration}` })
+    await auditLog({ userId: user.id, action: 'credit.deduct', resource: `user:${user.id}`, metadata: { amount: -creditsNeeded, reason: 'generate', topic } })
+
+    const episodeCost = getCostForDuration(duration)
+    await trackUserCost(user.id, episodeCost)
+    await trackGlobalCost(episodeCost)
 
     // ── CREATE EPISODE (with idempotency key) ────────────────────────────────
     const shareId = randomUUID().replace(/-/g, '')
@@ -144,9 +159,9 @@ export async function POST(req: NextRequest) {
     } catch (e: any) {
       logger.error('Script agent failed', { error: e.message })
       // FATAL — refund and fail
-      await db.update(users).set({ credits: sql`${users.credits} + 1` }).where(eq(users.id, user.id))
-      await db.insert(creditsLedger).values({ userId: user.id, amount: 1, reason: 'script_failure_refund' })
-    await auditLog({ userId: user.id, action: 'credit.refund', resource: `user:${user.id}`, metadata: { amount: 1, reason: 'script_failure' } })
+      await db.update(users).set({ credits: sql`${users.credits} + ${creditsNeeded}` }).where(eq(users.id, user.id))
+      await db.insert(creditsLedger).values({ userId: user.id, amount: creditsNeeded, reason: `script_failure_refund_${duration}` })
+      await auditLog({ userId: user.id, action: 'credit.refund', resource: `user:${user.id}`, metadata: { amount: creditsNeeded, reason: 'script_failure' } })
       await db.update(episodes).set({ status: 'failed', agentStep: 'failed' }).where(eq(episodes.id, episode.id))
       return NextResponse.json({ error: `Script generation failed: ${e.message}` }, { status: 500 })
     }
@@ -173,8 +188,6 @@ export async function POST(req: NextRequest) {
     }).where(eq(episodes.id, episode.id))
 
     logger.info('Generate complete — awaiting user selection', { episodeId: episode.id, winner: winnerAngle })
-
-    await trackUserCost(user.id, EPISODE_COST_USD[user.plan as keyof typeof EPISODE_COST_USD] || 0.28)
 
     return NextResponse.json({
       episodeId: episode.id,

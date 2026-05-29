@@ -4,10 +4,10 @@ import { useSession } from 'next-auth/react'
 import { Nav } from '@/components/ui/Nav'
 
 const PLANS = [
-  { id: 'starter', name: 'Starter', credits: 20,   price: '$19',  yearly: '$15',  perEp: '$0.95/ep', desc: 'Best for Creators' },
-  { id: 'pro',     name: 'Pro',     credits: 100,  price: '$49',  yearly: '$39',  perEp: '$0.49/ep', desc: 'Best for SMEs',    badge: 'MOST POPULAR' },
-  { id: 'studio',  name: 'Studio',  credits: 300,  price: '$99',  yearly: '$79',  perEp: '$0.33/ep', desc: 'Best for Studios' },
-  { id: 'agency',  name: 'Agency',  credits: 1000, price: '$249', yearly: '$199', perEp: '$0.25/ep', desc: 'Best for Agencies' },
+  { id: 'starter', name: 'Starter', credits: 60,   price: '$19',  yearly: '$15',  perMin: '$0.32/min', desc: 'Best for Creators' },
+  { id: 'pro',     name: 'Pro',     credits: 200,  price: '$39',  yearly: '$31',  perMin: '$0.20/min', desc: 'Best for SMEs',    badge: 'MOST POPULAR' },
+  { id: 'studio',  name: 'Studio',  credits: 600,  price: '$79',  yearly: '$63',  perMin: '$0.13/min', desc: 'Best for Studios' },
+  { id: 'agency',  name: 'Agency',  credits: 2000, price: '$199', yearly: '$159', perMin: '$0.10/min', desc: 'Best for Agencies' },
 ]
 
 export default function DashboardPage() {
@@ -75,7 +75,7 @@ export default function DashboardPage() {
         {/* STATS */}
         <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', border: `1px solid ${c.border}`, borderRadius: 12, overflow: 'hidden', marginBottom: 36 }}>
           {[
-            [String(data?.credits ?? '—'), 'Credits remaining'],
+            [String(data?.credits ?? '—'), 'Minutes remaining'],
             [String(episodes.length), 'Episodes generated'],
             [data?.plan?.toUpperCase() || 'Free', 'Current plan'],
           ].map(([v, l], i, arr) => (
@@ -119,7 +119,7 @@ export default function DashboardPage() {
             <div>
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Your free plan includes</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 20px' }}>
-                {['3 full episodes free', 'Claude AI scripts', 'ElevenLabs audio', 'AI thumbnails', 'SEO package', 'No card required'].map(f => (
+                {['10 free minutes', 'Claude AI scripts', 'ElevenLabs audio', 'AI thumbnails', 'SEO package', 'No card required'].map(f => (
                   <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: c.muted }}>
                     <span style={{ color: '#4ade80', fontSize: 10, flexShrink: 0 }}>✓</span>
                     {f}
@@ -148,11 +148,11 @@ export default function DashboardPage() {
                   <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: -1.2, lineHeight: 1 }}>{p.price}</span>
                   <span style={{ fontSize: 12, color: c.muted }}>/mo</span>
                 </div>
-                <div style={{ fontSize: 11, color: c.subtle, marginBottom: 4 }}>{p.credits} credits · {p.perEp}</div>
+                <div style={{ fontSize: 11, color: c.subtle, marginBottom: 4 }}>{p.credits} min · {(p as any).perMin}</div>
                 <div style={{ fontSize: 11, color: c.muted, marginBottom: 16 }}>{p.desc}</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 20 }}>
                   {[
-                    `${p.credits} episodes/mo`,
+                    `${p.credits} min/mo`,
                     'All 16 voices',
                     '12 languages',
                     'Audio + thumbnails',

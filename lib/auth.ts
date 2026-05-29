@@ -32,7 +32,7 @@ export const authOptions = {
           email: user.email,
           name: user.name || undefined,
           image: user.image || undefined,
-          credits: 3,
+          credits: 10,
           plan: 'free'
         })
         // New user — will be redirected to onboarding via callbackUrl
