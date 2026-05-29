@@ -849,7 +849,7 @@ export default function Home() {
       {/* FEATURES */}
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0', position: 'relative', zIndex: 1 }}>
         <div style={{ marginBottom: 36 }}>
-          <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Why SceneForge</p>
+          <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Why Sus</p>
           <h2 style={{ fontSize: 'clamp(22px,3vw,34px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.2 }}>Not a generator. A production system.</h2>
         </div>
         <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: c.border, borderRadius: 10, overflow: 'hidden' }}>
@@ -1011,7 +1011,7 @@ export default function Home() {
               <path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 13 }}>SceneForge</span>
+          <span style={{ fontWeight: 600, fontSize: 13 }}>Sus</span>
         </div>
         <div style={{ display: 'flex', gap: 0 }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['Changelog','/changelog'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
@@ -1024,7 +1024,7 @@ export default function Home() {
           <a href="/onboarding" style={{ fontSize: 11, color: dark ? '#888' : c.subtle, transition: 'color .15s' }}
             onMouseEnter={e => (e.currentTarget.style.color = c.text)}
             onMouseLeave={e => (e.currentTarget.style.color = dark ? '#888' : c.subtle)}>Quick start guide</a>
-          <span style={{ fontSize: 11, color: dark ? '#aaa' : c.muted }}>© 2025 SceneForge</span>
+          <span style={{ fontSize: 11, color: dark ? '#aaa' : c.muted }}>© 2025 Sus</span>
         </div>
       </footer>
 

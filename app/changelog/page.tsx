@@ -103,13 +103,13 @@ export default function ChangelogPage() {
       </main>
 
       <footer style={{ borderTop: `1px solid ${c.border}`, padding: '18px 24px', maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontWeight: 600, fontSize: 13 }}>SceneForge</span>
+        <span style={{ fontWeight: 600, fontSize: 13 }}>Sus</span>
         <div style={{ display: 'flex' }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
             <a key={l} href={h} style={{ fontSize: 12, color: c.muted, padding: '4px 10px' }}>{l}</a>
           ))}
         </div>
-        <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
+        <span style={{ fontSize: 11, color: c.muted }}>© 2025 Sus</span>
       </footer>
     </div>
   )

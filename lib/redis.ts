@@ -9,30 +9,30 @@ export const redis = new Redis({
 // ── PER-USER LIMITS ───────────────────────────────────────────────────────────
 // 5 generations per hour — primary API bill protection
 export const generateLimit = new Ratelimit({
-  redis, limiter: Ratelimit.slidingWindow(5, '1 h'), prefix: 'sf:gen:user'
+  redis, limiter: Ratelimit.slidingWindow(5, '1 h'), prefix: 'sus:gen:user'
 })
 
 // 3 refines per hour — ElevenLabs is expensive
 export const refineLimit = new Ratelimit({
-  redis, limiter: Ratelimit.slidingWindow(3, '1 h'), prefix: 'sf:refine:user'
+  redis, limiter: Ratelimit.slidingWindow(3, '1 h'), prefix: 'sus:refine:user'
 })
 
 // 60 chat messages per minute per user
 export const chatLimit = new Ratelimit({
-  redis, limiter: Ratelimit.slidingWindow(60, '1 m'), prefix: 'sf:chat:user'
+  redis, limiter: Ratelimit.slidingWindow(60, '1 m'), prefix: 'sus:chat:user'
 })
 
 // 20 enumeration-style lookups per minute per user (share/jobs/credits endpoints)
 export const enumLimit = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(20, '1 m'),
-  prefix: 'sf:enum:user'
+  prefix: 'sus:enum:user'
 })
 
 // ── PER-IP LIMITS (public + unauthenticated routes) ───────────────────────────
 // Prevents IP-level abuse of public endpoints
 export const ipLimit = new Ratelimit({
-  redis, limiter: Ratelimit.slidingWindow(100, '1 m'), prefix: 'sf:ip'
+  redis, limiter: Ratelimit.slidingWindow(100, '1 m'), prefix: 'sus:ip'
 })
 
 // ── COST-BASED LIMIT ──────────────────────────────────────────────────────────

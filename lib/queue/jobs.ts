@@ -66,7 +66,7 @@ export async function getJobStatus(jobId: string): Promise<{ status: string; res
   STEP 2: Create trigger.config.ts
     import { TriggerClient } from "@trigger.dev/sdk"
     export const triggerClient = new TriggerClient({
-      id: "sceneforge",
+      id: "sus",
       apiKey: process.env.TRIGGER_API_KEY!,
       apiUrl: process.env.TRIGGER_API_URL,
     })

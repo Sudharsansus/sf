@@ -39,19 +39,19 @@ export default function TermsPage() {
 
         {[
           ['Content ownership', [
-            'You own all episodes you generate with SceneForge. The scripts, audio, and thumbnails are yours. We claim no ownership over your content.',
+            'You own all episodes you generate with Sus. The scripts, audio, and thumbnails are yours. We claim no ownership over your content.',
           ]],
           ['Credits system', [
             'Credits are consumed when you generate an episode. 1 credit = 1 full episode (research + scripts + audio + thumbnails). Credits are non-refundable once an episode is successfully generated.',
             'If generation fails due to a platform error, credits are automatically refunded to your account.',
           ]],
           ['Acceptable use', [
-            'You may not use SceneForge to generate content that is illegal, hateful, sexually explicit, or designed to deceive. We reserve the right to terminate accounts that violate these rules.',
+            'You may not use Sus to generate content that is illegal, hateful, sexually explicit, or designed to deceive. We reserve the right to terminate accounts that violate these rules.',
           ]],
           ['Service availability', [
             'We aim for high availability but cannot guarantee 100% uptime. We are not liable for losses caused by service interruptions.',
           ]],
-          ['Contact', ['Questions? Email us at hello@sceneforge.ai']],
+          ['Contact', ['Questions? Email us at hello@sus.ai']],
         ].map(([heading, paras]) => (
           <div key={String(heading)} style={{ marginBottom: 36 }}>
             <h2 style={{ fontSize: 16, fontWeight: 600, letterSpacing: -.2, marginBottom: 14, color: c.text }}>{heading}</h2>
@@ -68,7 +68,7 @@ export default function TermsPage() {
           <div style={{ width: 18, height: 18, borderRadius: 5, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 13 }}>SceneForge</span>
+          <span style={{ fontWeight: 600, fontSize: 13 }}>Sus</span>
         </div>
         <div style={{ display: 'flex' }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
@@ -77,7 +77,7 @@ export default function TermsPage() {
               onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>{l}</a>
           ))}
         </div>
-        <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
+        <span style={{ fontSize: 11, color: c.muted }}>© 2025 Sus</span>
       </footer>
     </div>
   )

@@ -37,7 +37,7 @@ export async function enqueueJob(
   // Trigger.dev is NOT bundled — it must be installed separately.
   // Install: npm install @trigger.dev/sdk @trigger.dev/nextjs
   // Then replace this function body with:
-  //   const client = new TriggerClient({ id: 'sceneforge', apiKey: process.env.TRIGGER_API_KEY! })
+  //   const client = new TriggerClient({ id: 'sus', apiKey: process.env.TRIGGER_API_KEY! })
   //   const event = await client.sendEvent({ name: payload.jobType, payload, id: payload.idemKey })
   //   return { jobId: event.id, mode: 'queued' }
   return { jobId: `inline-${Date.now()}`, mode: 'inline' }

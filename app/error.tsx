@@ -13,7 +13,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
           <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 14 }}>SceneForge</span>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>Sus</span>
         </div>
         <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 22 }}>⚠</div>
         <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: -.4, marginBottom: 10 }}>Something went wrong</h1>

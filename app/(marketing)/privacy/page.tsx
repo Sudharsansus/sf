@@ -55,7 +55,7 @@ export default function PrivacyPage() {
             'You can delete your account and all associated data at any time from Settings. We will permanently delete all your data within 30 days of request.',
             'We do not sell your data. We do not use your data for advertising. We do not share your data with third parties except as described above.',
           ]],
-          ['Contact', ['Questions? Email us at privacy@sceneforge.ai']],
+          ['Contact', ['Questions? Email us at privacy@sus.ai']],
         ].map(([heading, paras]) => (
           <div key={String(heading)} style={{ marginBottom: 36 }}>
             <h2 style={{ fontSize: 16, fontWeight: 600, letterSpacing: -.2, marginBottom: 14, color: c.text }}>{heading}</h2>
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
           <div style={{ width: 18, height: 18, borderRadius: 5, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 13 }}>SceneForge</span>
+          <span style={{ fontWeight: 600, fontSize: 13 }}>Sus</span>
         </div>
         <div style={{ display: 'flex' }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
               onMouseLeave={e => (e.currentTarget.style.color = c.muted)}>{l}</a>
           ))}
         </div>
-        <span style={{ fontSize: 11, color: c.muted }}>© 2025 SceneForge</span>
+        <span style={{ fontSize: 11, color: c.muted }}>© 2025 Sus</span>
       </footer>
     </div>
   )

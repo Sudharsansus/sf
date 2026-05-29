@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const [ep] = await db.select().from(episodes).where(eq(episodes.shareId, params.id)).limit(1)
   if (!ep) return { title: 'Episode not found' }
   return {
-    title: `${ep.title} — SceneForge`,
+    title: `${ep.title} — Sus`,
     description: ep.topic,
     openGraph: { title: ep.title, description: ep.topic, type: 'website' },
     twitter: { card: 'summary_large_image', title: ep.title, description: ep.topic }
@@ -47,7 +47,7 @@ export default async function SharePage({ params }: { params: { id: string } }) 
           <div style={{ width: 22, height: 22, borderRadius: 6, background: c.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>SceneForge</span>
+          <span style={{ fontWeight: 600, fontSize: 14, letterSpacing: -.3 }}>Sus</span>
         </a>
         <a href="/login" style={{ fontSize: 13, fontWeight: 500, background: c.text, color: c.bg, padding: '7px 16px', borderRadius: 7 }}>Make your own →</a>
       </nav>

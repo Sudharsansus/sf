@@ -48,7 +48,7 @@ export async function checkForAbuse(userId: string, topic: string): Promise<Abus
   const velocityLimiter = new Ratelimit({
     redis,
     limiter: Ratelimit.slidingWindow(20, '10 m'),
-    prefix: 'sf:abuse:velocity'
+    prefix: 'sus:abuse:velocity'
   })
   const { success: velocityOk } = await velocityLimiter.limit(userId)
   if (!velocityOk) {

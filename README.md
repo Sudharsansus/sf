@@ -1,4 +1,4 @@
-# SceneForge — AI Production Infrastructure for Creator Media
+# Sus — AI Production Infrastructure for Creator Media
 
 > Produce studio-grade scripted content in minutes. Human-in-the-loop. Creator-controlled.
 
@@ -8,7 +8,7 @@
 
 ## What it is
 
-SceneForge compresses weeks of research, scripting, and production into a single workflow. You review, edit, and publish on your own schedule. No auto-posting. No spam. Full creator control.
+Sus compresses weeks of research, scripting, and production into a single workflow. You review, edit, and publish on your own schedule. No auto-posting. No spam. Full creator control.
 
 **Category:** AI-assisted creator production operating system.
 
@@ -80,14 +80,14 @@ Episode complete — user publishes when ready
 ## Deploy (5 minutes)
 
 ```bash
-git init && git add . && git commit -m "SceneForge v6"
+git init && git add . && git commit -m "Sus v6"
 git remote add origin https://github.com/Sudharsansus/sf
 git push -u origin main --force
 ```
 
 1. **Neon** — SQL Editor → paste `db/schema.sql` → Run
 2. **Upstash** — New Redis → copy URL + Token
-3. **Cloudflare R2** — bucket `sceneforge-audio` → enable public access
+3. **Cloudflare R2** — bucket `sus-audio` → enable public access
 4. **Vercel** — import repo → add env vars → deploy
 
 ### Minimum env vars

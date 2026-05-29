@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
   const requestOrigin = req.headers.get('origin')
   const allowedOrigins = [
     process.env.NEXT_PUBLIC_APP_URL || '',
-    'https://sf-bice.vercel.app',
+    'https://sus.studio',
   ].filter(Boolean)
 
   if (

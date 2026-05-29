@@ -3,10 +3,10 @@ import './globals.css'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
-  title: 'SceneForge — AI Creator Production Studio',
+  title: 'Sus — AI Creator Production Studio',
   description: 'Turn any topic into a broadcast-quality episode in minutes. 12 languages. 16 voices. Research, scripts, voice, visuals, and SEO — all in one workflow.',
   keywords: ['AI podcast', 'AI creator', 'script generator', 'ElevenLabs', 'podcast production', 'AI content'],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://sf-bice.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://sus.studio'),
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
@@ -15,14 +15,14 @@ export const metadata: Metadata = {
     shortcut: '/favicon.svg',
   },
   openGraph: {
-    title: 'SceneForge — AI Creator Production Studio',
+    title: 'Sus — AI Creator Production Studio',
     description: 'Turn any topic into a broadcast-ready episode in minutes.',
     type: 'website',
     images: ['/og-image.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SceneForge — AI Creator Production Studio',
+    title: 'Sus — AI Creator Production Studio',
     description: 'Turn any topic into a broadcast-ready episode in minutes.',
   }
 }
