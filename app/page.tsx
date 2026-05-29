@@ -741,9 +741,9 @@ export default function Home() {
           {(g.step === 'idle' || g.step === 'failed') && (
             <div style={{ marginTop: 10, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
               <a href="/upload?tab=script"
-                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: c.muted, background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`, padding: '9px 18px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; e.currentTarget.style.color = c.text; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'; e.currentTarget.style.color = c.muted; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: '#c4b5fd', background: 'rgba(139,92,246,0.08)', border: '1.5px solid rgba(139,92,246,0.6)', padding: '10px 20px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none', boxShadow: '0 0 16px rgba(139,92,246,0.2), inset 0 0 16px rgba(139,92,246,0.05)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.18)'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.9)'; e.currentTarget.style.boxShadow = '0 0 28px rgba(139,92,246,0.45), inset 0 0 20px rgba(139,92,246,0.1)'; e.currentTarget.style.color = '#ddd6fe' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.6)'; e.currentTarget.style.boxShadow = '0 0 16px rgba(139,92,246,0.2), inset 0 0 16px rgba(139,92,246,0.05)'; e.currentTarget.style.color = '#c4b5fd' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                   <polyline points="14 2 14 8 20 8"/>
@@ -753,9 +753,9 @@ export default function Home() {
                 Upload script
               </a>
               <a href="/upload?tab=audio"
-                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: c.muted, background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`, padding: '9px 18px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; e.currentTarget.style.color = c.text; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'; e.currentTarget.style.color = c.muted; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: '#fdba74', background: 'rgba(249,115,22,0.08)', border: '1.5px solid rgba(249,115,22,0.6)', padding: '10px 20px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none', boxShadow: '0 0 16px rgba(249,115,22,0.2), inset 0 0 16px rgba(249,115,22,0.05)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(249,115,22,0.18)'; e.currentTarget.style.borderColor = 'rgba(249,115,22,0.9)'; e.currentTarget.style.boxShadow = '0 0 28px rgba(249,115,22,0.45), inset 0 0 20px rgba(249,115,22,0.1)'; e.currentTarget.style.color = '#fed7aa' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(249,115,22,0.08)'; e.currentTarget.style.borderColor = 'rgba(249,115,22,0.6)'; e.currentTarget.style.boxShadow = '0 0 16px rgba(249,115,22,0.2), inset 0 0 16px rgba(249,115,22,0.05)'; e.currentTarget.style.color = '#fdba74' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
                   <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
@@ -764,9 +764,9 @@ export default function Home() {
                 Upload audio
               </a>
               <a href="/upload"
-                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: c.muted, background: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)', border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`, padding: '9px 18px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; e.currentTarget.style.color = c.text; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'; e.currentTarget.style.color = c.muted; e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: '#f9a8d4', background: 'rgba(236,72,153,0.08)', border: '1.5px solid rgba(236,72,153,0.6)', padding: '10px 20px', borderRadius: 10, backdropFilter: 'blur(10px)', transition: 'all .2s', textDecoration: 'none', boxShadow: '0 0 16px rgba(236,72,153,0.2), inset 0 0 16px rgba(236,72,153,0.05)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(236,72,153,0.18)'; e.currentTarget.style.borderColor = 'rgba(236,72,153,0.9)'; e.currentTarget.style.boxShadow = '0 0 28px rgba(236,72,153,0.45), inset 0 0 20px rgba(236,72,153,0.1)'; e.currentTarget.style.color = '#fbcfe8' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(236,72,153,0.08)'; e.currentTarget.style.borderColor = 'rgba(236,72,153,0.6)'; e.currentTarget.style.boxShadow = '0 0 16px rgba(236,72,153,0.2), inset 0 0 16px rgba(236,72,153,0.05)'; e.currentTarget.style.color = '#f9a8d4' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 20h9"/>
                   <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
