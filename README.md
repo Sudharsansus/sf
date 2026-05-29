@@ -1,4 +1,4 @@
-# Sus — AI Production Infrastructure for Creator Media
+# Sus — AI Creator Production Studio
 
 > Produce studio-grade scripted content in minutes. Human-in-the-loop. Creator-controlled.
 
