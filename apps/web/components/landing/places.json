@@ -82,5 +82,68 @@
   "author": "Dang Son",
   "license": "CC0",
   "url": "https://commons.wikimedia.org/wiki/File:12-Chureito-pagoda-and-Mount-Fuji-Japan_(29677439878).jpg"
+ },
+ "te": {
+  "place": "Charminar",
+  "src": "/landing/places/te.jpg",
+  "author": "DidierTais",
+  "license": "CC BY-SA 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Charminar_Hyderabad_1.jpg"
+ },
+ "kn": {
+  "place": "Mysore Palace",
+  "src": "/landing/places/kn.jpg",
+  "author": "Subhashish Panigrahi",
+  "license": "CC BY-SA 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Illuminated_Mysore_palace_at_night.JPG"
+ },
+ "ml": {
+  "place": "Kerala backwaters",
+  "src": "/landing/places/ml.jpg",
+  "author": "Augustus Binu : flickr",
+  "license": "CC BY-SA 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:House_Boat_DSW.jpg"
+ },
+ "bn": {
+  "place": "Victoria Memorial",
+  "src": "/landing/places/bn.jpg",
+  "author": "Subhrajyoti07",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Victoria_Memorial_situated_in_Kolkata.jpg"
+ },
+ "mr": {
+  "place": "Gateway of India",
+  "src": "/landing/places/mr.jpg",
+  "author": "A.Savin",
+  "license": "FAL",
+  "url": "https://commons.wikimedia.org/wiki/File:Mumbai_03-2016_30_Gateway_of_India.jpg"
+ },
+ "gu": {
+  "place": "Rani ki Vav",
+  "src": "/landing/places/gu.jpg",
+  "author": "Bernard Gagnon",
+  "license": "CC BY-SA 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Rani_ki_vav_02.jpg"
+ },
+ "pa": {
+  "place": "Golden Temple",
+  "src": "/landing/places/pa.jpg",
+  "author": "Shagil Kannur",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:The_Golden_Temple_of_Amrithsar_7.jpg"
+ },
+ "or": {
+  "place": "Konark Sun Temple",
+  "src": "/landing/places/or.jpg",
+  "author": "Subham9423",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Konarka_Temple.jpg"
+ },
+ "ur": {
+  "place": "Qutb Minar",
+  "src": "/landing/places/ur.jpg",
+  "author": "Wasir kasab",
+  "license": "CC BY 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Qutb_Minar_2022.jpg"
  }
 }

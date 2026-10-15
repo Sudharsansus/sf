@@ -8,6 +8,7 @@ import { ScriptPicker } from '@/components/studio/ScriptPicker'
 import { EpisodeResult } from '@/components/studio/EpisodeResult'
 import { ChatBox } from '@/components/studio/ChatBox'
 import { AuthPopup } from '@/components/ui/AuthPopup'
+import { LANGUAGES } from '@/lib/languages'
 import '@/components/landing/landing.css'
 import { PipelineDemo } from '@/components/landing/PipelineDemo'
 import { UseCaseTabs } from '@/components/landing/UseCaseTabs'
@@ -44,20 +45,6 @@ const VOICES = [
   { id: 'nPczCjzI2devNBz1zQrb', name: 'Brian',     gender: 'M', accent: 'American' },
 ]
 
-const LANGUAGES = [
-  { code: 'en', name: 'English',    flag: '🇺🇸' },
-  { code: 'hi', name: 'Hindi',      flag: '🇮🇳' },
-  { code: 'ta', name: 'Tamil',      flag: '🇮🇳' },
-  { code: 'es', name: 'Spanish',    flag: '🇪🇸' },
-  { code: 'fr', name: 'French',     flag: '🇫🇷' },
-  { code: 'de', name: 'German',     flag: '🇩🇪' },
-  { code: 'pt', name: 'Portuguese', flag: '🇧🇷' },
-  { code: 'ja', name: 'Japanese',   flag: '🇯🇵' },
-  { code: 'ko', name: 'Korean',     flag: '🇰🇷' },
-  { code: 'ar', name: 'Arabic',     flag: '🇸🇦' },
-  { code: 'it', name: 'Italian',    flag: '🇮🇹' },
-  { code: 'zh', name: 'Chinese',    flag: '🇨🇳' },
-]
 
 const SUGGESTIONS = [
   {
@@ -673,7 +660,7 @@ export default function Home() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, opacity: 0.3, pointerEvents: 'none', filter: 'blur(1px)' }}>
                       {LANGUAGES.map(lang => (
                         <div key={lang.code} style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${c.border}`, textAlign: 'center', fontSize: 10 }}>
-                          <div style={{ fontSize: 14, marginBottom: 2 }}>{lang.flag}</div>
+                          <div lang={lang.code} style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{lang.native}</div>
                           {lang.name}
                         </div>
                       ))}
@@ -695,7 +682,7 @@ export default function Home() {
                     {LANGUAGES.map(lang => (
                       <button key={lang.code} onClick={() => setLanguage(lang.code)}
                         style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${language === lang.code ? c.text : c.border}`, background: language === lang.code ? c.surface2 : 'transparent', color: language === lang.code ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: language === lang.code ? 600 : 400, textAlign: 'center' }}>
-                        <div style={{ fontSize: 14, marginBottom: 2 }}>{lang.flag}</div>
+                        <div lang={lang.code} style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{lang.native}</div>
                         {lang.name}
                       </button>
                     ))}
@@ -1013,7 +1000,7 @@ export default function Home() {
             ['Script × 5 variations',   true,  true,  true,  true,  true],
             ['AI script evaluation',    true,  true,  true,  true,  true],
             ['16 voice options',        true,  true,  true,  true,  true],
-            ['12 languages',            true,  true,  true,  true,  true],
+            ['21 languages (11 Indian)', true,  true,  true,  true,  true],
             ['Audio rendering',         true,  true,  true,  true,  true],
             ['AI thumbnails',           false, true,  true,  true,  true],
             ['SEO package',             false, true,  true,  true,  true],

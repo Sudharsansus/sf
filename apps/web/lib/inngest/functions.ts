@@ -56,7 +56,8 @@ export const generateEpisode = inngest.createFunction(
       await setEpisode(d.episodeId, { status: 'scripting', agentStep: 'scripts' })
       const data = await runScriptAgent(d.topic, research, d.language, ctx)
       if (!data.scripts.length) throw new Error('No scripts returned')
-      await setEpisode(d.episodeId, { allScripts: data, agentStep: 'scripts_done' })
+      // Language rides along with the scripts so production voices it correctly.
+      await setEpisode(d.episodeId, { allScripts: { ...data, language: d.language }, agentStep: 'scripts_done' })
       return data
     })
 
@@ -120,7 +121,8 @@ export const produceEpisode = inngest.createFunction(
         }
       }
       await setEpisode(d.episodeId, { selectedScript: chosen, script: chosen, title: chosen.title, agentStep: 'refined' })
-      return { title: chosen.title || ep.topic, topic: ep.topic, lines: chosen.lines.map(l => ({ speaker: l.speaker, text: l.text })), seconds: chosen.duration_estimate_seconds }
+      const language = (ep.allScripts as { language?: string } | null)?.language || 'en'
+      return { language, title: chosen.title || ep.topic, topic: ep.topic, lines: chosen.lines.map(l => ({ speaker: l.speaker, text: l.text })), seconds: chosen.duration_estimate_seconds }
     })
 
     // Voices: one step per chunk keeps every step well under serverless time limits.
@@ -131,7 +133,7 @@ export const produceEpisode = inngest.createFunction(
         parts.push(await step.run(`audio-part-${n}`, async () => {
           const buf = await renderLines(script.lines as Line[], offset, LINES_PER_AUDIO_STEP, {
             A: d.voiceA || VOICE_A, B: d.voiceB || VOICE_B,
-          })
+          }, script.language)
           return uploadBuffer(buf, `episodes/${d.episodeId}/part-${n}.mp3`, 'audio/mpeg')
         }))
       }

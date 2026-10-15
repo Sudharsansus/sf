@@ -28,7 +28,8 @@ Given an episode title and topic, return exactly 3 distinct variants.
 
 Each variant:
 - layout: one of bold-left, centered, split — use each layout once
-- headline: 2 to 6 punchy words, readable at small sizes, no emojis
+- headline: 2 to 6 punchy words, readable at small sizes, no emojis.
+  Always write the headline and kicker in English with Latin letters, even if the title is in another language.
 - kicker: a short label above the headline (e.g. "EP. 12", "DEEP DIVE", "STORY"), max 3 words
 - background, accent, text: hex colors like #0b0b0f. Text must contrast strongly with background.
   Make the three variants feel clearly different from each other.`

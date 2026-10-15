@@ -5,6 +5,11 @@ import { Section, ORANGE, type LandingProps } from './Section'
 import { useInView, useReducedMotion } from './useReveal'
 import { Waveform } from './Waveform'
 import { GREETINGS } from './audioScript'
+
+const REGIONS = [
+  { key: 'india', label: 'India', list: GREETINGS.filter(g => g.region === 'india') },
+  { key: 'global', label: 'Global', list: GREETINGS.filter(g => g.region === 'global') },
+] as const
 import PLACES from './places.json'
 
 type Place = { place: string; src: string; author: string; license: string; url: string }
@@ -15,39 +20,42 @@ const clip = (code: string) => `/landing/audio/greet-${code}.mp3`
 export function LanguagePlaces({ c, dark }: LandingProps) {
   const [ref, inView] = useInView<HTMLDivElement>(0.25)
   const reduced = useReducedMotion()
+  const [r, setR] = useState(0)               // 0 = India first
   const [i, setI] = useState(0)
+  const LIST = REGIONS[r].list
   const [hold, setHold] = useState(false)      // user picked a language or is hovering
   const [playing, setPlaying] = useState(false)
   const [hasAudio, setHasAudio] = useState(false)
   const audio = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    fetch(clip('en'), { method: 'HEAD' }).then(r => setHasAudio(r.ok)).catch(() => {})
+    fetch(clip('hi'), { method: 'HEAD' }).then(r => setHasAudio(r.ok)).catch(() => {})
     return () => { audio.current?.pause() }
   }, [])
 
   // Tour the languages while visible and idle.
   useEffect(() => {
     if (!inView || hold || playing || reduced) return
-    const t = setInterval(() => setI(v => (v + 1) % GREETINGS.length), 5000)
+    const t = setInterval(() => setI(v => (v + 1) % LIST.length), 5000)
     return () => clearInterval(t)
-  }, [inView, hold, playing, reduced])
+  }, [inView, hold, playing, reduced, LIST.length])
 
   useEffect(() => { if (!inView) stop() }, [inView]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function select(k: number) { stop(); setI(k); setHold(true) }
+  function switchRegion(k: number) { stop(); setR(k); setI(0) }
   function stop() { audio.current?.pause(); setPlaying(false) }
   function play() {
     audio.current ??= new Audio()
     const a = audio.current
-    a.src = clip(GREETINGS[i].code)
+    a.src = clip(LIST[i].code)
     a.onended = () => setPlaying(false)
     a.onerror = () => setPlaying(false)
     setPlaying(true)
     a.play().catch(() => setPlaying(false))
   }
 
-  const g = GREETINGS[i]
+  const g = LIST[i]
   const p = places[g.code]
   const hue = HUES[i % HUES.length]
 
@@ -55,16 +63,16 @@ export function LanguagePlaces({ c, dark }: LandingProps) {
     <Section c={c} dark={dark} eyebrow="Languages"
       title={<>Create in{' '}
         <span className="word-swap" style={{ color: ORANGE }}>
-          {GREETINGS.map((w, k) => <span key={w.code} aria-hidden={k !== i} className={k === i ? 'on' : k === (i - 1 + GREETINGS.length) % GREETINGS.length ? 'past' : ''}>{w.native}</span>)}
+          {LIST.map((w, k) => <span key={w.code} aria-hidden={k !== i} className={k === i ? 'on' : k === (i - 1 + LIST.length) % LIST.length ? 'past' : ''}>{w.native}</span>)}
         </span></>}
-      subtitle="Research, scripts and voices in 12 languages — with hosts that sound local, not translated.">
+      subtitle={`Made in India, for India first: ${REGIONS[0].list.length} Indian languages — plus ${REGIONS[1].list.length} global ones. Research, scripts and voices with hosts that sound local, not translated.`}>
       <div ref={ref} className="l-split" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 20, alignItems: 'stretch' }}
         onMouseEnter={() => setHold(true)} onMouseLeave={() => !playing && setHold(false)}>
 
         {/* stage: landmark photo + host card */}
         <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div className="l-stage" style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', aspectRatio: '16 / 10', background: c.surface2, border: `1px solid ${c.border}` }}>
-            {GREETINGS.map((w, k) => {
+            {LIST.map((w, k) => {
               const pl = places[w.code]
               const on = k === i
               return pl && (
@@ -118,7 +126,16 @@ export function LanguagePlaces({ c, dark }: LandingProps) {
 
         {/* language picker */}
         <div className="stagger" style={{ ['--d' as string]: 1, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, alignContent: 'start' }}>
-          {GREETINGS.map((w, k) => {
+          <div role="tablist" style={{ gridColumn: '1 / -1', display: 'flex', gap: 4, padding: 4, borderRadius: 999, border: `1px solid ${c.border}`, marginBottom: 4, justifySelf: 'start' }}>
+            {REGIONS.map((reg, k) => (
+              <button key={reg.key} role="tab" aria-selected={k === r} onClick={() => switchRegion(k)} className="tab-pill"
+                style={{ padding: '7px 16px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+                  background: k === r ? c.accent : 'transparent', color: k === r ? c.accentFg : c.muted }}>
+                {reg.label} <span style={{ opacity: .6, fontWeight: 500 }}>{reg.list.length}</span>
+              </button>
+            ))}
+          </div>
+          {LIST.map((w, k) => {
             const on = k === i
             return (
               <button key={w.code} onClick={() => select(k)} aria-pressed={on}

@@ -6,24 +6,30 @@ const key = () => process.env.ELEVENLABS_API_KEY!
 export const VOICE_A = process.env.ELEVENLABS_VOICE_A || '21m00Tcm4TlvDq8ikWAM' // Rachel
 export const VOICE_B = process.env.ELEVENLABS_VOICE_B || 'AZnzlk1XvdvUeBnXmlld' // Domi
 
-const TTS_MODEL = process.env.ELEVENLABS_TTS_MODEL || 'eleven_multilingual_v2'
-const STT_MODEL = process.env.ELEVENLABS_STT_MODEL || 'scribe_v1'
+const TTS_V2 = 'eleven_multilingual_v2'
+const TTS_V3 = 'eleven_v3'
+const STT_MODEL = process.env.ELEVENLABS_STT_MODEL || 'scribe_v2'
+
+// Multilingual v2 is steadier for these; v3 covers the rest, including Telugu,
+// Kannada, Malayalam, Bengali, Marathi, Gujarati, Punjabi, Odia and Urdu.
+const V2_LANGS = new Set(['en', 'hi', 'ta', 'es', 'fr', 'de', 'pt', 'ar', 'ja', 'ko', 'it', 'zh'])
+export const ttsModelFor = (language = 'en') => (V2_LANGS.has(language) ? TTS_V2 : TTS_V3)
 const CONCURRENCY = 4
 
 export type Line = { speaker: string; text: string }
 
 // ── TEXT TO SPEECH ────────────────────────────────────────────────────────────
 export async function textToSpeech(
-  text: string, voiceId: string, context?: { previous?: string; next?: string }
+  text: string, voiceId: string, model: string = TTS_V2, context?: { previous?: string; next?: string }
 ): Promise<Buffer> {
   const res = await fetch(`${BASE}/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
     method: 'POST',
     headers: { 'xi-api-key': key(), 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
     body: JSON.stringify({
       text,
-      model_id: TTS_MODEL,
-      previous_text: context?.previous,
-      next_text: context?.next,
+      model_id: model,
+      // v3 doesn't accept neighbouring-text context
+      ...(model === TTS_V2 ? { previous_text: context?.previous, next_text: context?.next } : {}),
       voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true },
     }),
   })
@@ -38,8 +44,10 @@ export async function textToSpeech(
  */
 export async function renderLines(
   all: Line[], offset: number, count: number,
-  voices: { A: string; B: string } = { A: VOICE_A, B: VOICE_B }
+  voices: { A: string; B: string } = { A: VOICE_A, B: VOICE_B },
+  language = 'en'
 ): Promise<Buffer> {
+  const model = ttsModelFor(language)
   const slice = all.slice(offset, offset + count)
   const out: Buffer[] = new Array(slice.length)
   let next = 0
@@ -48,14 +56,14 @@ export async function renderLines(
       const i = next++
       const idx = offset + i
       const line = slice[i]
-      out[i] = await textToSpeech(line.text, line.speaker === 'B' ? voices.B : voices.A, {
+      out[i] = await textToSpeech(line.text, line.speaker === 'B' ? voices.B : voices.A, model, {
         previous: all[idx - 1]?.text,
         next: all[idx + 1]?.text,
       })
     }
   }
   await Promise.all(Array.from({ length: Math.min(CONCURRENCY, slice.length) }, worker))
-  logger.info('ElevenLabs rendered', { offset, lines: slice.length })
+  logger.info('ElevenLabs rendered', { offset, lines: slice.length, model })
   return Buffer.concat(out)
 }
 

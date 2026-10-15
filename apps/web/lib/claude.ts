@@ -4,6 +4,7 @@
 
 import * as z from 'zod/v4'
 import { generateJSON, type AICtx } from './ai'
+import { languageName } from './languages'
 import {
   RESEARCH_PROMPT, SCRIPTS_PROMPT, EVALUATE_PROMPT,
   REFINE_PROMPT, SEO_PROMPT
@@ -89,13 +90,8 @@ export type Research = z.infer<typeof ResearchSchema>
 export type Evaluation = z.infer<typeof EvaluationSchema>
 export type Refined = z.infer<typeof RefinedSchema>
 
-const LANGUAGES_MAP: Record<string, string> = {
-  hi: 'Hindi', ta: 'Tamil', es: 'Spanish', fr: 'French',
-  de: 'German', pt: 'Portuguese', ja: 'Japanese',
-  ko: 'Korean', ar: 'Arabic', it: 'Italian', zh: 'Chinese'
-}
 const langLine = (language: string) =>
-  language !== 'en' ? `\n\nWrite everything in ${LANGUAGES_MAP[language] || language}.` : ''
+  language !== 'en' ? `\n\nWrite everything in ${languageName(language)}, in its native script. Keep names and numbers natural for native speakers.` : ''
 
 // ── AGENTS ────────────────────────────────────────────────────────────────────
 export function runResearchAgent(topic: string, language = 'en', ctx?: AICtx) {

@@ -133,7 +133,7 @@ ISAII is an autonomous AI podcast studio that:
 1. Researches any topic
 2. Writes 5 script angles, then scores and ranks them
 3. Lets the creator pick an angle and length (1 to 60 minutes), then refines it
-4. Renders two-speaker audio with ElevenLabs voices in 12 languages
+4. Renders two-speaker audio with ElevenLabs voices in 21 languages, including Hindi, Tamil, Telugu, Kannada, Malayalam, Bengali, Marathi, Gujarati, Punjabi, Odia and Urdu
 5. Designs 3 thumbnails and writes all SEO copy, captions and show notes
 6. Publishes to YouTube or Instagram only when the creator clicks publish
 

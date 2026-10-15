@@ -154,7 +154,7 @@ export default function DashboardPage() {
                   {[
                     `${p.credits} min/mo`,
                     'All 16 voices',
-                    '12 languages',
+                    '21 languages',
                     'Audio + thumbnails',
                     'SEO package',
                     p.id === 'agency' ? 'Team access' : 'YouTube upload',

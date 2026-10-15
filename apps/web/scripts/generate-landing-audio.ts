@@ -4,7 +4,7 @@
 
 import { mkdirSync, existsSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { CONVO, CONVO_VOICES, GREETINGS } from '../components/landing/audioScript'
+import { CONVO, CONVO_VOICES, GREETINGS, TTS_MODEL_V2, ttsModelFor } from '../components/landing/audioScript'
 
 const KEY = process.env.ELEVENLABS_API_KEY
 if (!KEY) { console.error('Set ELEVENLABS_API_KEY (e.g. in the repo root .env)'); process.exit(1) }
@@ -13,13 +13,14 @@ const OUT = join(process.cwd(), 'public/landing/audio')
 const force = process.argv.includes('--force')
 mkdirSync(OUT, { recursive: true })
 
-async function tts(text: string, voice: string, context?: { previous?: string; next?: string }) {
+async function tts(text: string, voice: string, model: string, context?: { previous?: string; next?: string }) {
   const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_44100_128`, {
     method: 'POST',
     headers: { 'xi-api-key': KEY!, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
     body: JSON.stringify({
-      text, model_id: 'eleven_multilingual_v2',
-      previous_text: context?.previous, next_text: context?.next,
+      text, model_id: model,
+      // v3 doesn't take neighbouring-text context
+      ...(model === TTS_MODEL_V2 ? { previous_text: context?.previous, next_text: context?.next } : {}),
       voice_settings: { stability: 0.45, similarity_boost: 0.75, style: 0.35, use_speaker_boost: true },
     }),
   })
@@ -36,10 +37,10 @@ async function save(name: string, make: () => Promise<Buffer>) {
 
 async function main() {
   for (const [i, line] of CONVO.entries()) {
-    await save(`convo-${i}.mp3`, () => tts(line.text, CONVO_VOICES[line.speaker], {
+    await save(`convo-${i}.mp3`, () => tts(line.text, CONVO_VOICES[line.speaker], TTS_MODEL_V2, {
       previous: CONVO[i - 1]?.text, next: CONVO[i + 1]?.text,
     }))
   }
-  for (const g of GREETINGS) await save(`greet-${g.code}.mp3`, () => tts(g.text, g.voice))
+  for (const g of GREETINGS) await save(`greet-${g.code}.mp3`, () => tts(g.text, g.voice, ttsModelFor(g.code)))
 }
 main().catch(e => { console.error(e.message); process.exit(1) })
