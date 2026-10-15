@@ -1,0 +1,208 @@
+export const dynamic = 'force-dynamic'
+
+import { NextRequest, NextResponse } from 'next/server'
+import { db, users, episodes, creditsLedger, workflowLocks } from '@sus/db'
+import { runResearchAgent, runScriptAgent, runEvaluateAgent } from '@/lib/claude'
+import { generateLimit, freeGenerateLimit } from '@/lib/redis'
+import { canAffordDuration, checkGlobalBudget, checkUserHourlyCost, trackUserCost, getCostForDuration, getPlan, trackGlobalCost } from '@/lib/budget'
+import { eq, sql, and } from 'drizzle-orm'
+import { getSession } from '@/lib/session'
+import { z } from 'zod'
+import { randomUUID } from 'crypto'
+import { sanitizeInput, auditLog } from '@/lib/security'
+import { checkForAbuse } from '@/lib/abuse'
+import { events as analyticsEvents } from '@/lib/observability'
+import { logger } from '@/lib/logger'
+
+export const maxDuration = 300
+
+const Body = z.object({
+  topic:    z.string().min(3).max(200),
+  voiceA:   z.string().optional(),
+  voiceB:   z.string().optional(),
+  language: z.string().optional(),
+  duration: z.string().optional().default('5min'),
+})
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getSession()
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Sign in to generate episodes' }, { status: 401 })
+    }
+
+    const body = await req.json()
+
+    // ── IDEMPOTENCY ──────────────────────────────────────────────────────────
+    // Client sends Idempotency-Key header. Same key = same response, no double-spend.
+    // Key is namespaced to the user so one user cannot replay another's key.
+    const clientKey = req.headers.get('Idempotency-Key')
+    const idemKey = clientKey
+      ? `${session.user.email}:${clientKey.slice(0, 64)}`
+      : randomUUID()
+
+    // Check for existing episode with this idempotency key
+    const [existingEp] = await db.select().from(episodes)
+      .where(eq(episodes.idempotencyKey, idemKey)).limit(1)
+    if (existingEp) {
+      logger.info('Idempotent replay', { idemKey, episodeId: existingEp.id })
+      return NextResponse.json({
+        episodeId: existingEp.id,
+        shareId: existingEp.shareId,
+        status: existingEp.status,
+        scripts: (existingEp.allScripts as any)?.scripts || [],
+        evaluations: (existingEp.evaluations as any)?.scores || [],
+        winner: (existingEp.evaluations as any)?.winner || '',
+        research: existingEp.researchData,
+        idempotentReplay: true
+      })
+    }
+
+    // ── VALIDATE INPUT ───────────────────────────────────────────────────────
+    const parsed = Body.safeParse(body)
+    if (!parsed.success) return NextResponse.json({ error: 'Topic must be 3-200 characters' }, { status: 400 })
+    const topic    = sanitizeInput(parsed.data.topic)
+    const voiceA   = parsed.data.voiceA
+    const voiceB   = parsed.data.voiceB
+    const language = parsed.data.language || 'en'
+    const duration = parsed.data.duration || '5min'
+
+    // ── CREDIT CHECK + ATOMIC DEDUCTION ──────────────────────────────────────
+    const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
+
+    // ── ABUSE DETECTION ─────────────────────────────────────────────────────
+    const abuseCheck = await checkForAbuse(user?.id || session.user.email, topic)
+    if (!abuseCheck.allowed) {
+      return NextResponse.json({ error: abuseCheck.reason }, { status: 422 })
+    }
+    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+    const affordCheck = canAffordDuration(user.credits, duration, user.plan)
+    if (!affordCheck.allowed) {
+      return NextResponse.json({
+        error: affordCheck.reason,
+        creditsRequired: affordCheck.required,
+        creditsAvailable: user.credits,
+        upgrade: user.credits < affordCheck.required
+      }, { status: 402 })
+    }
+    const creditsNeeded = affordCheck.required
+
+    // ── GUARD 1: Global daily budget ─────────────────────────────────────────
+    const globalOk = await checkGlobalBudget()
+    if (!globalOk) {
+      logger.error('Global budget exceeded')
+      return NextResponse.json({
+        error: 'Service temporarily unavailable. Try again tomorrow.'
+      }, { status: 503 })
+    }
+
+    // ── GUARD 2: Per-user hourly cost ────────────────────────────────────────
+    const hourlyCheck = await checkUserHourlyCost(user.id, user.plan)
+    if (!hourlyCheck.allowed) {
+      return NextResponse.json({ error: hourlyCheck.reason }, { status: 429 })
+    }
+
+    // ── GUARD 3: Plan-aware rate limit ───────────────────────────────────────
+    const limiter = user.plan === 'free' ? freeGenerateLimit : generateLimit
+    const { success: rlOk } = await limiter.limit(session.user.email)
+    if (!rlOk) return NextResponse.json({
+      error: user.plan === 'free'
+        ? 'Free users can generate 3 episodes per hour. Upgrade for more.'
+        : 'Too many requests. Please wait a moment.'
+    }, { status: 429 })
+
+    // Atomic deduction — WHERE >= creditsNeeded is race-condition-safe.
+    const updateResult = await db.update(users)
+      .set({ credits: sql`${users.credits} - ${creditsNeeded}`, updatedAt: new Date() })
+      .where(and(eq(users.id, user.id), sql`${users.credits} >= ${creditsNeeded}`))
+      .returning({ credits: users.credits })
+
+    if (!updateResult.length) {
+      return NextResponse.json({
+        error: `Not enough credits. Need ${creditsNeeded}, have ${user.credits}.`,
+        upgrade: true
+      }, { status: 402 })
+    }
+
+    await db.insert(creditsLedger).values({ userId: user.id, amount: -creditsNeeded, reason: `generate_${duration}` })
+    await auditLog({ userId: user.id, action: 'credit.deduct', resource: `user:${user.id}`, metadata: { amount: -creditsNeeded, reason: 'generate', topic } })
+
+    const episodeCost = getCostForDuration(duration)
+    await trackUserCost(user.id, episodeCost)
+    await trackGlobalCost(episodeCost)
+
+    // ── CREATE EPISODE (with idempotency key) ────────────────────────────────
+    const shareId = randomUUID().replace(/-/g, '')
+    const [episode] = await db.insert(episodes).values({
+      userId: user.id, topic, title: topic, shareId,
+      status: 'processing', agentStep: 'research',
+      idempotencyKey: idemKey,
+    }).returning()
+
+    // ── STEP 1: RESEARCH (Groq — fast + cheap) ───────────────────────────────
+    let researchData: any = { summary: topic, key_facts: [], angles: [], hook: topic }
+    try {
+      researchData = await runResearchAgent(topic, language)
+      await db.update(episodes).set({ researchData, agentStep: 'research_done' }).where(eq(episodes.id, episode.id))
+    } catch (e: any) {
+      logger.warn('Research failed, using stub', { error: e.message })
+      // Non-fatal — continue with stub research
+    }
+
+    // ── STEP 2: GENERATE 5 SCRIPTS (Claude — quality matters) ────────────────
+    let allScripts: any
+    try {
+      await db.update(episodes).set({ agentStep: 'scripts' }).where(eq(episodes.id, episode.id))
+      allScripts = await runScriptAgent(topic, researchData, language)
+      await db.update(episodes).set({ allScripts, agentStep: 'scripts_done' }).where(eq(episodes.id, episode.id))
+    } catch (e: any) {
+      logger.error('Script agent failed', { error: e.message })
+      // FATAL — refund and fail
+      await db.update(users).set({ credits: sql`${users.credits} + ${creditsNeeded}` }).where(eq(users.id, user.id))
+      await db.insert(creditsLedger).values({ userId: user.id, amount: creditsNeeded, reason: `script_failure_refund_${duration}` })
+      await auditLog({ userId: user.id, action: 'credit.refund', resource: `user:${user.id}`, metadata: { amount: creditsNeeded, reason: 'script_failure' } })
+      await db.update(episodes).set({ status: 'failed', agentStep: 'failed' }).where(eq(episodes.id, episode.id))
+      return NextResponse.json({ error: `Script generation failed: ${e.message}` }, { status: 500 })
+    }
+
+    // ── STEP 3: EVALUATE (GPT-4o-mini — cheap + structured) ─────────────────
+    let evaluations: any = { winner: allScripts.scripts[0]?.angle, runner_up: allScripts.scripts[1]?.angle, scores: [] }
+    try {
+      await db.update(episodes).set({ agentStep: 'evaluate' }).where(eq(episodes.id, episode.id))
+      evaluations = await runEvaluateAgent(allScripts)
+      await db.update(episodes).set({ evaluations, agentStep: 'evaluate_done' }).where(eq(episodes.id, episode.id))
+    } catch (e: any) {
+      logger.warn('Evaluate failed, using default ranking', { error: e.message })
+      // Non-fatal — continue with first script as winner
+    }
+
+    const winnerAngle = evaluations?.winner || allScripts.scripts[0]?.angle
+    const winnerScript = allScripts.scripts.find((s: any) => s.angle === winnerAngle) || allScripts.scripts[0]
+
+    await db.update(episodes).set({
+      status: 'awaiting_selection',
+      agentStep: 'awaiting_selection',
+      title: winnerScript?.title || topic,
+      updatedAt: new Date()
+    }).where(eq(episodes.id, episode.id))
+
+    logger.info('Generate complete — awaiting user selection', { episodeId: episode.id, winner: winnerAngle })
+
+    return NextResponse.json({
+      episodeId: episode.id,
+      shareId: episode.shareId,
+      status: 'awaiting_selection',
+      research: researchData,
+      scripts: allScripts.scripts,
+      evaluations: evaluations?.scores || [],
+      winner: winnerAngle,
+      runnerUp: evaluations?.runner_up
+    })
+
+  } catch (e: any) {
+    logger.error('Generate error', { error: e.message })
+    return NextResponse.json({ error: e.message || 'Internal error' }, { status: 500 })
+  }
+}
+

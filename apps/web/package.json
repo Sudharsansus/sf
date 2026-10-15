@@ -1,0 +1,37 @@
+{
+  "name": "@sus/web",
+  "version": "7.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.24.3",
+    "@aws-sdk/client-s3": "3.600.0",
+    "@aws-sdk/s3-request-presigner": "3.600.0",
+    "@neondatabase/serverless": "0.9.3",
+    "@sus/db": "*",
+    "@upstash/ratelimit": "1.2.1",
+    "@upstash/redis": "1.31.3",
+    "drizzle-orm": "0.30.10",
+    "elevenlabs": "0.17.0",
+    "next": "14.2.29",
+    "next-auth": "4.24.7",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "replicate": "0.31.1",
+    "uuid": "11.0.3",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@sus/tsconfig": "*",
+    "@types/node": "20.14.0",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "typescript": "5.4.5"
+  }
+}

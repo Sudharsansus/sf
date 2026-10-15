@@ -1,6 +1,19 @@
+# deps
 node_modules
+
+# builds
 .next
+dist
+out
+.turbo
+*.tsbuildinfo
+next-env.d.ts
+
+# env
 .env
-.env.local
+.env*.local
+
+# misc
 .vercel
 *.log
+.DS_Store

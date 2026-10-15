@@ -2,32 +2,24 @@
   "name": "sus",
   "version": "7.0.0",
   "private": true,
+  "packageManager": "npm@11.12.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "@anthropic-ai/sdk": "0.24.3",
-    "@aws-sdk/client-s3": "3.600.0",
-    "@aws-sdk/s3-request-presigner": "3.600.0",
-    "@neondatabase/serverless": "0.9.3",
-    "@upstash/ratelimit": "1.2.1",
-    "@upstash/redis": "1.31.3",
-    "drizzle-orm": "0.30.10",
-    "elevenlabs": "0.17.0",
-    "next": "14.2.29",
-    "next-auth": "4.24.7",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "replicate": "0.31.1",
-    "uuid": "11.0.3",
-    "zod": "3.23.8"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "db:make-admin": "npm run make-admin -w @sus/db"
   },
   "devDependencies": {
-    "@types/node": "20.14.0",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
-"typescript": "5.4.5"
+    "turbo": "^2.5.4",
+    "typescript": "5.4.5"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

@@ -6,6 +6,31 @@
 
 ---
 
+## Repo structure (Turborepo)
+
+```
+apps/
+  web/              Next.js 14 app (@sus/web) — pages, API routes, components, hooks, lib
+packages/
+  db/               @sus/db — Drizzle schema + client, schema.sql, admin script
+  tsconfig/         @sus/tsconfig — shared TS configs (base, nextjs)
+turbo.json          task pipeline (dev, build, lint, typecheck)
+```
+
+```bash
+npm install                 # installs all workspaces
+cp .env.example apps/web/.env.local
+npm run dev                 # turbo run dev
+npm run build               # turbo run build
+npm run typecheck
+```
+
+Branches: `main` = production (Vercel), `dev` = integration. Feature branches -> `dev` -> `main`.
+
+**Vercel:** set Root Directory to `apps/web` (framework: Next.js). Vercel auto-detects Turborepo.
+
+---
+
 ## What it is
 
 SUS compresses weeks of research, scripting, and production into a single workflow. You review, edit, and publish on your own schedule. No auto-posting. No spam. Full creator control.
