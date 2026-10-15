@@ -8,6 +8,15 @@ import { ScriptPicker } from '@/components/studio/ScriptPicker'
 import { EpisodeResult } from '@/components/studio/EpisodeResult'
 import { ChatBox } from '@/components/studio/ChatBox'
 import { AuthPopup } from '@/components/ui/AuthPopup'
+import '@/components/landing/landing.css'
+import { PipelineDemo } from '@/components/landing/PipelineDemo'
+import { UseCaseTabs } from '@/components/landing/UseCaseTabs'
+import { ScriptShowdown } from '@/components/landing/ScriptShowdown'
+import { VoiceStudio } from '@/components/landing/VoiceStudio'
+import { LanguageGlobe } from '@/components/landing/LanguageGlobe'
+import { UploadFlow } from '@/components/landing/UploadFlow'
+import { TrustGrid } from '@/components/landing/TrustGrid'
+import { FAQ } from '@/components/landing/FAQ'
 
 const ROTATING_WORDS = ['podcasts', 'YouTube videos', 'newsletters', 'scripts', 'narrations', 'episodes']
 
@@ -872,6 +881,8 @@ export default function Home() {
         </div>
       </div>
 
+      <PipelineDemo c={c} dark={dark} />
+
       {/* HOW IT WORKS */}
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 36, gap: 24, flexWrap: 'wrap' }}>
@@ -900,6 +911,9 @@ export default function Home() {
         </div>
       </section>
 
+      <UseCaseTabs c={c} dark={dark} />
+      <ScriptShowdown c={c} dark={dark} />
+
       {/* FEATURES */}
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0', position: 'relative', zIndex: 1 }}>
         <div style={{ marginBottom: 36 }}>
@@ -923,6 +937,11 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <VoiceStudio c={c} dark={dark} />
+      <LanguageGlobe c={c} dark={dark} />
+      <UploadFlow c={c} dark={dark} />
+      <TrustGrid c={c} dark={dark} />
 
       {/* PRICING */}
       <section id="pricing" style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0', position: 'relative', zIndex: 1 }}>
@@ -1033,6 +1052,8 @@ export default function Home() {
         </div>
       </section>
 
+      <FAQ c={c} dark={dark} />
+
       {/* CTA */}
       <section style={{ maxWidth: 1080, margin: '80px auto 0', padding: '0 24px 100px', position: 'relative', zIndex: 1 }}>
         <div className="card cta-grid" style={{ padding: '60px 52px', display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 48 }}>
@@ -1057,6 +1078,31 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FOOTER LINKS */}
+      <div className="l-footer" style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 40px', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr 1fr', gap: 24, position: 'relative', zIndex: 1, borderTop: `1px solid ${c.border}` }}>
+        <div>
+          <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 8 }}>SUS</div>
+          <p style={{ fontSize: 12, color: dark ? '#aaa' : c.muted, lineHeight: 1.7, maxWidth: 240 }}>Your whole episode — research, script, voices, artwork and SEO — produced in one session.</p>
+        </div>
+        {([
+          ['Product', [['Studio','/studio'],['Upload','/upload'],['Pricing','#pricing'],['Changelog','/changelog']]],
+          ['Use cases', [['Podcasters','/studio'],['YouTubers','/studio'],['Educators','/studio'],['Agencies','/studio']]],
+          ['Resources', [['Quick start','/onboarding'],['FAQ','#faq'],['Waitlist','/waitlist']]],
+          ['Legal', [['Terms','/terms'],['Privacy','/privacy']]],
+        ] as [string, string[][]][]).map(([h, links]) => (
+          <div key={h}>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 1.2, textTransform: 'uppercase', color: c.subtle, marginBottom: 12 }}>{h}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {links.map(([l, href]) => (
+                <a key={l} href={href} style={{ fontSize: 13, color: dark ? '#bbb' : c.muted, transition: 'color .15s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = c.text)}
+                  onMouseLeave={e => (e.currentTarget.style.color = dark ? '#bbb' : c.muted)}>{l}</a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* FOOTER */}
       <footer className="footer-inner" style={{ borderTop: `1px solid ${c.border}`, padding: '18px 24px', maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
