@@ -1,4 +1,8 @@
-# SUS — AI Creator Production Studio
+# ISAII — AI Creator Production Studio
+
+Live at [isaii.si](https://isaii.si)
+
+Live at [isaii.si](https://isaii.si)
 
 > Produce studio-grade scripted content in minutes. Human-in-the-loop. Creator-controlled.
 
@@ -33,7 +37,7 @@ Branches: `main` = production (Vercel), `dev` = integration. Feature branches ->
 
 ## What it is
 
-SUS compresses weeks of research, scripting, and production into a single workflow. You review, edit, and publish on your own schedule. No auto-posting. No spam. Full creator control.
+ISAII compresses weeks of research, scripting, and production into a single workflow. You review, edit, and publish on your own schedule. No auto-posting. No spam. Full creator control.
 
 **Category:** AI-assisted creator production operating system.
 
@@ -105,7 +109,7 @@ Episode complete — user publishes when ready
 ## Deploy (5 minutes)
 
 ```bash
-git init && git add . && git commit -m "SUS v6"
+git init && git add . && git commit -m "ISAII v6"
 git remote add origin https://github.com/Sudharsansus/sf
 git push -u origin main --force
 ```

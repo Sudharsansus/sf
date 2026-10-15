@@ -917,7 +917,7 @@ export default function Home() {
       {/* FEATURES */}
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '80px 24px 0', position: 'relative', zIndex: 1 }}>
         <div style={{ marginBottom: 36 }}>
-          <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Why SUS</p>
+          <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Why ISAII</p>
           <h2 style={{ fontSize: 'clamp(22px,3vw,34px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.2 }}>Not a generator. A production system.</h2>
         </div>
         <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: c.border, borderRadius: 10, overflow: 'hidden' }}>
@@ -1082,7 +1082,7 @@ export default function Home() {
       {/* FOOTER LINKS */}
       <div className="l-footer" style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 24px 40px', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr 1fr', gap: 24, position: 'relative', zIndex: 1, borderTop: `1px solid ${c.border}` }}>
         <div>
-          <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 8 }}>SUS</div>
+          <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 8 }}>ISAII</div>
           <p style={{ fontSize: 12, color: dark ? '#aaa' : c.muted, lineHeight: 1.7, maxWidth: 240 }}>Your whole episode — research, script, voices, artwork and SEO — produced in one session.</p>
         </div>
         {([
@@ -1112,7 +1112,7 @@ export default function Home() {
               <path d="M1.5 8.5L5 1.5L8.5 8.5" stroke={c.bg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: 13 }}>SUS</span>
+          <span style={{ fontWeight: 600, fontSize: 13 }}>ISAII</span>
         </div>
         <div style={{ display: 'flex', gap: 0 }}>
           {[['Terms','/terms'],['Privacy','/privacy'],['Changelog','/changelog'],['GitHub','https://github.com/Sudharsansus/sf']].map(([l,h]) => (
@@ -1125,7 +1125,7 @@ export default function Home() {
           <a href="/onboarding" style={{ fontSize: 11, color: dark ? '#888' : c.subtle, transition: 'color .15s' }}
             onMouseEnter={e => (e.currentTarget.style.color = c.text)}
             onMouseLeave={e => (e.currentTarget.style.color = dark ? '#888' : c.subtle)}>Quick start guide</a>
-          <span style={{ fontSize: 11, color: dark ? '#aaa' : c.muted }}>© 2026 SUS</span>
+          <span style={{ fontSize: 11, color: dark ? '#aaa' : c.muted }}>© 2026 ISAII</span>
         </div>
       </footer>
 

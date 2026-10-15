@@ -24,7 +24,7 @@ export function UploadFlow({ c, dark }: LandingProps) {
     {
       tag: 'Upload script',
       title: 'Have a script? Voice it.',
-      body: 'Upload .txt, .pdf or .docx. SUS splits it into lines and assigns speakers you can change line by line.',
+      body: 'Upload .txt, .pdf or .docx. ISAII splits it into lines and assigns speakers you can change line by line.',
       color: '#22c55e',
       demo: (
         <>
@@ -60,7 +60,7 @@ export function UploadFlow({ c, dark }: LandingProps) {
   return (
     <Section c={c} dark={dark} eyebrow="Bring your own" center
       title="Start from a topic, a recording or a script."
-      subtitle="SUS isn’t only for new ideas. Turn what you already have into a produced episode.">
+      subtitle="ISAII isn’t only for new ideas. Turn what you already have into a produced episode.">
       <div ref={ref} className="l-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
         {cards.map((cd, i) => (
           <div key={cd.tag} className="stagger lift" style={{ ['--d' as string]: i, ...glass(dark, false), boxShadow: 'none', borderRadius: 18, padding: 20, display: 'flex', flexDirection: 'column', gap: 14,

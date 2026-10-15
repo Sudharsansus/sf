@@ -43,12 +43,12 @@ export function PipelineDemo({ c, dark }: LandingProps) {
   return (
     <Section c={c} dark={dark} eyebrow="Live pipeline" center
       title={<>One topic in. <span style={{ color: ORANGE }}>A finished episode</span> out.</>}
-      subtitle="Watch SUS research, write, score, voice, design and package an episode — the same pipeline that runs when you hit generate.">
+      subtitle="Watch ISAII research, write, score, voice, design and package an episode — the same pipeline that runs when you hit generate.">
       <div ref={ref} className="stagger" style={{ ...glass(dark), borderRadius: 18, overflow: 'hidden', maxWidth: 920, margin: '0 auto' }}>
         {/* window chrome */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: `1px solid ${line}` }}>
           {['#ff5f57', '#febc2e', '#28c840'].map(col => <span key={col} style={{ width: 10, height: 10, borderRadius: '50%', background: col, opacity: .85 }} />)}
-          <span style={{ marginLeft: 10, fontSize: 12, color: c.subtle }}>sus.studio / studio</span>
+          <span style={{ marginLeft: 10, fontSize: 12, color: c.subtle }}>isaii.si / studio</span>
           <span style={{ marginLeft: 'auto', fontSize: 11, color: done ? '#22c55e' : ORANGE, fontWeight: 600 }}>
             {stage === -1 ? 'Waiting for topic' : done ? 'Ready for review' : 'Producing…'}
           </span>

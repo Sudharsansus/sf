@@ -14,7 +14,8 @@ export async function middleware(req: NextRequest) {
   const requestOrigin = req.headers.get('origin')
   const allowedOrigins = [
     process.env.NEXT_PUBLIC_APP_URL || '',
-    'https://sus.studio',
+    'https://isaii.si',
+    'https://www.isaii.si',
   ].filter(Boolean)
 
   if (

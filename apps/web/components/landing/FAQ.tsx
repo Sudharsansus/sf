@@ -3,14 +3,14 @@ import { useState } from 'react'
 import { Section, glass, ORANGE, type LandingProps } from './Section'
 
 const QA: [string, string][] = [
-  ['What is SUS?', 'SUS is an AI production studio for creators. Give it a topic, a recording or a script and it researches, writes five scored scripts, voices the one you pick with studio voices, and designs thumbnails plus a full SEO and social package.'],
+  ['What is ISAII?', 'ISAII is an AI production studio for creators. Give it a topic, a recording or a script and it researches, writes five scored scripts, voices the one you pick with studio voices, and designs thumbnails plus a full SEO and social package.'],
   ['How do credits work?', 'One credit equals one minute of finished audio. A 10-minute episode uses 10 credits. Credits are only deducted when you generate, and they are refunded automatically if a generation fails.'],
   ['Is there a free plan?', 'Yes. Every new account gets free credits to produce real episodes — no card required. Upgrade when you need longer episodes or more minutes each month.'],
   ['Which languages are supported?', 'English, Hindi, Tamil, Spanish, French, German, Portuguese, Japanese, Korean, Arabic, Italian and Chinese — for research, scripts and voices.'],
   ['Can I use my own recording or script?', 'Yes. Upload audio (MP3/WAV up to 25MB) to get an editable transcript, or upload a .txt, .pdf or .docx script. You can reassign speakers and rewrite any line before producing.'],
-  ['Does SUS post anything automatically?', 'Never. You review everything first. Publishing to YouTube or Instagram only happens when you connect your account and click publish.'],
+  ['Does ISAII post anything automatically?', 'Never. You review everything first. Publishing to YouTube or Instagram only happens when you connect your account and click publish.'],
   ['Who owns the content?', 'You do. Download your audio, scripts and artwork and use them commercially anywhere. We take no revenue share.'],
-  ['Which AI powers SUS?', 'Claude for writing, OpenAI and Groq for research and scoring, ElevenLabs for voices and Replicate for artwork — with automatic failover between providers.'],
+  ['Which AI powers ISAII?', 'Claude for writing, OpenAI and Groq for research and scoring, ElevenLabs for voices and Replicate for artwork — with automatic failover between providers.'],
 ]
 
 export function FAQ({ c, dark }: LandingProps) {
