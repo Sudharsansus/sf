@@ -72,7 +72,8 @@ function Cover({ v }: { v: Variant }) {
       <div style={{
         display: 'flex', flexDirection: 'column',
         alignItems: centered ? 'center' : 'flex-start', textAlign: centered ? 'center' : 'left',
-        alignSelf: centered ? 'center' : 'flex-start', maxWidth: split ? 680 : 1080,
+        alignSelf: centered ? 'center' : 'flex-start',
+        ...(split ? { width: 680 } : { maxWidth: 1080 }), // fixed width so satori wraps before measuring
         marginBottom: centered ? 120 : 0,
       }}>
         <div style={{ display: 'flex', fontSize: 30, fontWeight: 700, letterSpacing: 4, color: v.accent, marginBottom: 18 }}>
