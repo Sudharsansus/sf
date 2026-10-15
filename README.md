@@ -45,48 +45,32 @@ ISAII compresses weeks of research, scripting, and production into a single work
 
 ## Architecture
 
+**Stack:** Next.js 14 on Vercel · Claude (all text AI) · ElevenLabs (voices + transcription) · Inngest (background jobs) · Neon Postgres + Drizzle · Upstash Redis · Cloudflare R2 · Dodo Payments
+
 ```
-User submits topic
-    ↓
-/api/generate
-    ├── Research    (Groq — fast + cheap)
-    ├── Scripts ×5  (Claude — quality)
-    └── Evaluate    (GPT-4o-mini — scoring)
-    ↓
-Human picks script + duration
-    ↓
-/api/agents/refine → Isolated workers run in parallel:
-    ├── AI Worker     (Claude refinement)
-    ├── Audio Worker  (ElevenLabs)
-    ├── Thumb Worker  (Replicate)
-    └── SEO Worker    (Groq)
-    ↓
-Episode complete — user publishes when ready
+POST /api/generate            deduct credits, create episode, queue job → 202
+  └─ Inngest: episode-generate
+       research (Claude) → 5 scripts (Claude) → scores (Claude)
+       status = awaiting_selection        (onFailure → credits refunded)
+
+Creator picks an angle + length in the studio
+
+POST /api/agents/refine       lock, queue job → 202
+  └─ Inngest: episode-produce
+       refine (Claude)
+       ├─ voices: ElevenLabs, 12 lines per step → R2 parts → merged MP3
+       ├─ thumbnails: Claude designs 3 → rendered with next/og → R2
+       └─ SEO pack: Claude
+       status = complete | partial_failure
+
+Client polls GET /api/jobs?episodeId=… for real progress.
 ```
 
-### AI Gateway (`lib/ai/gateway.ts`)
-- Semantic cache — research/SEO/evaluate cached by prompt hash
-- Adaptive routing — deprioritises slow/failing providers dynamically
-- Circuit breakers — 3 failures → open 60s → half-open
-- Per-provider timeouts — Claude 55s | OpenAI 30s | Groq 15s
-- Persistent cost logging — survives cold starts
-
-### Workers (`lib/workers/`)
-- `ai.worker.ts` — research, scripts, evaluate, refine
-- `audio.worker.ts` — ElevenLabs rendering
-- `thumb.worker.ts` — Replicate image generation
-- `seo.worker.ts` — distribution copy generation
-- `upload.worker.ts` — R2 storage
-
-### Events (`lib/events/`)
-- Every workflow state change emits a typed event
-- Events persisted to `workflow_runs` table
-- Enables observability, replay, analytics
-
-### Queue (`lib/queue/trigger.ts`)
-- Trigger.dev auto-activates when `TRIGGER_API_KEY` is set
-- Falls back to inline execution without it
-- Zero code changes needed to activate
+- `apps/web/lib/ai/claude.ts` — one Claude client: structured JSON outputs (Zod), cached system prompts, per-task effort, usage + cost logged to `ai_request_log`
+- `apps/web/lib/claude.ts` — the agents (research, scripts, evaluate, refine, SEO)
+- `apps/web/lib/elevenlabs.ts` — text-to-speech and Scribe speech-to-text with speaker detection
+- `apps/web/lib/thumbnails.tsx` — Claude-designed, code-rendered thumbnails
+- `apps/web/lib/inngest/` — the two pipeline functions, served at `/api/inngest`
 
 ---
 
@@ -114,31 +98,16 @@ git remote add origin https://github.com/Sudharsansus/sf
 git push -u origin main --force
 ```
 
-1. **Neon** — SQL Editor → paste `db/schema.sql` → Run
+1. **Neon** — SQL Editor → paste `packages/db/schema.sql` → Run
 2. **Upstash** — New Redis → copy URL + Token
 3. **Cloudflare R2** — bucket `sus-audio` → enable public access
-4. **Vercel** — import repo → add env vars → deploy
+4. **Inngest** — install the Inngest integration on the Vercel project (adds the keys, syncs `/api/inngest`)
+5. **Vercel** — Root Directory `apps/web` → add env vars → deploy
 
-### Minimum env vars
-```
-ANTHROPIC_API_KEY
-DATABASE_URL
-REDIS_URL + REDIS_TOKEN
-NEXTAUTH_URL + NEXTAUTH_SECRET
-GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET
-NEXT_PUBLIC_APP_URL
-```
+### Env vars
+See `.env.example`. Required: `ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY`, `DATABASE_URL`, `REDIS_URL` + `REDIS_TOKEN`, `NEXTAUTH_URL` + `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET`, `NEXT_PUBLIC_APP_URL`, the `R2_*` vars, and `INNGEST_EVENT_KEY` + `INNGEST_SIGNING_KEY` (added by the Inngest Vercel integration).
 
-### Activate more power
-```
-OPENAI_API_KEY        → fallback + evaluate (20× cheaper)
-GROQ_API_KEY          → research + SEO (50× cheaper)
-ELEVENLABS_API_KEY    → voice rendering
-REPLICATE_API_TOKEN   → thumbnail generation
-TRIGGER_API_KEY       → real background workers
-SENTRY_DSN            → error tracking
-POSTHOG_KEY           → product analytics
-```
+Local dev: run `npx inngest-cli@latest dev` next to `npm run dev` so queued jobs execute.
 
 ---
 
@@ -156,6 +125,5 @@ POSTHOG_KEY           → product analytics
 
 | Phase | Capacity | Unlock |
 |---|---|---|
-| v6 now | 500–1500 paying creators | Current |
-| + full Trigger.dev | 10k–50k creators | Add TRIGGER_API_KEY |
-| + Railway workers | 50k–200k creators | Deploy workers separately |
+| Now (Inngest + Vercel) | 10k+ creators | Current — tune Inngest concurrency per plan |
+| Dedicated workers | 50k+ creators | Move Inngest functions to a long-running worker |

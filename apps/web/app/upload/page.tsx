@@ -177,7 +177,7 @@ function UploadPageInner() {
           <div style={{ border: `1px solid ${c.border}`, borderRadius: 10, padding: '14px 18px', marginBottom: 20, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.muted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <p style={{ fontSize: 12, color: c.muted, lineHeight: 1.7 }}>
-              Your audio will be transcribed using <strong style={{ color: c.text }}>Groq Whisper</strong> — the fastest AI transcription model. Results are editable in the script editor. Costs 1 credit.
+              Your audio will be transcribed using <strong style={{ color: c.text }}>ElevenLabs Scribe</strong>, which detects who is speaking and splits the transcript into speakers A and B. Results are editable in the script editor. Costs 1 credit.
             </p>
           </div>
         )}

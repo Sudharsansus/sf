@@ -10,7 +10,7 @@ const QA: [string, string][] = [
   ['Can I use my own recording or script?', 'Yes. Upload audio (MP3/WAV up to 25MB) to get an editable transcript, or upload a .txt, .pdf or .docx script. You can reassign speakers and rewrite any line before producing.'],
   ['Does ISAII post anything automatically?', 'Never. You review everything first. Publishing to YouTube or Instagram only happens when you connect your account and click publish.'],
   ['Who owns the content?', 'You do. Download your audio, scripts and artwork and use them commercially anywhere. We take no revenue share.'],
-  ['Which AI powers ISAII?', 'Claude for writing, OpenAI and Groq for research and scoring, ElevenLabs for voices and Replicate for artwork — with automatic failover between providers.'],
+  ['Which AI powers ISAII?', 'Claude handles research, scripts, scoring, SEO and thumbnail design. ElevenLabs handles voices and transcription.'],
 ]
 
 export function FAQ({ c, dark }: LandingProps) {

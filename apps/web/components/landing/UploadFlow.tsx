@@ -11,7 +11,7 @@ export function UploadFlow({ c, dark }: LandingProps) {
     {
       tag: 'Upload audio',
       title: 'Already recorded? Bring it.',
-      body: 'Drop an MP3 or WAV up to 25MB. Whisper transcribes it into an editable two-speaker script in seconds.',
+      body: 'Drop an MP3 or WAV up to 25MB. ElevenLabs Scribe detects who is speaking and turns it into an editable two-speaker script.',
       color: '#3b82f6',
       demo: (
         <>

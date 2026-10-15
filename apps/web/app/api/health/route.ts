@@ -26,7 +26,7 @@ export async function GET() {
   }
 
   // AI provider availability
-  const hasAI = !!(process.env.ANTHROPIC_API_KEY || process.env.OPENAI_API_KEY || process.env.GROQ_API_KEY)
+  const hasAI = !!(process.env.ANTHROPIC_API_KEY && process.env.ELEVENLABS_API_KEY)
   checks.ai = {
     ok: hasAI,
     error: hasAI ? undefined : 'No AI provider configured'

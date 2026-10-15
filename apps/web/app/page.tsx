@@ -855,7 +855,7 @@ export default function Home() {
           )}
 
           {g.step === 'idle' && <p className="f3" style={{ marginTop: 12, fontSize: 11, color: c.muted, textAlign: 'center', letterSpacing: .3 }}>
-            No auto-posting · You own every episode · Claude · ElevenLabs · Replicate
+            No auto-posting · You own every episode · Claude · ElevenLabs
           </p>}
         </div>
       </section>
@@ -875,7 +875,7 @@ export default function Home() {
       {/* TICKER */}
       <div style={{ overflow: 'hidden', borderBottom: `1px solid ${c.border}`, padding: '11px 0', background: c.surface, position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', width: 'max-content', animation: 'marquee 22s linear infinite' }}>
-          {[...Array(2)].flatMap(() => ['Research Agent','Script × 5','Claude Sonnet 4','ElevenLabs','Replicate','SEO Package','Human in the loop','Zero auto-post','Multi-provider AI','Studio quality']).map((s,i) => (
+          {[...Array(2)].flatMap(() => ['Research Agent','Script × 5','Claude','ElevenLabs','AI thumbnails','SEO Package','Human in the loop','Zero auto-post','Background rendering','Studio quality']).map((s,i) => (
             <span key={i} style={{ fontSize: 11, color: dark ? '#b0b0b0' : c.muted, padding: '0 22px', borderRight: `1px solid ${c.border}`, whiteSpace: 'nowrap', fontWeight: 500, letterSpacing: .3 }}>{s}</span>
           ))}
         </div>
@@ -926,7 +926,7 @@ export default function Home() {
             ['Quality over quantity','Five scripts, scored on 10 metrics. You pick the best angle, not the first one.'],
             ['Real voices','ElevenLabs renders two speakers with natural pacing and emotion. Not TTS.'],
             ['Your IP, your brand','Every episode is yours. Download everything. No lock-in, no revenue share.'],
-            ['Multi-provider AI','Claude → OpenAI → Groq. Three providers on standby. Zero downtime.'],
+            ['Built to finish','Every step runs in the background with automatic retries. Close the tab — your episode keeps rendering.'],
             ['Scales with you','One episode or fifty — same quality, same workflow, every time.'],
           ].map(([name, body]) => (
             <div key={name} className="feat-card" style={{ background: c.bg, padding: '26px 22px' }}>

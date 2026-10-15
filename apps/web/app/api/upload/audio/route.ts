@@ -4,7 +4,7 @@ import { getSession } from '@/lib/session'
 import { db, users, episodes, creditsLedger } from '@sus/db'
 import { eq, sql, and } from 'drizzle-orm'
 import { randomUUID } from 'crypto'
-import { transcribeToScript } from '@/lib/claude'
+import { transcribeToScript } from '@/lib/elevenlabs'
 import { uploadBuffer } from '@/lib/storage'
 import { auditLog } from '@/lib/security'
 import { logger } from '@/lib/logger'
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     const audioKey = `uploads/${user.id}/${episodeId}.mp3`
     const audioUrl = await uploadBuffer(buffer, audioKey, file.type || 'audio/mpeg')
 
-    // Transcribe with Groq Whisper
+    // Transcribe with ElevenLabs Scribe (speaker-aware)
     let lines: { speaker: string; text: string }[] = []
     try {
       lines = await transcribeToScript(buffer, file.type || 'audio/mpeg')

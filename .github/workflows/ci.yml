@@ -16,9 +16,6 @@ jobs:
       REDIS_TOKEN: ci
       NEXTAUTH_SECRET: ci
       ANTHROPIC_API_KEY: ci
-      OPENAI_API_KEY: ci
-      GROQ_API_KEY: ci
-      REPLICATE_API_TOKEN: ci
       ELEVENLABS_API_KEY: ci
     steps:
       - uses: actions/checkout@v4

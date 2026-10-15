@@ -2,7 +2,9 @@
 const nextConfig = {
   transpilePackages: ['@sus/db'],
   experimental: {
-    serverComponentsExternalPackages: ['@neondatabase/serverless']
+    serverComponentsExternalPackages: ['@neondatabase/serverless', '@resvg/resvg-js'],
+    // Thumbnail fonts are read from disk at runtime by the Inngest functions.
+    outputFileTracingIncludes: { '/api/inngest': ['./lib/fonts/**'] }
   },
   async headers() {
     return [

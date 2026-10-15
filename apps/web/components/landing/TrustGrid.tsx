@@ -7,7 +7,7 @@ const ITEMS: [string, string, string][] = [
   ['M3 11h18v11H3zM7 11V7a5 5 0 0 1 10 0v4', 'Secure by default', 'Google sign-in, signed payment webhooks, abuse detection and per-user rate limits.'],
   ['M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6', 'Pay per minute', 'One credit is one minute of finished audio. If a generation fails, your credits come back.'],
   ['M4 4h16v16H4zM4 9h16M9 20V9', 'Every format you need', 'MP3 audio, 16:9 and square thumbnails, show notes, chapters and social copy — ready to upload.'],
-  ['M22 12h-4l-3 9L9 3l-3 9H2', 'Always on', 'Claude, OpenAI and Groq on standby with automatic failover, so a provider outage doesn’t stop your show.'],
+  ['M22 12h-4l-3 9L9 3l-3 9H2', 'Built to finish', 'Every step runs in the background with automatic retries, so a hiccup never loses your episode — or your credits.'],
 ]
 
 export function TrustGrid({ c, dark }: LandingProps) {

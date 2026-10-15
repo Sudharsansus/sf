@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { streamGenerate } from '@/lib/ai'
+import { streamChat } from '@/lib/ai'
 import { CHAT_PROMPT } from '@/lib/prompts'
 import { chatLimit, apiLimit } from '@/lib/redis'
 import { logger } from '@/lib/logger'
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     const safe = messages.slice(-20).map((m: any) => ({
-      role:    m.role === 'user' ? 'user' : 'assistant',
+      role:    (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
       content: String(m.content || '').slice(0, 2000)
     }))
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     const readable = new ReadableStream({
       async start(controller) {
         try {
-          await streamGenerate(CHAT_PROMPT, safe, (text) => {
+          await streamChat(CHAT_PROMPT, safe, (text) => {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`))
           })
           controller.enqueue(encoder.encode('data: [DONE]\n\n'))

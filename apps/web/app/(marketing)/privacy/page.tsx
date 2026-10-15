@@ -48,7 +48,7 @@ export default function PrivacyPage() {
             'Cache: Upstash Redis — ephemeral session and rate limit data only.',
           ]],
           ['Third-party services', [
-            'We send your episode scripts to Anthropic (Claude API) and ElevenLabs for audio generation. We send thumbnail prompts to Replicate. None of these services retain your data beyond the request.',
+            'We send your topics and episode scripts to Anthropic (Claude API) to write and package episodes, and scripts and uploaded audio to ElevenLabs for voices and transcription. None of these services retain your data beyond the request.',
             'If you connect YouTube or Instagram, we store OAuth tokens encrypted in our database to enable publishing on your behalf.',
           ]],
           ['Your rights', [
