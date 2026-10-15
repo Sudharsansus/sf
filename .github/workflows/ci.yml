@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Placeholders so `next build` can collect page data. Real values live in Vercel.
+      DATABASE_URL: postgresql://ci:ci@localhost/ci
+      REDIS_URL: https://ci.upstash.io
+      REDIS_TOKEN: ci
+      NEXTAUTH_SECRET: ci
+      ANTHROPIC_API_KEY: ci
+      OPENAI_API_KEY: ci
+      GROQ_API_KEY: ci
+      REPLICATE_API_TOKEN: ci
+      ELEVENLABS_API_KEY: ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
