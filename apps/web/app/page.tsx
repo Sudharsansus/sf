@@ -13,7 +13,7 @@ import { PipelineDemo } from '@/components/landing/PipelineDemo'
 import { UseCaseTabs } from '@/components/landing/UseCaseTabs'
 import { ScriptShowdown } from '@/components/landing/ScriptShowdown'
 import { VoiceStudio } from '@/components/landing/VoiceStudio'
-import { LanguageGlobe } from '@/components/landing/LanguageGlobe'
+import { LanguagePlaces } from '@/components/landing/LanguagePlaces'
 import { UploadFlow } from '@/components/landing/UploadFlow'
 import { TrustGrid } from '@/components/landing/TrustGrid'
 import { FAQ } from '@/components/landing/FAQ'
@@ -939,7 +939,7 @@ export default function Home() {
       </section>
 
       <VoiceStudio c={c} dark={dark} />
-      <LanguageGlobe c={c} dark={dark} />
+      <LanguagePlaces c={c} dark={dark} />
       <UploadFlow c={c} dark={dark} />
       <TrustGrid c={c} dark={dark} />
 

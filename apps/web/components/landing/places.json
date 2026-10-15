@@ -1,0 +1,86 @@
+{
+ "en": {
+  "place": "Tower Bridge",
+  "src": "/landing/places/en.jpg",
+  "author": "Fuzzypiggy",
+  "license": "CC BY-SA 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Tower_Bridge_at_Dawn.jpg"
+ },
+ "hi": {
+  "place": "Taj Mahal",
+  "src": "/landing/places/hi.jpg",
+  "author": "Yann; edited by Jim Carter",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Taj_Mahal_(Edited).jpeg"
+ },
+ "ta": {
+  "place": "Meenakshi Temple",
+  "src": "/landing/places/ta.jpg",
+  "author": "எஸ்ஸார்",
+  "license": "CC BY 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:An_aerial_view_of_Madurai_city_from_atop_of_Meenakshi_Amman_temple.jpg"
+ },
+ "es": {
+  "place": "Sagrada Família",
+  "src": "/landing/places/es.jpg",
+  "author": "Canaan",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:SF_maig_2_cropped.jpg"
+ },
+ "fr": {
+  "place": "Eiffel Tower",
+  "src": "/landing/places/fr.jpg",
+  "author": "Benh LIEU SONG",
+  "license": "Public domain",
+  "url": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons_(cropped).jpg"
+ },
+ "de": {
+  "place": "Neuschwanstein Castle",
+  "src": "/landing/places/de.jpg",
+  "author": "Thomas Wolf, www.foto-tw.de",
+  "license": "CC BY-SA 3.0 de",
+  "url": "https://commons.wikimedia.org/wiki/File:Schloss_Neuschwanstein_2013.jpg"
+ },
+ "pt": {
+  "place": "Belém Tower",
+  "src": "/landing/places/pt.jpg",
+  "author": "Alvesgaspar",
+  "license": "CC BY-SA 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Torre_Bel%C3%A9m_April_2009-4a.jpg"
+ },
+ "ko": {
+  "place": "Gyeongbokgung",
+  "src": "/landing/places/ko.jpg",
+  "author": "서울관광 아카이브",
+  "license": "KOGL Type 1",
+  "url": "https://commons.wikimedia.org/wiki/File:%EA%B4%91%ED%99%94%EB%AC%B8_%EC%9B%94%EB%8C%80.jpg"
+ },
+ "ar": {
+  "place": "Petra",
+  "src": "/landing/places/ar.jpg",
+  "author": "Azurfrog",
+  "license": "CC BY-SA 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Al_Deir_Petra.JPG"
+ },
+ "it": {
+  "place": "Colosseum",
+  "src": "/landing/places/it.jpg",
+  "author": "FeaturedPics",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:Colosseo_2020.jpg"
+ },
+ "zh": {
+  "place": "Great Wall of China",
+  "src": "/landing/places/zh.jpg",
+  "author": "Severin.stalder",
+  "license": "CC BY-SA 3.0",
+  "url": "https://commons.wikimedia.org/wiki/File:The_Great_Wall_of_China_at_Jinshanling-edit.jpg"
+ },
+ "ja": {
+  "place": "Mount Fuji",
+  "src": "/landing/places/ja.jpg",
+  "author": "Dang Son",
+  "license": "CC0",
+  "url": "https://commons.wikimedia.org/wiki/File:12-Chureito-pagoda-and-Mount-Fuji-Japan_(29677439878).jpg"
+ }
+}
