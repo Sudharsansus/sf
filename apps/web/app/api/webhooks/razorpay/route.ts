@@ -1,22 +1,16 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import crypto from 'crypto'
+import { verifyHmacHex } from '@isaii/security'
 import { grantPurchase } from '@/lib/billing'
-import { logger } from '@/lib/logger'
-
-function validSignature(raw: string, signature: string, secret: string) {
-  const expected = crypto.createHmac('sha256', secret).update(raw).digest('hex')
-  const a = Buffer.from(expected), b = Buffer.from(signature)
-  return a.length === b.length && crypto.timingSafeEqual(a, b)
-}
+import { logger } from '@isaii/logger'
 
 /** Razorpay webhook — subscribe to `order.paid` in the Razorpay dashboard. */
 export async function POST(req: NextRequest) {
   const raw = await req.text()
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET
   if (!secret) return NextResponse.json({ error: 'Not configured' }, { status: 503 })
-  if (!validSignature(raw, req.headers.get('x-razorpay-signature') || '', secret)) {
+  if (!verifyHmacHex(raw, req.headers.get('x-razorpay-signature') || '', secret)) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
 

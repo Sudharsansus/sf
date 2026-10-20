@@ -1,25 +1,5 @@
-import { Inngest } from 'inngest'
+import type { EventData } from '@isaii/queue'
 
-export const inngest = new Inngest({ id: 'isaii' })
-
-export type GenerateRequested = {
-  episodeId: string
-  userId: string
-  topic: string
-  language: string
-  duration: string
-  credits: number
-}
-
-export type ProduceRequested = {
-  episodeId: string
-  userId: string
-  selectedAngle: string
-  durationLabel: string
-  selectedSpeaker: string
-  lockKey: string
-  voiceA?: string
-  voiceB?: string
-  /** Produce the script as saved in the editor, without refining it. */
-  useExistingScript?: boolean
-}
+export { inngest } from '@isaii/queue'
+export type GenerateRequested = EventData<'episode/generate.requested'>
+export type ProduceRequested = EventData<'episode/produce.requested'>

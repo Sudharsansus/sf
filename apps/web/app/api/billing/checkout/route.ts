@@ -6,7 +6,7 @@ import { db, users } from '@isaii/db'
 import { eq } from 'drizzle-orm'
 import { getSession } from '@/lib/session'
 import { getProduct, dodoProductId } from '@/lib/billing'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 
 const Body = z.object({
   productId: z.string(),

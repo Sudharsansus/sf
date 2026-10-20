@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@isaii/db'],
+  // Workspace packages ship TypeScript source.
+  transpilePackages: Object.keys(require('./package.json').dependencies).filter(n => n.startsWith('@isaii/')),
   serverExternalPackages: ['@neondatabase/serverless', '@resvg/resvg-js'],
   // Thumbnail fonts are read from disk at runtime by the Inngest functions.
   outputFileTracingIncludes: { '/api/inngest': ['./lib/fonts/**'] },

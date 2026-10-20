@@ -23,7 +23,7 @@ const below = {
 /** @param {{ tsconfigRootDir?: string }} [opts] */
 export function config(opts = {}) {
   return tseslint.config(
-    { ignores: ['**/dist/**', '**/.next/**', '**/coverage/**', '**/node_modules/**', '**/*.config.*', '**/next-env.d.ts'] },
+    { ignores: ['**/*.snap', '**/dist/**', '**/.next/**', '**/coverage/**', '**/node_modules/**', '**/*.config.*', '**/next-env.d.ts'] },
     js.configs.recommended,
     ...tseslint.configs.recommended,
     {

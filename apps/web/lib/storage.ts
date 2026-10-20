@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import { logger } from './logger'
+import { logger } from '@isaii/logger'
 
 const s3 = new S3Client({
   region: 'auto',

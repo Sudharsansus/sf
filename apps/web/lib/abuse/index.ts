@@ -2,7 +2,7 @@
 // Detects: prompt injection, token draining, generation spam, malicious content.
 
 import { redis } from '@/lib/redis'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 
 // Patterns that signal prompt injection or abuse
 const INJECTION_PATTERNS = [

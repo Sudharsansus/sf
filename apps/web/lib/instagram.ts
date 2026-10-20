@@ -1,4 +1,4 @@
-import { logger } from './logger'
+import { logger } from '@isaii/logger'
 
 const APP_ID = process.env.INSTAGRAM_APP_ID!
 const APP_SECRET = process.env.INSTAGRAM_APP_SECRET!

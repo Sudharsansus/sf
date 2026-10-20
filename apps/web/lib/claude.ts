@@ -4,7 +4,7 @@
 
 import * as z from 'zod'
 import { generateJSON, type AICtx } from './ai'
-import { languageName } from './languages'
+import { languageName } from '@isaii/i18n'
 import {
   RESEARCH_PROMPT, SCRIPTS_PROMPT, EVALUATE_PROMPT,
   REFINE_PROMPT, SEO_PROMPT

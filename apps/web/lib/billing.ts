@@ -6,7 +6,7 @@ import { db, users, creditsLedger } from '@isaii/db'
 import { eq, sql } from 'drizzle-orm'
 import { redis } from './redis'
 import { auditLog } from './security'
-import { logger } from './logger'
+import { logger } from '@isaii/logger'
 
 export type Currency = 'INR' | 'USD'
 export type Provider = 'razorpay' | 'dodo'

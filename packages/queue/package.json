@@ -1,0 +1,23 @@
+{
+  "name": "@isaii/queue",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Inngest client and typed event contracts.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "inngest": "4.25.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@isaii/config": "*",
+    "@types/node": "22.20.5"
+  }
+}

@@ -1,4 +1,4 @@
-import { logger } from './logger'
+import { logger } from '@isaii/logger'
 
 const CLIENT_ID = process.env.YOUTUBE_CLIENT_ID!
 const CLIENT_SECRET = process.env.YOUTUBE_CLIENT_SECRET!

@@ -1,4 +1,4 @@
-import { logger } from './logger'
+import { logger } from '@isaii/logger'
 
 const BASE = 'https://api.elevenlabs.io/v1'
 const key = () => process.env.ELEVENLABS_API_KEY!

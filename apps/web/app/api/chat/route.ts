@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { streamChat } from '@/lib/ai'
 import { CHAT_PROMPT } from '@/lib/prompts'
 import { chatLimit, apiLimit } from '@/lib/redis'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 import { getSession } from '@/lib/session'
 
 export async function POST(req: NextRequest) {

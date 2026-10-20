@@ -1,0 +1,24 @@
+{
+  "name": "@isaii/security",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Webhook verification, CSRF, rate limits, token encryption, sanitising.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@isaii/core": "*",
+    "@upstash/ratelimit": "2.2.0"
+  },
+  "devDependencies": {
+    "@isaii/config": "*",
+    "@types/node": "22.20.5",
+    "@upstash/redis": "1.39.0"
+  }
+}

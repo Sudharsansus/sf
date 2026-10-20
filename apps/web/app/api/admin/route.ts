@@ -6,7 +6,7 @@ import { db, users, episodes, aiRequestLog, auditLogs, waitlist } from '@isaii/d
 import { isAdmin, auditLog } from '@/lib/security'
 import { getAIStats } from '@/lib/ai'
 import { eq, desc, sql, gte } from 'drizzle-orm'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 
 export async function GET(req: NextRequest) {
   const session = await getSession()

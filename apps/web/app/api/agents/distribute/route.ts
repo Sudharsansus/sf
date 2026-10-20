@@ -6,7 +6,7 @@ import { uploadVideo, refreshAccessToken } from '@/lib/youtube'
 import { createReelContainer, publishReel } from '@/lib/instagram'
 import { getSession } from '@/lib/session'
 import { eq } from 'drizzle-orm'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 
 export const maxDuration = 60
 

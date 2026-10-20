@@ -12,7 +12,7 @@ import { randomUUID } from 'crypto'
 import { sanitizeInput, auditLog } from '@/lib/security'
 import { checkForAbuse } from '@/lib/abuse'
 import { events as analyticsEvents } from '@/lib/observability'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 
 export const maxDuration = 30
 

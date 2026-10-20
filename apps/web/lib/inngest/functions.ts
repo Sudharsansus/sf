@@ -13,7 +13,7 @@ import { renderLines, VOICE_A, VOICE_B, type Line } from '@/lib/elevenlabs'
 import { designThumbnails, renderThumbnail } from '@/lib/thumbnails'
 import { uploadBuffer } from '@/lib/storage'
 import { auditLog } from '@/lib/security'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 
 const LINES_PER_AUDIO_STEP = 12
 

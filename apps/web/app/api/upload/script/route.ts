@@ -5,7 +5,7 @@ import { db, users, episodes, creditsLedger } from '@isaii/db'
 import { eq, sql, and } from 'drizzle-orm'
 import { randomUUID } from 'crypto'
 import { auditLog } from '@/lib/security'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 
 export const maxDuration = 60
 

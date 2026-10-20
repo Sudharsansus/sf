@@ -1,5 +1,5 @@
 import { redis } from './redis'
-import { logger } from './logger'
+import { logger } from '@isaii/logger'
 
 export const COST_PER_MINUTE_USD = 0.12  // ElevenLabs + Claude + infra blended
 

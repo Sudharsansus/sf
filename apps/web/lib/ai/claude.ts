@@ -5,7 +5,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod'
 import type * as z from 'zod'
-import { logger } from '../logger'
+import { logger } from '@isaii/logger'
 
 export const CLAUDE_MODEL = process.env.CLAUDE_MODEL || 'claude-opus-5-5'
 

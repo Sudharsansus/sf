@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { isCrossOriginBlocked } from '@isaii/security'
 
 export async function proxy(req: NextRequest) {
   const token = await getToken({
@@ -10,22 +11,9 @@ export async function proxy(req: NextRequest) {
 
   const { pathname } = req.nextUrl
 
-  // ── CSRF: reject cross-origin state-mutating requests ────────────────────────
-  const requestOrigin = req.headers.get('origin')
-  const allowedOrigins = [
-    process.env.NEXT_PUBLIC_APP_URL || '',
-    'https://isaii.si',
-    'https://www.isaii.si',
-  ].filter(Boolean)
-
-  if (
-    requestOrigin &&
-    (req.method === 'POST' || req.method === 'PATCH' || req.method === 'DELETE') &&
-    pathname.startsWith('/api/') &&
-    !pathname.startsWith('/api/auth') &&
-    !pathname.startsWith('/api/webhooks') &&
-    !allowedOrigins.some(o => requestOrigin.startsWith(o))
-  ) {
+  // ── CSRF: reject cross-origin state-mutating requests (exact origin match) ───
+  const allowedOrigins = [process.env.NEXT_PUBLIC_APP_URL || '', 'https://isaii.si', 'https://www.isaii.si']
+  if (isCrossOriginBlocked({ method: req.method, pathname, origin: req.headers.get('origin'), allowedOrigins })) {
     return NextResponse.json({ error: 'Invalid origin' }, { status: 403 })
   }
 

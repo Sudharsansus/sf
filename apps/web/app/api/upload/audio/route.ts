@@ -7,7 +7,7 @@ import { randomUUID } from 'crypto'
 import { transcribeToScript } from '@/lib/elevenlabs'
 import { uploadBuffer } from '@/lib/storage'
 import { auditLog } from '@/lib/security'
-import { logger } from '@/lib/logger'
+import { logger } from '@isaii/logger'
 
 export const maxDuration = 120
 
