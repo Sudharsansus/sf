@@ -1,0 +1,36 @@
+{
+  "name": "@isaii/evals",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AI quality evals: datasets (21 languages), checks, Claude-judge rubrics, baselines, CLI with spend cap.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "eval": "tsx --env-file-if-exists=../../.env src/cli.ts"
+  },
+  "dependencies": {
+    "@isaii/agents": "*",
+    "@isaii/ai-gateway": "*",
+    "@isaii/domain-billing": "*",
+    "@isaii/guardrails": "*",
+    "@isaii/i18n": "*",
+    "@isaii/prompts": "*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@isaii/config": "*",
+    "@types/node": "22.20.5",
+    "tsx": "4.23.15"
+  },
+  "files": [
+    "src",
+    "datasets",
+    "rubrics",
+    "baselines"
+  ]
+}

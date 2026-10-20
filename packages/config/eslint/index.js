@@ -5,15 +5,18 @@ import tseslint from 'typescript-eslint'
 import boundaries from 'eslint-plugin-boundaries'
 
 export const LAYERS = [
-  { type: 'app', pattern: 'apps/*', mode: 'folder' },
-  { type: 'domain', pattern: 'packages/domain-*', mode: 'folder' },
-  { type: 'capability', pattern: 'packages/(agents|voice|media|guardrails|db|storage|queue|ui|sdk|evals)', mode: 'folder' },
-  { type: 'ai-core', pattern: 'packages/(ai-gateway|prompts)', mode: 'folder' },
-  { type: 'platform', pattern: 'packages/(core|env|logger|telemetry|cache|flags|i18n|contracts|security|config)', mode: 'folder' },
+  { type: 'app', pattern: 'apps/*' },
+  { type: 'tooling', pattern: 'packages/evals' },
+  { type: 'domain', pattern: 'packages/domain-*' },
+  { type: 'capability', pattern: 'packages/(agents|voice|media|guardrails|db|storage|queue|ui|sdk)' },
+  { type: 'ai-core', pattern: 'packages/(ai-gateway|prompts)' },
+  { type: 'platform', pattern: 'packages/(core|env|logger|telemetry|cache|flags|i18n|contracts|security|config)' },
 ]
 
+/** Which layers each layer may import. Nothing may import apps; tooling (evals) sits beside apps. */
 const below = {
   app: ['domain', 'capability', 'ai-core', 'platform'],
+  tooling: ['domain', 'capability', 'ai-core', 'platform'],
   domain: ['domain', 'capability', 'ai-core', 'platform'],
   capability: ['capability', 'ai-core', 'platform'],
   'ai-core': ['ai-core', 'platform'],
@@ -35,9 +38,12 @@ export function config(opts = {}) {
         'import/resolver': { typescript: { alwaysTryTypes: true, project: ['apps/*/tsconfig.json', 'packages/*/tsconfig.json'] } },
       },
       rules: {
-        'boundaries/element-types': [2, {
+        'boundaries/dependencies': [2, {
           default: 'disallow',
-          rules: Object.entries(below).map(([from, allow]) => ({ from, allow })),
+          policies: Object.entries(below).map(([from, allow]) => ({
+            from: { element: { type: from } },
+            allow: { to: { element: { types: { anyOf: allow } } } },
+          })),
         }],
         '@typescript-eslint/no-explicit-any': 'warn',
         '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_', ignoreRestSiblings: true }],
@@ -46,7 +52,7 @@ export function config(opts = {}) {
       },
     },
     {
-      files: ['**/tests/**', '**/*.test.*', '**/scripts/**'],
+      files: ['**/tests/**', '**/*.test.*', '**/scripts/**', '**/src/cli.ts', '**/src/server.ts'],
       rules: { 'no-console': 'off', '@typescript-eslint/no-explicit-any': 'off' },
     },
   )

@@ -1,0 +1,27 @@
+name: Evals
+
+# AI quality evals cost money: manual runs, or nightly once ANTHROPIC_API_KEY_EVALS is set.
+on:
+  workflow_dispatch:
+    inputs:
+      agents: { description: 'agents', default: 'guardrails,research,scripts' }
+      langs: { description: 'languages', default: 'hi,ta,te,kn,ml' }
+      budget: { description: 'max USD', default: '3' }
+  schedule:
+    - cron: '30 20 * * *'
+
+jobs:
+  eval:
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.NIGHTLY_EVALS == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_EVALS }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: npm }
+      - run: npm ci
+      - run: npm run eval -- --agents ${{ inputs.agents || 'guardrails,research,scripts' }} --langs ${{ inputs.langs || 'hi,ta,te,kn,ml' }} --n 1 --judge --budget ${{ inputs.budget || '3' }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: eval-report, path: packages/evals/results }

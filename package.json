@@ -17,7 +17,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "knip": "knip",
-    "db:make-admin": "npm run make-admin -w @isaii/db"
+    "db:make-admin": "npm run make-admin -w @isaii/db",
+    "eval": "npm run eval -w @isaii/evals --",
+    "new:package": "node tooling/scripts/new-package.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

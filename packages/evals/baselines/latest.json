@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-20-19-10-28",
+  "model": "claude-opus-5-5",
+  "summaries": [
+    {
+      "agent": "guardrails",
+      "cases": 4,
+      "errors": 0,
+      "checkPassRate": 1,
+      "judgeMean": null,
+      "byLanguage": {
+        "en": {
+          "cases": 4,
+          "checkPassRate": 1,
+          "judgeMean": null
+        }
+      }
+    },
+    {
+      "agent": "research",
+      "cases": 3,
+      "errors": 0,
+      "checkPassRate": 1,
+      "judgeMean": 8,
+      "byLanguage": {
+        "hi": {
+          "cases": 1,
+          "checkPassRate": 1,
+          "judgeMean": 8.5
+        },
+        "ta": {
+          "cases": 1,
+          "checkPassRate": 1,
+          "judgeMean": 8
+        },
+        "kn": {
+          "cases": 1,
+          "checkPassRate": 1,
+          "judgeMean": 7.5
+        }
+      }
+    },
+    {
+      "agent": "scripts",
+      "cases": 3,
+      "errors": 0,
+      "checkPassRate": 1,
+      "judgeMean": 7.466666666666666,
+      "byLanguage": {
+        "hi": {
+          "cases": 1,
+          "checkPassRate": 1,
+          "judgeMean": 7
+        },
+        "ta": {
+          "cases": 1,
+          "checkPassRate": 1,
+          "judgeMean": 7.6
+        },
+        "kn": {
+          "cases": 1,
+          "checkPassRate": 1,
+          "judgeMean": 7.8
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+# Default owner
+*                                   @Sudharsansus
+
+# Money, identity and security need a second look
+/packages/domain-billing/           @Sudharsansus
+/packages/domain-identity/          @Sudharsansus
+/packages/security/                 @Sudharsansus
+/packages/db/migrations/            @Sudharsansus
+/apps/*/app/api/webhooks/           @Sudharsansus
+/apps/api/src/                      @Sudharsansus
+
+# AI quality
+/packages/prompts/                  @Sudharsansus
+/packages/evals/                    @Sudharsansus
