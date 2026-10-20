@@ -46,8 +46,8 @@ describe('public API v1', () => {
   it('returns 404 for episodes the key does not own', async () => {
     expect((await app.request('/v1/episodes/00000000-0000-0000-0000-000000000000', { headers: auth() })).status).toBe(404)
   })
-  it('maps domain errors (insufficient credits) to 402', async () => {
-    const r = await app.request('/v1/generations', { method: 'POST', headers: auth(), body: JSON.stringify({ topic: 'Long one', duration: '5min' }) })
+  it('maps domain errors (plan limit) to 402', async () => {
+    const r = await app.request('/v1/generations', { method: 'POST', headers: auth(), body: JSON.stringify({ topic: 'Long one', duration: '60min' }) })
     expect(r.status).toBe(402)
   })
 })
