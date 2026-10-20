@@ -1,74 +1,34 @@
+import { CheckoutRequest } from '@isaii/contracts'
+import { AppError, ErrorCode } from '@isaii/core'
+import { createDodoCheckout, createRazorpayOrder, dodoProductIdsFromEnv, getProduct } from '@isaii/domain-billing'
+import { logger } from '@isaii/logger'
+import { appUrl, json, readJson, route } from '@/server/http'
+import { requireUser } from '@/server/session'
+
 export const dynamic = 'force-dynamic'
 
-import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import { db, users } from '@isaii/db'
-import { eq } from 'drizzle-orm'
-import { getSession } from '@/lib/session'
-import { getProduct, dodoProductId } from '@/lib/billing'
-import { logger } from '@isaii/logger'
-
-const Body = z.object({
-  productId: z.string(),
-  currency: z.enum(['INR', 'USD']),
-})
-
-const DODO_BASE = process.env.DODO_PAYMENTS_ENV === 'live'
-  ? 'https://live.dodopayments.com'
-  : 'https://test.dodopayments.com'
-
-/** Start a checkout. ₹ goes through Razorpay (UPI, cards, netbanking); $ through Dodo. */
-export async function POST(req: NextRequest) {
-  const session = await getSession()
-  if (!session?.user?.email) return NextResponse.json({ error: 'Sign in to buy credits' }, { status: 401 })
-
-  const parsed = Body.safeParse(await req.json())
-  if (!parsed.success) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
-  const product = getProduct(parsed.data.productId)
-  if (!product) return NextResponse.json({ error: 'Unknown product' }, { status: 404 })
-
-  const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
-  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
-
+/** ₹ → Razorpay order (UPI, cards, netbanking). $ → Dodo hosted checkout. */
+export const POST = route(async (req: Request) => {
+  const user = await requireUser()
+  const body = await readJson(req, v => CheckoutRequest.parse(v))
+  const product = getProduct(body.productId)
+  if (!product) throw new AppError(ErrorCode.NOT_FOUND, 'Unknown product')
   const notes = { userId: user.id, productId: product.id }
-
   try {
-    if (parsed.data.currency === 'INR') {
-      const keyId = process.env.RAZORPAY_KEY_ID, secret = process.env.RAZORPAY_KEY_SECRET
-      if (!keyId || !secret) return NextResponse.json({ error: 'INR payments are not configured yet' }, { status: 503 })
-      const res = await fetch('https://api.razorpay.com/v1/orders', {
-        method: 'POST',
-        headers: { Authorization: `Basic ${Buffer.from(`${keyId}:${secret}`).toString('base64')}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: product.inr * 100, currency: 'INR', receipt: `${product.id}-${Date.now()}`, notes }),
-      })
-      const order = await res.json()
-      if (!res.ok) throw new Error(`Razorpay ${res.status}: ${order?.error?.description || 'order failed'}`)
-      return NextResponse.json({
-        provider: 'razorpay', keyId, orderId: order.id, amount: order.amount, currency: 'INR',
-        name: 'ISAII', description: `${product.name} · ${product.credits} min`,
-        prefill: { email: user.email, name: user.name ?? undefined },
-      })
+    if (body.currency === 'INR') {
+      const keyId = process.env.RAZORPAY_KEY_ID, keySecret = process.env.RAZORPAY_KEY_SECRET
+      if (!keyId || !keySecret) throw new AppError(ErrorCode.UNAVAILABLE, 'INR payments are not configured yet')
+      const order = await createRazorpayOrder({ keyId, keySecret }, product, notes)
+      return json({ provider: 'razorpay', keyId, ...order, currency: 'INR', name: 'ISAII', description: `${product.name} · ${product.credits} min`, prefill: { email: user.email, name: user.name ?? undefined } })
     }
-
     const apiKey = process.env.DODO_PAYMENTS_API_KEY
-    const dodoProduct = dodoProductId(product.id)
-    if (!apiKey || !dodoProduct) return NextResponse.json({ error: 'USD payments are not configured yet' }, { status: 503 })
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin
-    const res = await fetch(`${DODO_BASE}/checkouts`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        product_cart: [{ product_id: dodoProduct, quantity: 1 }],
-        customer: { email: user.email, name: user.name ?? undefined },
-        return_url: `${appUrl}/dashboard?paid=1`,
-        metadata: notes,
-      }),
-    })
-    const data = await res.json()
-    if (!res.ok || !data.checkout_url) throw new Error(`Dodo ${res.status}: ${JSON.stringify(data).slice(0, 200)}`)
-    return NextResponse.json({ provider: 'dodo', url: data.checkout_url })
-  } catch (e: any) {
-    logger.error('Checkout failed', { product: product.id, error: e.message })
-    return NextResponse.json({ error: 'Could not start checkout. Please try again.' }, { status: 502 })
+    if (!apiKey) throw new AppError(ErrorCode.UNAVAILABLE, 'USD payments are not configured yet')
+    const env = process.env.DODO_PAYMENTS_ENV === 'live' ? 'live' : 'test'
+    const { url } = await createDodoCheckout({ apiKey, env, productIds: dodoProductIdsFromEnv() }, product.id, { email: user.email, name: user.name }, `${appUrl(req)}/dashboard?paid=1`, notes)
+    return json({ provider: 'dodo', url })
+  } catch (e) {
+    if (e instanceof AppError) throw e
+    logger.error('checkout failed', { product: product.id, error: (e as Error).message })
+    throw new AppError(ErrorCode.UPSTREAM, 'Could not start checkout. Please try again.')
   }
-}
+})

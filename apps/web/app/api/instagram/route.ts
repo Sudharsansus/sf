@@ -1,16 +1,17 @@
+import { NextResponse } from 'next/server'
+import { randomUUID } from 'node:crypto'
+import { keys, kv } from '@isaii/cache'
+import { instagramAuthUrl } from '@isaii/domain-publishing'
+import { appUrl, route } from '@/server/http'
+import { requireUser } from '@/server/session'
+
 export const dynamic = 'force-dynamic'
-import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/session'
-import { getAuthUrl } from '@/lib/instagram'
-import { randomUUID } from 'crypto'
-import { redis } from '@/lib/redis'
 
-export async function GET(req: NextRequest) {
-  const session = await getSession()
-  if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+/** Start the instagram OAuth flow. The state ties the callback to this user for 10 minutes. */
+export const GET = route(async (req: Request) => {
+  const user = await requireUser()
+  const base = appUrl(req)
   const state = randomUUID()
-  await redis.setex(`ig_state:${state}`, 600, session.user.email)
-  return NextResponse.redirect(getAuthUrl(state))
-}
-
-
+  await kv().set(keys.oauthState('instagram', state), user.id, { ex: 600 })
+  return NextResponse.redirect(instagramAuthUrl({ appId: process.env.INSTAGRAM_APP_ID ?? '', appSecret: process.env.INSTAGRAM_APP_SECRET ?? '', redirectUri: `${base}/api/instagram/callback` }, state))
+})

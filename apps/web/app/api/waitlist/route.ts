@@ -1,29 +1,16 @@
+import * as z from 'zod'
+import { getDb, joinWaitlist } from '@isaii/db'
+import { clientIp } from '@isaii/security'
+import { limit } from '@/server/deps'
+import { json, readJson, route } from '@/server/http'
+
 export const dynamic = 'force-dynamic'
 
-import { NextRequest, NextResponse } from 'next/server'
-import { db, waitlist } from '@isaii/db'
-import { randomUUID } from 'crypto'
+const Body = z.object({ email: z.email(), name: z.string().max(100).optional() })
 
-export async function POST(req: NextRequest) {
-  try {
-    const { email, name } = await req.json()
-
-    if (!email?.trim() || !email.includes('@')) {
-      return NextResponse.json({ error: 'Valid email is required' }, { status: 400 })
-    }
-
-    const entry = await db.insert(waitlist).values({
-      id: randomUUID() as any,
-      email: email.toLowerCase().trim(),
-      name: name?.trim() || null
-    }).returning()
-
-    return NextResponse.json({ success: true, entry: entry[0] })
-  } catch (error: any) {
-    if (error.message?.includes('unique')) {
-      return NextResponse.json({ error: 'Email already on waitlist' }, { status: 409 })
-    }
-    console.error('Error adding to waitlist:', error)
-    return NextResponse.json({ error: 'Failed to add to waitlist' }, { status: 500 })
-  }
-}
+export const POST = route(async (req: Request) => {
+  if (!(await limit('waitlist', 5, '1 h').limit(clientIp(req.headers))).success) return json({ error: 'Too many requests' }, 429)
+  const body = await readJson(req, v => Body.parse(v))
+  const added = await joinWaitlist(getDb(), body.email, body.name)
+  return added ? json({ success: true }) : json({ error: 'Email already on waitlist' }, 409)
+})

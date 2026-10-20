@@ -1,0 +1,20 @@
+{
+  "name": "@isaii/domain-publishing",
+  "version": "0.0.0",
+  "private": true,
+  "description": "YouTube, Instagram Reels and podcast RSS publishing.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@isaii/config": "*",
+    "@types/node": "22.20.5"
+  }
+}

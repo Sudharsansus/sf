@@ -5,7 +5,8 @@
   "description": "Thumbnails (satori/resvg), captions (SRT/VTT), ffmpeg video + Shorts builders.",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./ffmpeg": "./src/ffmpeg.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

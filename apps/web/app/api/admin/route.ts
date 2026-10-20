@@ -1,112 +1,47 @@
+import * as z from 'zod'
+import { eq } from 'drizzle-orm'
+import { AppError, ErrorCode } from '@isaii/core'
+import { addCredits, adminOverview, aiUsageByTask, getDb, listEpisodesForAdmin, listUsersForAdmin, listWaitlist, recordLedger, users } from '@isaii/db'
+import { audit, requireRole } from '@isaii/domain-identity'
+import { clientIp } from '@isaii/security'
+import { json, readJson, route } from '@/server/http'
+import { requireUser } from '@/server/session'
+
 export const dynamic = 'force-dynamic'
 
-import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/session'
-import { db, users, episodes, aiRequestLog, auditLogs, waitlist } from '@isaii/db'
-import { isAdmin, auditLog } from '@/lib/security'
-import { getAIStats } from '@/lib/ai'
-import { eq, desc, sql, gte } from 'drizzle-orm'
-import { logger } from '@isaii/logger'
-
-export async function GET(req: NextRequest) {
-  const session = await getSession()
-  if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
-  if (!user || !isAdmin(user)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-
-  const { searchParams } = new URL(req.url)
-  const view = searchParams.get('view') || 'overview'
-
-  await auditLog({
-    userId: user.id,
-    action: 'admin.data_access',
-    resource: `view:${view}`,
-    metadata: {
-      ip: req.headers.get('x-forwarded-for') || 'unknown',
-      userAgent: req.headers.get('user-agent') || 'unknown'
-    }
-  })
-
-  if (view === 'overview') {
-    const [
-      totalUsers,
-      totalEpisodes,
-      completedEpisodes,
-      recentAudit,
-      aiStats
-    ] = await Promise.all([
-      db.select({ count: sql<number>`count(*)::int` }).from(users),
-      db.select({ count: sql<number>`count(*)::int` }).from(episodes),
-      db.select({ count: sql<number>`count(*)::int` }).from(episodes).where(eq(episodes.status, 'complete')),
-      db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)).limit(20),
-      getAIStats()
-    ])
-
-    return NextResponse.json({
-      users:            totalUsers[0]?.count || 0,
-      episodes:         totalEpisodes[0]?.count || 0,
-      completedEpisodes: completedEpisodes[0]?.count || 0,
-      recentAudit,
-      ai:               aiStats
-    })
+export const GET = route(async (req: Request) => {
+  const admin = await requireUser()
+  requireRole(admin, 'admin')
+  const view = new URL(req.url).searchParams.get('view') ?? 'overview'
+  const db = getDb()
+  await audit(db, { userId: admin.id, action: 'admin.data_access', resource: `view:${view}`, ipAddress: clientIp(req.headers) })
+  switch (view) {
+    case 'overview': return json({ ...(await adminOverview(db)), ai: await aiUsageByTask(db) })
+    case 'users': return json(await listUsersForAdmin(db))
+    case 'episodes': return json(await listEpisodesForAdmin(db))
+    case 'waitlist': return json(await listWaitlist(db))
+    default: throw new AppError(ErrorCode.BAD_REQUEST, 'Unknown view')
   }
+})
 
-  if (view === 'users') {
-    const allUsers = await db.select({
-      id: users.id, email: users.email, name: users.name,
-      credits: users.credits, plan: users.plan, role: users.role,
-      createdAt: users.createdAt
-    }).from(users).orderBy(desc(users.createdAt)).limit(100)
-    return NextResponse.json(allUsers)
+const Patch = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('set_role'), userId: z.uuid(), value: z.enum(['user', 'support', 'moderator', 'admin']) }),
+  z.object({ action: z.literal('adjust_credits'), userId: z.uuid(), value: z.number().int().min(-100_000).max(100_000), reason: z.string().min(3).max(200) }),
+])
+
+/** Role changes and credit adjustments — validated, ledgered and audited. */
+export const PATCH = route(async (req: Request) => {
+  const admin = await requireUser()
+  requireRole(admin, 'admin')
+  const body = await readJson(req, v => Patch.parse(v))
+  const db = getDb()
+  if (body.action === 'set_role') {
+    if (body.userId === admin.id && body.value !== 'admin') throw new AppError(ErrorCode.BAD_REQUEST, 'You cannot remove your own admin role')
+    await db.update(users).set({ role: body.value, updatedAt: new Date() }).where(eq(users.id, body.userId))
+  } else {
+    if ((await addCredits(db, body.userId, body.value)) === null) throw new AppError(ErrorCode.NOT_FOUND, 'User not found')
+    await recordLedger(db, { userId: body.userId, amount: body.value, reason: `admin:${admin.id}:${body.reason}` })
   }
-
-  if (view === 'episodes') {
-    const allEpisodes = await db.select({
-      id: episodes.id,
-      title: episodes.title,
-      email: users.email,
-      status: episodes.status,
-      createdAt: episodes.createdAt
-    }).from(episodes)
-      .innerJoin(users, eq(episodes.userId, users.id))
-      .orderBy(desc(episodes.createdAt))
-      .limit(100)
-    return NextResponse.json(allEpisodes)
-  }
-
-  if (view === 'waitlist') {
-    const waitlistEntries = await db.select({
-      id: waitlist.id,
-      email: waitlist.email,
-      name: waitlist.name,
-      createdAt: waitlist.createdAt
-    }).from(waitlist).orderBy(desc(waitlist.createdAt)).limit(500)
-    return NextResponse.json(waitlistEntries)
-  }
-
-  return NextResponse.json({ error: 'Unknown view' }, { status: 400 })
-}
-
-// Grant/revoke admin, adjust credits
-export async function PATCH(req: NextRequest) {
-  const session = await getSession()
-  if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const [admin] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
-  if (!admin || !isAdmin(admin)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-
-  const { userId, action, value } = await req.json()
-
-  if (action === 'set_role') {
-    await db.update(users).set({ role: value }).where(eq(users.id, userId))
-    logger.info('Admin: set_role', { adminId: admin.id, userId, role: value })
-  }
-
-  if (action === 'set_credits') {
-    await db.update(users).set({ credits: parseInt(value) }).where(eq(users.id, userId))
-    logger.info('Admin: set_credits', { adminId: admin.id, userId, credits: value })
-  }
-
-  return NextResponse.json({ ok: true })
-}
-
+  await audit(db, { userId: admin.id, action: `admin.${body.action}`, resource: `user:${body.userId}`, metadata: body, ipAddress: clientIp(req.headers) })
+  return json({ ok: true })
+})

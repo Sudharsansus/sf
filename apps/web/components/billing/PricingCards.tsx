@@ -1,5 +1,6 @@
 'use client'
-import { PLAN_PRODUCTS, PACK_PRODUCTS, formatPrice, type Currency } from '@/lib/billing'
+import type { Currency } from '@isaii/core'
+import { PLAN_PRODUCTS, PACK_PRODUCTS, formatPrice } from '@isaii/domain-billing/catalogue'
 import { BuyButton } from './BuyButton'
 import { useCurrency } from './useCurrency'
 

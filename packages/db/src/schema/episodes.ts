@@ -24,6 +24,10 @@ export const episodes = pgTable('episodes', {
   selectedScript: jsonb('selected_script'),
   script: jsonb('script'),
   audioUrl: text('audio_url'),
+  /** 16:9 MP4 rendered by worker-media (YouTube) */
+  videoUrl: text('video_url'),
+  /** 9:16 Shorts/Reels rendered by worker-media */
+  shortUrls: jsonb('short_urls'),
   thumbnailUrls: jsonb('thumbnail_urls'),
   seoData: jsonb('seo_data'),
   duration: integer('duration').default(0),

@@ -1,87 +1,62 @@
-export const dynamic = 'force-dynamic'
-
-import { NextRequest, NextResponse } from 'next/server'
-import { db, episodes, users } from '@isaii/db'
-import { uploadVideo, refreshAccessToken } from '@/lib/youtube'
-import { createReelContainer, publishReel } from '@/lib/instagram'
-import { getSession } from '@/lib/session'
+import * as z from 'zod'
 import { eq } from 'drizzle-orm'
+import { AppError, ErrorCode } from '@isaii/core'
+import { episodes, getDb, getOwnedEpisode } from '@isaii/db'
+import { openToken } from '@isaii/domain-identity'
+import { instagramPublishReel, reelCaption, youtubeRefresh, youtubeUploadVideo } from '@isaii/domain-publishing'
 import { logger } from '@isaii/logger'
+import { appUrl, json, readJson, route } from '@/server/http'
+import { requireUser } from '@/server/session'
 
-export const maxDuration = 60
+export const dynamic = 'force-dynamic'
+export const maxDuration = 300
 
-export async function POST(req: NextRequest) {
-  try {
-    const session = await getSession()
-    if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+const Body = z.object({ episodeId: z.uuid(), platforms: z.array(z.enum(['youtube', 'instagram'])).min(1), privacy: z.enum(['private', 'unlisted', 'public']).default('private') })
+type Seo = { youtube?: { title?: string; description?: string; tags?: string[] }; instagram?: { caption?: string; hashtags?: string[] } }
 
-    const { episodeId, platforms } = await req.json()
-    if (!episodeId) return NextResponse.json({ error: 'Missing episodeId' }, { status: 400 })
+/** Publish on the creator's click. Needs the MP4 / Short rendered by worker-media — audio is never uploaded as video. */
+export const POST = route(async (req: Request) => {
+  const user = await requireUser()
+  const body = await readJson(req, v => Body.parse(v))
+  const ep = await getOwnedEpisode(getDb(), body.episodeId, user.id)
+  if (!ep) throw new AppError(ErrorCode.NOT_FOUND, 'Not found')
+  const seo = (ep.seoData ?? {}) as Seo
+  const results: Record<string, unknown> = {}
 
-    const [episode] = await db.select().from(episodes).where(eq(episodes.id, episodeId)).limit(1)
-    const [user] = await db.select().from(users).where(eq(users.email, session.user.email)).limit(1)
-    if (!episode || !user || episode.userId !== user.id) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    if (!episode.audioUrl) return NextResponse.json({ error: 'Audio not ready yet' }, { status: 400 })
-
-    const seo = episode.seoData as any
-    const results: Record<string, any> = {}
-
-    // YouTube upload
-    if (platforms?.includes('youtube') && user.youtubeAccessToken && user.youtubeRefreshToken) {
+  if (body.platforms.includes('youtube')) {
+    const refresh = openToken(user.youtubeRefreshToken)
+    if (!ep.videoUrl) results.youtube = { status: 'not_ready', error: 'The video for this episode has not been rendered yet.' }
+    else if (!refresh) results.youtube = { status: 'not_connected' }
+    else {
       try {
-        let token = user.youtubeAccessToken
-        try { token = await refreshAccessToken(user.youtubeRefreshToken) } catch {}
-
-        const audioRes = await fetch(episode.audioUrl)
-        const audioBuffer = Buffer.from(await audioRes.arrayBuffer())
-
-        const { videoId, videoUrl } = await uploadVideo({
-          accessToken: token,
-          audioBuffer,
-          title: seo?.youtube?.title || episode.title,
-          description: seo?.youtube?.description || episode.topic,
-          tags: seo?.youtube?.tags || [],
-          thumbnailUrl: (episode.thumbnailUrls as string[])?.[0]
-        })
-
-        await db.update(episodes).set({ youtubeVideoId: videoId, youtubeUrl: videoUrl }).where(eq(episodes.id, episodeId))
-        results.youtube = { videoId, videoUrl, status: 'published' }
-        logger.info('YouTube upload complete', { videoId })
-      } catch (e: any) {
-        logger.error('YouTube upload failed', { error: e.message })
-        results.youtube = { status: 'failed', error: e.message }
+        const base = appUrl(req)
+        const token = await youtubeRefresh({ clientId: process.env.YOUTUBE_CLIENT_ID ?? '', clientSecret: process.env.YOUTUBE_CLIENT_SECRET ?? '', redirectUri: `${base}/api/youtube/callback` }, refresh)
+        const video = new Uint8Array(await (await fetch(ep.videoUrl)).arrayBuffer())
+        const r = await youtubeUploadVideo({ accessToken: token, video, title: seo.youtube?.title || ep.title, description: seo.youtube?.description || ep.topic, tags: seo.youtube?.tags ?? [], privacy: body.privacy, language: ep.language })
+        await getDb().update(episodes).set({ youtubeVideoId: r.videoId, youtubeUrl: r.videoUrl }).where(eq(episodes.id, ep.id))
+        results.youtube = { status: 'uploaded', ...r }
+      } catch (e) {
+        logger.error('youtube publish failed', { error: (e as Error).message })
+        results.youtube = { status: 'failed' }
       }
     }
-
-    // Instagram Reel
-    if (platforms?.includes('instagram') && user.instagramAccessToken && user.instagramUserId && episode.audioUrl) {
-      try {
-        const caption = `${seo?.instagram?.caption || episode.title}\n\n${(seo?.instagram?.hashtags || []).map((h: string) => `#${h}`).join(' ')}`
-        const containerId = await createReelContainer({
-          accessToken: user.instagramAccessToken,
-          userId: user.instagramUserId,
-          videoUrl: episode.audioUrl,
-          caption
-        })
-        // Wait for container to process
-        await new Promise(r => setTimeout(r, 5000))
-        const postId = await publishReel({
-          accessToken: user.instagramAccessToken,
-          userId: user.instagramUserId,
-          containerId
-        })
-        await db.update(episodes).set({ instagramPostId: postId }).where(eq(episodes.id, episodeId))
-        results.instagram = { postId, status: 'published' }
-        logger.info('Instagram published', { postId })
-      } catch (e: any) {
-        logger.error('Instagram failed', { error: e.message })
-        results.instagram = { status: 'failed', error: e.message }
-      }
-    }
-
-    return NextResponse.json({ episodeId, distribution: results })
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
   }
-}
 
+  if (body.platforms.includes('instagram')) {
+    const short = (ep.shortUrls as string[] | null)?.[0]
+    const token = openToken(user.instagramAccessToken)
+    if (!short) results.instagram = { status: 'not_ready', error: 'No Short has been rendered for this episode yet.' }
+    else if (!token || !user.instagramUserId) results.instagram = { status: 'not_connected' }
+    else {
+      try {
+        const r = await instagramPublishReel({ accessToken: token, userId: user.instagramUserId, videoUrl: short, caption: reelCaption(seo.instagram?.caption || ep.title, seo.instagram?.hashtags ?? []) })
+        await getDb().update(episodes).set({ instagramPostId: r.postId }).where(eq(episodes.id, ep.id))
+        results.instagram = { status: 'published', ...r }
+      } catch (e) {
+        logger.error('instagram publish failed', { error: (e as Error).message })
+        results.instagram = { status: 'failed' }
+      }
+    }
+  }
+  return json({ episodeId: ep.id, distribution: results })
+})

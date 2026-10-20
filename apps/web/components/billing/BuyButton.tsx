@@ -1,7 +1,7 @@
 'use client'
 import { useState, type CSSProperties, type ReactNode } from 'react'
 import { useSession } from 'next-auth/react'
-import type { Currency } from '@/lib/billing'
+import type { Currency } from '@isaii/core'
 
 declare global { interface Window { Razorpay?: any } }
 

@@ -4,7 +4,7 @@ const nextConfig = {
   transpilePackages: Object.keys(require('./package.json').dependencies).filter(n => n.startsWith('@isaii/')),
   serverExternalPackages: ['@neondatabase/serverless', '@resvg/resvg-js'],
   // Thumbnail fonts are read from disk at runtime by the Inngest functions.
-  outputFileTracingIncludes: { '/api/inngest': ['./lib/fonts/**'] },
+  outputFileTracingIncludes: { '/api/inngest': ['../../packages/media/fonts/**'] },
   async headers() {
     return [
       {

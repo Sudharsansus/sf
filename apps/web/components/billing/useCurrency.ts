@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import type { Currency } from '@/lib/billing'
+import type { Currency } from '@isaii/core'
 
 /** ₹ for visitors in India (by timezone), $ elsewhere. Remembers a manual choice. */
 export function useCurrency(): [Currency, (c: Currency) => void] {

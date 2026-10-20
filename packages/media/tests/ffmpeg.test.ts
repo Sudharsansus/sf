@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { episodeVideoArgs, runFfmpeg, shortArgs } from '../src'
+import { episodeVideoArgs, runFfmpeg, shortArgs } from '../src/ffmpeg'
 
 describe('ffmpeg args', () => {
   it('builds a faststart H.264 episode with waveform and optional captions', () => {

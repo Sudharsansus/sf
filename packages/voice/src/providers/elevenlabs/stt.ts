@@ -9,7 +9,7 @@ export class ElevenLabsSTT implements STTProvider {
   async transcribe(req: { audio: Uint8Array; mimeType: string; language?: string }) {
     const form = new FormData()
     form.append('model_id', this.model)
-    form.append('file', new Blob([req.audio], { type: req.mimeType }), 'audio')
+    form.append('file', new Blob([new Uint8Array(req.audio)], { type: req.mimeType }), 'audio')
     form.append('diarize', 'true')
     if (req.language && !req.language.includes('-')) form.append('language_code', req.language)
     const res = await this.fetchImpl(`${BASE}/speech-to-text`, { method: 'POST', headers: { 'xi-api-key': this.apiKey }, body: form })

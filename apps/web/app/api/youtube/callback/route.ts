@@ -1,28 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { exchangeCode } from '@/lib/youtube'
-import { db, users } from '@isaii/db'
+import { NextResponse } from 'next/server'
 import { eq } from 'drizzle-orm'
-import { redis } from '@/lib/redis'
+import { keys, kv } from '@isaii/cache'
+import { getDb, users } from '@isaii/db'
+import { audit, sealToken } from '@isaii/domain-identity'
+import { youtubeExchangeCode } from '@isaii/domain-publishing'
+import { logger } from '@isaii/logger'
+import { appUrl } from '@/server/http'
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  const code = searchParams.get('code')
-  const state = searchParams.get('state')
-  if (!code || !state) return NextResponse.redirect('/dashboard?error=oauth_failed')
+export const dynamic = 'force-dynamic'
 
-  const email = await redis.get<string>(`yt_state:${state}`)
-  if (!email) return NextResponse.redirect('/dashboard?error=state_invalid')
-
+export async function GET(req: Request) {
+  const base = appUrl(req)
+  const back = (q: string) => NextResponse.redirect(`${base}/dashboard?${q}`)
+  const url = new URL(req.url)
+  const code = url.searchParams.get('code'), state = url.searchParams.get('state')
+  if (!code || !state) return back('error=oauth_failed')
+  const stateKey = keys.oauthState('youtube', state)
+  const userId = await kv().get<string>(stateKey)
+  if (!userId) return back('error=state_invalid')
+  await kv().del(stateKey)
   try {
-    const { accessToken, refreshToken } = await exchangeCode(code)
-    await db.update(users).set({
-      youtubeAccessToken: accessToken,
-      youtubeRefreshToken: refreshToken,
-      updatedAt: new Date()
-    }).where(eq(users.email, email))
-    await redis.del(`yt_state:${state}`)
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard?youtube=connected`)
-  } catch (e: any) {
-    return NextResponse.redirect(`/dashboard?error=${encodeURIComponent(e.message)}`)
+    const t = await youtubeExchangeCode({ clientId: process.env.YOUTUBE_CLIENT_ID ?? '', clientSecret: process.env.YOUTUBE_CLIENT_SECRET ?? '', redirectUri: `${base}/api/youtube/callback` }, code)
+    await getDb().update(users).set({ youtubeAccessToken: sealToken(t.accessToken), youtubeRefreshToken: sealToken(t.refreshToken), updatedAt: new Date() }).where(eq(users.id, userId))
+    await audit(getDb(), { userId, action: 'youtube.connected' })
+    return back('youtube=connected')
+  } catch (e) {
+    logger.error('youtube oauth failed', { error: (e as Error).message })
+    return back('error=oauth_failed')
   }
 }
