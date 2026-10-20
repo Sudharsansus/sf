@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
-import { db, users, episodes, aiRequestLog, auditLogs, waitlist } from '@sus/db'
+import { db, users, episodes, aiRequestLog, auditLogs, waitlist } from '@isaii/db'
 import { isAdmin, auditLog } from '@/lib/security'
 import { getAIStats } from '@/lib/ai'
 import { eq, desc, sql, gte } from 'drizzle-orm'

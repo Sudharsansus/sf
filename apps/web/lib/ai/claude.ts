@@ -4,7 +4,7 @@
 
 import Anthropic from '@anthropic-ai/sdk'
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod'
-import type * as z from 'zod/v4'
+import type * as z from 'zod'
 import { logger } from '../logger'
 
 export const CLAUDE_MODEL = process.env.CLAUDE_MODEL || 'claude-opus-5-5'
@@ -44,7 +44,7 @@ function costOf(usage: Anthropic.Usage): number {
 
 async function logUsage(task: TaskType, usage: Anthropic.Usage, latencyMs: number, ctx?: AICtx, success = true) {
   try {
-    const { db, aiRequestLog } = await import('@sus/db')
+    const { db, aiRequestLog } = await import('@isaii/db')
     await db.insert(aiRequestLog).values({
       taskType: task, provider: 'claude', model: CLAUDE_MODEL,
       tokens: usage.input_tokens + usage.output_tokens, latencyMs,
@@ -126,7 +126,7 @@ export async function streamChat(
 /** Aggregate usage from ai_request_log for the admin/health dashboards. */
 export async function getAIStats() {
   try {
-    const { db, aiRequestLog } = await import('@sus/db')
+    const { db, aiRequestLog } = await import('@isaii/db')
     const { sql } = await import('drizzle-orm')
     const rows = await db.select({
       task: aiRequestLog.taskType,

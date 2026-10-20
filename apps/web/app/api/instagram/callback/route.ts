@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { exchangeCode } from '@/lib/instagram'
-import { db, users } from '@sus/db'
+import { db, users } from '@isaii/db'
 import { eq } from 'drizzle-orm'
 import { redis } from '@/lib/redis'
 

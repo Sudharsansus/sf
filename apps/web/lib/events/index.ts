@@ -50,7 +50,7 @@ export function onEvent(event: WorkflowEvent, fn: (payload: EventPayload) => voi
 
 async function persistEvent(payload: EventPayload) {
   try {
-    const { db, workflowRuns } = await import('@sus/db')
+    const { db, workflowRuns } = await import('@isaii/db')
     // Store as workflow_runs metadata record
     await db.insert(workflowRuns).values({
       episodeId:    payload.episodeId || null,

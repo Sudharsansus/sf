@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { db, waitlist } from '@sus/db'
+import { db, waitlist } from '@isaii/db'
 import { randomUUID } from 'crypto'
 
 export async function POST(req: NextRequest) {

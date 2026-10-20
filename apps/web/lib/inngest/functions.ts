@@ -2,7 +2,7 @@
 // Two durable functions. Each step.run is retried on its own and memoized, so a
 // retry never repeats work that already succeeded (or charges for it twice).
 
-import { db, episodes, users, creditsLedger, workflowLocks } from '@sus/db'
+import { db, episodes, users, creditsLedger, workflowLocks } from '@isaii/db'
 import { eq, sql } from 'drizzle-orm'
 import { inngest, type GenerateRequested, type ProduceRequested } from './client'
 import {

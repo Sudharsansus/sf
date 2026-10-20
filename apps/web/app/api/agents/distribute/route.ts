@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { db, episodes, users } from '@sus/db'
+import { db, episodes, users } from '@isaii/db'
 import { uploadVideo, refreshAccessToken } from '@/lib/youtube'
 import { createReelContainer, publishReel } from '@/lib/instagram'
 import { getSession } from '@/lib/session'

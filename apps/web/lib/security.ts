@@ -50,7 +50,7 @@ export async function verifyEpisodeOwnership(
   userId: string
 ): Promise<boolean> {
   try {
-    const { db, episodes } = await import('@sus/db')
+    const { db, episodes } = await import('@isaii/db')
     const { eq } = await import('drizzle-orm')
     const [ep] = await db.select({ userId: episodes.userId })
       .from(episodes)
@@ -71,7 +71,7 @@ export async function auditLog(params: {
   ipAddress?: string
 }) {
   try {
-    const { db, auditLogs } = await import('@sus/db')
+    const { db, auditLogs } = await import('@isaii/db')
     await db.insert(auditLogs).values({
       userId:    params.userId || null,
       action:    params.action,

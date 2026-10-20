@@ -2,7 +2,7 @@
 // One catalogue for both providers: Razorpay (India, ₹ + UPI) and Dodo (international, $).
 // Every purchase is granted exactly once, keyed by the provider's order/payment id.
 
-import { db, users, creditsLedger } from '@sus/db'
+import { db, users, creditsLedger } from '@isaii/db'
 import { eq, sql } from 'drizzle-orm'
 import { redis } from './redis'
 import { auditLog } from './security'

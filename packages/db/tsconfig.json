@@ -1,5 +1,5 @@
 {
-  "extends": "@sus/tsconfig/base.json",
-  "include": ["src/**/*.ts", "scripts/**/*.ts"],
+  "extends": "@isaii/config/typescript/node.json",
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules"]
 }

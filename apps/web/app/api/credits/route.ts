@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
-import { db, users } from '@sus/db'
+import { db, users } from '@isaii/db'
 import { eq } from 'drizzle-orm'
 
 export async function GET() {

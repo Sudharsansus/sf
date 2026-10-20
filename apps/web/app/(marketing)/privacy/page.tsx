@@ -55,7 +55,7 @@ export default function PrivacyPage() {
             'You can delete your account and all associated data at any time from Settings. We will permanently delete all your data within 30 days of request.',
             'We do not sell your data. We do not use your data for advertising. We do not share your data with third parties except as described above.',
           ]],
-          ['Contact', ['Questions? Email us at privacy@sus.ai']],
+          ['Contact', ['Questions? Email us at privacy@isaii.si']],
         ].map(([heading, paras]) => (
           <div key={String(heading)} style={{ marginBottom: 36 }}>
             <h2 style={{ fontSize: 16, fontWeight: 600, letterSpacing: -.2, marginBottom: 14, color: c.text }}>{heading}</h2>

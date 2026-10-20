@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-import { db, users } from '@sus/db'
+import { db, users } from '@isaii/db'
 import { eq } from 'drizzle-orm'
 
 export const authOptions = {

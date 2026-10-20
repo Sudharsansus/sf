@@ -1,39 +1,41 @@
 {
-  "name": "@sus/web",
+  "name": "@isaii/web",
   "version": "7.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.135.0",
-    "@aws-sdk/client-s3": "3.600.0",
-    "@aws-sdk/s3-request-presigner": "3.600.0",
-    "@neondatabase/serverless": "0.9.3",
+    "@aws-sdk/client-s3": "3.1153.0",
+    "@aws-sdk/s3-request-presigner": "3.1153.0",
+    "@isaii/db": "*",
+    "@neondatabase/serverless": "1.2.0",
     "@resvg/resvg-js": "2.6.2",
-    "@sus/db": "*",
-    "@upstash/ratelimit": "1.2.1",
-    "@upstash/redis": "1.31.3",
-    "drizzle-orm": "0.30.10",
-    "elevenlabs": "0.17.0",
-    "inngest": "4.24.0",
-    "next": "14.2.29",
-    "next-auth": "4.24.7",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "satori": "0.60.0",
-    "uuid": "11.0.3",
-    "zod": "3.25.76"
+    "@upstash/ratelimit": "2.2.0",
+    "@upstash/redis": "1.39.0",
+    "drizzle-orm": "0.45.4",
+    "inngest": "4.25.0",
+    "next": "16.4.2",
+    "next-auth": "4.24.15",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "satori": "0.63.2",
+    "zod": "4.6.7"
   },
   "devDependencies": {
-    "@sus/tsconfig": "*",
+    "@isaii/config": "*",
+    "@next/eslint-plugin-next": "16.4.2",
+    "@testing-library/react": "16.3.3",
     "@types/node": "22.20.5",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
-    "typescript": "5.9.3"
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "jsdom": "30.1.3"
   }
 }

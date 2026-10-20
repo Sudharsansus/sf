@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { db, episodes, users, workflowLocks } from '@sus/db'
+import { db, episodes, users, workflowLocks } from '@isaii/db'
 import { getSession } from '@/lib/session'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'

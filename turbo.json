@@ -47,10 +47,30 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {},
+    "lint": {
+      "dependsOn": [
+        "^lint"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "eslint.config.*"
+      ]
+    },
     "typecheck": {
       "dependsOn": [
         "^typecheck"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "coverage/**"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "vitest.config.*"
       ]
     }
   }

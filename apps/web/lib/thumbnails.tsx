@@ -6,7 +6,7 @@ import satori from 'satori'
 import { Resvg } from '@resvg/resvg-js'
 import { readFile } from 'fs/promises'
 import { join } from 'path'
-import * as z from 'zod/v4'
+import * as z from 'zod'
 import { generateJSON, type AICtx } from './ai'
 
 const HEX = /^#[0-9a-fA-F]{6}$/

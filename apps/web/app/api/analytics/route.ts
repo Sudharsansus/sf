@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
-import { db, episodes, analytics, users } from '@sus/db'
+import { db, episodes, analytics, users } from '@isaii/db'
 import { eq, desc } from 'drizzle-orm'
 import { getChannelStats, refreshAccessToken } from '@/lib/youtube'
 

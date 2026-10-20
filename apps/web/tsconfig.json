@@ -1,19 +1,11 @@
 {
-  "extends": "@sus/tsconfig/nextjs.json",
+  "extends": "@isaii/config/typescript/nextjs.json",
   "compilerOptions": {
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+    // TODO(phase 5): enable strict once app code has moved into packages.
+    "strict": false,
+    "noUncheckedIndexedAccess": false,
+    "paths": { "@/*": ["./*"] }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

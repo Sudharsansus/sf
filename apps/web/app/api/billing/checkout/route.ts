@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { db, users } from '@sus/db'
+import { db, users } from '@isaii/db'
 import { eq } from 'drizzle-orm'
 import { getSession } from '@/lib/session'
 import { getProduct, dodoProductId } from '@/lib/billing'

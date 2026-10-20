@@ -2,7 +2,7 @@
 // Every text task runs on Claude through generateJSON(). Voices and transcription
 // run on ElevenLabs (see ./elevenlabs).
 
-import * as z from 'zod/v4'
+import * as z from 'zod'
 import { generateJSON, type AICtx } from './ai'
 import { languageName } from './languages'
 import {

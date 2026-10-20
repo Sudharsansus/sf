@@ -1,0 +1,14 @@
+{
+  "name": "@isaii/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./typescript/*": "./typescript/*",
+    "./eslint": "./eslint/index.js",
+    "./prettier": "./prettier/index.js",
+    "./vitest/node": "./vitest/node.js",
+    "./vitest/react": "./vitest/react.js"
+  },
+  "files": ["typescript", "eslint", "prettier", "vitest"]
+}

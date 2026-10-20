@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { db, projects, episodes, users } from '@sus/db'
+import { db, projects, episodes, users } from '@isaii/db'
 import { getSession } from '@/lib/session'
 import { eq, sql } from 'drizzle-orm'
 import { randomUUID } from 'crypto'

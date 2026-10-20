@@ -51,7 +51,7 @@ export default function TermsPage() {
           ['Service availability', [
             'We aim for high availability but cannot guarantee 100% uptime. We are not liable for losses caused by service interruptions.',
           ]],
-          ['Contact', ['Questions? Email us at hello@sus.ai']],
+          ['Contact', ['Questions? Email us at hello@isaii.si']],
         ].map(([heading, paras]) => (
           <div key={String(heading)} style={{ marginBottom: 36 }}>
             <h2 style={{ fontSize: 16, fontWeight: 600, letterSpacing: -.2, marginBottom: 14, color: c.text }}>{heading}</h2>

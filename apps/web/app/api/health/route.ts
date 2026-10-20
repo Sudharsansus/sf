@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { db, users } from '@sus/db'
+import { db, users } from '@isaii/db'
 import { redis } from '@/lib/redis'
 import { getAIStats } from '@/lib/ai'
 import { sql } from 'drizzle-orm'

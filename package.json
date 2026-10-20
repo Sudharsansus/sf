@@ -13,13 +13,28 @@
     "start": "turbo run start",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "db:make-admin": "npm run make-admin -w @sus/db"
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "knip": "knip",
+    "db:make-admin": "npm run make-admin -w @isaii/db"
   },
   "devDependencies": {
-    "turbo": "^2.5.4",
-    "typescript": "5.9.3"
+    "@eslint/js": "10.0.1",
+    "@isaii/config": "*",
+    "@vitest/coverage-v8": "5.0.5",
+    "eslint": "10.13.0",
+    "eslint-import-resolver-typescript": "4.4.5",
+    "eslint-plugin-boundaries": "7.2.0",
+    "knip": "6.42.1",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "turbo": "2.11.9",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.0",
+    "vitest": "5.0.5"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   }
 }

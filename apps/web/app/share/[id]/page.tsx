@@ -1,10 +1,11 @@
-import { db, episodes } from '@sus/db'
+import { db, episodes } from '@isaii/db'
 import { eq, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const [ep] = await db.select().from(episodes).where(eq(episodes.shareId, params.id)).limit(1)
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const [ep] = await db.select().from(episodes).where(eq(episodes.shareId, id)).limit(1)
   if (!ep) return { title: 'Episode not found' }
   return {
     title: `${ep.title} — ISAII`,
@@ -14,9 +15,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function SharePage({ params }: { params: { id: string } }) {
+export default async function SharePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const [ep] = await db.select().from(episodes)
-    .where(and(eq(episodes.shareId, params.id), eq(episodes.isPublic, true)))
+    .where(and(eq(episodes.shareId, id), eq(episodes.isPublic, true)))
     .limit(1)
   if (!ep) notFound()
   const script = ep.script as any

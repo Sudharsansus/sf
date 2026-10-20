@@ -1,10 +1,11 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
-import { db, users, episodes } from '@sus/db'
+import { db, users, episodes } from '@isaii/db'
 import { eq } from 'drizzle-orm'
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   try {
     const session = await getSession()
     if (!session?.user?.email)
@@ -15,7 +16,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
     const [episode] = await db.select().from(episodes)
-      .where(eq(episodes.id, params.id)).limit(1)
+      .where(eq(episodes.id, id)).limit(1)
     if (!episode || episode.userId !== user.id)
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
@@ -40,7 +41,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       status: 'awaiting_selection',
       agentStep: 'script_edited',
       updatedAt: new Date()
-    }).where(eq(episodes.id, params.id))
+    }).where(eq(episodes.id, id))
 
     return NextResponse.json({ ok: true, lines: validLines.length })
   } catch (e: any) {

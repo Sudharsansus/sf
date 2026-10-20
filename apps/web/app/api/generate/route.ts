@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { db, users, episodes, creditsLedger, workflowLocks } from '@sus/db'
+import { db, users, episodes, creditsLedger, workflowLocks } from '@isaii/db'
 import { inngest } from '@/lib/inngest/client'
 import { planGenerateLimit } from '@/lib/redis'
 import { canAffordDuration, checkGlobalBudget, checkUserHourlyCost, trackUserCost, getCostForDuration, getPlan, trackGlobalCost } from '@/lib/budget'
