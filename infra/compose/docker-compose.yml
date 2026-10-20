@@ -1,0 +1,43 @@
+# Local stack: Postgres, Upstash-compatible Redis, S3-compatible storage, Inngest dev server and the workers.
+#   cp infra/compose/.env.compose.example infra/compose/.env.compose
+#   docker compose -f infra/compose/docker-compose.yml up
+# Then run the web app on the host: npm run dev (it talks to these services).
+name: isaii
+services:
+  postgres:
+    image: postgres:17
+    environment: { POSTGRES_USER: isaii, POSTGRES_PASSWORD: isaii, POSTGRES_DB: isaii }
+    ports: ["5432:5432"]
+    volumes: [pg:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD", "pg_isready", "-U", "isaii"], interval: 5s, retries: 10 }
+
+  redis:
+    image: redis:7
+  redis-http:
+    # Upstash REST API on top of local Redis, so @upstash/redis works unchanged.
+    image: hiett/serverless-redis-http:latest
+    environment: { SRH_MODE: env, SRH_TOKEN: local_token, SRH_CONNECTION_STRING: "redis://redis:6379" }
+    ports: ["8079:80"]
+    depends_on: [redis]
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment: { MINIO_ROOT_USER: isaii, MINIO_ROOT_PASSWORD: isaii-secret }
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [minio:/data]
+
+  inngest:
+    image: inngest/inngest:latest
+    command: inngest dev -u http://host.docker.internal:3000/api/inngest -u http://worker-media:8080/api/inngest
+    ports: ["8288:8288"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+
+  worker-media:
+    build: { context: ../.., dockerfile: infra/docker/node.Dockerfile, args: { APP: worker-media } }
+    env_file: .env.compose
+    depends_on: [postgres, redis-http, minio, inngest]
+
+volumes:
+  pg: {}
+  minio: {}

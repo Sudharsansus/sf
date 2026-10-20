@@ -1,6 +1,7 @@
 import { failWorkflowLock, getDb, updateEpisode } from '@isaii/db'
 import { refundCredits } from '@isaii/domain-billing'
 import { audit } from '@isaii/domain-identity'
+import { isEnabled } from '@isaii/flags'
 import { inngest, type EventData } from '@isaii/queue'
 import { getStore } from '@isaii/storage'
 import { ElevenLabsTTS } from '@isaii/voice'
@@ -71,11 +72,16 @@ export const produceEpisode = inngest.createFunction(
 
     const [a, t, s] = await Promise.allSettled([audio, thumbs, seo])
     if (a.status === 'rejected') throw a.reason
-    return step.run('finalize', () => finalizeStep(deps, {
+    const final = await step.run('finalize', () => finalizeStep(deps, {
       episodeId: d.episodeId, lockKey: d.lockKey, seconds: script.seconds, audioUrl: a.value,
       thumbnailUrls: t.status === 'fulfilled' ? t.value : [], seo: s.status === 'fulfilled' ? s.value : {},
       partial: t.status === 'rejected' || s.status === 'rejected',
     }))
+    // Video + Shorts render in worker-media once it is deployed (FLAG_VIDEO_RENDERING=true).
+    if (isEnabled('videoRendering') && t.status === 'fulfilled' && t.value.length) {
+      await step.sendEvent('render-media', { name: 'media/render.requested', data: { episodeId: d.episodeId, kind: 'episode-video', options: {} } })
+    }
+    return final
   },
 )
 

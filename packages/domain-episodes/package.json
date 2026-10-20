@@ -6,7 +6,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./functions": "./src/functions-entry.ts"
+    "./functions": "./src/functions-entry.ts",
+    "./media-functions": "./src/media-functions.ts",
+    "./media": "./src/media.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -21,6 +23,7 @@
     "@isaii/db": "*",
     "@isaii/domain-billing": "*",
     "@isaii/domain-identity": "*",
+    "@isaii/flags": "*",
     "@isaii/guardrails": "*",
     "@isaii/i18n": "*",
     "@isaii/logger": "*",
