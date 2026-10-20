@@ -63,5 +63,16 @@ export async function getCurrentCost(userId: string): Promise<number> {
   return val ? parseFloat(val) : 0
 }
 
+// Per-plan generate limits (generatesPerHour in lib/budget.ts), one limiter per plan.
+const planLimiters = new Map<string, Ratelimit>()
+export function planGenerateLimit(plan: string, perHour: number) {
+  let l = planLimiters.get(plan)
+  if (!l) {
+    l = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(perHour, '1 h'), prefix: `sus:gen:${plan}` })
+    planLimiters.set(plan, l)
+  }
+  return l
+}
+
 // Legacy export name kept for compatibility
 export const apiLimit = ipLimit

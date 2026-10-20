@@ -2,17 +2,14 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Nav } from '@/components/ui/Nav'
+import { PricingCards } from '@/components/billing/PricingCards'
 
-const PLANS = [
-  { id: 'starter', name: 'Starter', credits: 60,   price: '$19',  yearly: '$15',  perMin: '$0.32/min', desc: 'Best for Creators' },
-  { id: 'pro',     name: 'Pro',     credits: 200,  price: '$39',  yearly: '$31',  perMin: '$0.20/min', desc: 'Best for SMEs',    badge: 'MOST POPULAR' },
-  { id: 'studio',  name: 'Studio',  credits: 600,  price: '$79',  yearly: '$63',  perMin: '$0.13/min', desc: 'Best for Studios' },
-  { id: 'agency',  name: 'Agency',  credits: 2000, price: '$199', yearly: '$159', perMin: '$0.10/min', desc: 'Best for Agencies' },
-]
 
 export default function DashboardPage() {
   const { data: session } = useSession()
   const [dark, setDark] = useState(true)
+  const [paid, setPaid] = useState(false)
+  useEffect(() => { setPaid(new URLSearchParams(window.location.search).get('paid') === '1') }, [])
   const [data, setData] = useState<any>(null)
   const [episodes, setEpisodes] = useState<any[]>([])
 
@@ -72,6 +69,12 @@ export default function DashboardPage() {
           <h1 style={{ fontSize: 'clamp(26px,3vw,38px)', fontWeight: 600, letterSpacing: -.6, lineHeight: 1.15 }}>Dashboard</h1>
         </div>
 
+        {paid && (
+          <div role="status" style={{ marginBottom: 24, padding: '14px 18px', borderRadius: 12, border: '1px solid rgba(74,222,128,0.4)', background: 'rgba(74,222,128,0.08)', fontSize: 13 }}>
+            Payment received — your minutes will appear in a few seconds. Refresh if they don’t show up.
+          </div>
+        )}
+
         {/* STATS */}
         <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', border: `1px solid ${c.border}`, borderRadius: 12, overflow: 'hidden', marginBottom: 36 }}>
           {[
@@ -127,52 +130,15 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
-            <a href="/dashboard" style={{ fontSize: 12, fontWeight: 600, color: '#fff', background: 'linear-gradient(135deg, #f97316, #ea580c)', padding: '8px 16px', borderRadius: 7, whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(249,115,22,0.3)' }}>
+            <a href="#credits" style={{ fontSize: 12, fontWeight: 600, color: '#fff', background: 'linear-gradient(135deg, #f97316, #ea580c)', padding: '8px 16px', borderRadius: 7, whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(249,115,22,0.3)' }}>
               Upgrade →
             </a>
           </div>
         )}
 
-        <div style={{ marginBottom: 36 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, letterSpacing: -.3, marginBottom: 16 }}>Get more credits</h2>
-          <div className="plans-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
-            {PLANS.map(p => (
-              <div key={p.id} style={{ border: `1px solid ${p.badge ? c.border2 : c.border}`, borderRadius: 12, padding: '24px 22px', transition: 'border-color .2s', position: 'relative', background: p.badge ? c.surface : 'transparent' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = c.border2)}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = p.badge ? c.border2 : c.border)}>
-                {p.badge && (
-                  <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#fb923c', background: c.bg, border: '1px solid rgba(251,146,60,0.4)', padding: '2px 10px', borderRadius: 4, whiteSpace: 'nowrap' }}>{p.badge}</div>
-                )}
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>{p.name}</div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 2, marginBottom: 2 }}>
-                  <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: -1.2, lineHeight: 1 }}>{p.price}</span>
-                  <span style={{ fontSize: 12, color: c.muted }}>/mo</span>
-                </div>
-                <div style={{ fontSize: 11, color: c.subtle, marginBottom: 4 }}>{p.credits} min · {(p as any).perMin}</div>
-                <div style={{ fontSize: 11, color: c.muted, marginBottom: 16 }}>{p.desc}</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 20 }}>
-                  {[
-                    `${p.credits} min/mo`,
-                    'All 16 voices',
-                    '21 languages',
-                    'Audio + thumbnails',
-                    'SEO package',
-                    p.id === 'agency' ? 'Team access' : 'YouTube upload',
-                  ].map(f => (
-                    <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: c.muted }}>
-                      <span style={{ color: '#4ade80', fontSize: 10, flexShrink: 0 }}>✓</span>
-                      {f}
-                    </div>
-                  ))}
-                </div>
-                <button style={{ width: '100%', fontSize: 13, fontWeight: 500, color: p.badge ? c.accentFg : c.text, background: p.badge ? c.accent : 'transparent', border: `1px solid ${p.badge ? c.accent : c.border}`, padding: '10px', borderRadius: 7, cursor: 'pointer', transition: 'opacity .15s' }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-                  Buy {p.name}
-                </button>
-              </div>
-            ))}
-          </div>
+        <div id="credits" style={{ marginBottom: 36, scrollMarginTop: 90 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 600, letterSpacing: -.3, marginBottom: 16 }}>Get more minutes</h2>
+          <PricingCards c={c} dark={dark} />
         </div>
 
         {/* RECENT EPISODES */}

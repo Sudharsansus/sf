@@ -33,7 +33,7 @@ export async function middleware(req: NextRequest) {
   const protectedApis  = [
     '/api/generate', '/api/agents', '/api/jobs',
     '/api/credits', '/api/analytics', '/api/ai-stats',
-    '/api/youtube', '/api/instagram', '/api/admin', '/api/upload', '/api/episodes'
+    '/api/youtube', '/api/instagram', '/api/admin', '/api/upload', '/api/episodes', '/api/billing'
   ]
 
   const isProtectedPage = protectedPages.some(p => pathname.startsWith(p))
@@ -69,6 +69,7 @@ export const config = {
     '/api/instagram/:path*',
     '/api/admin/:path*',
     '/api/upload/:path*',
-    '/api/episodes/:path*'
+    '/api/episodes/:path*',
+    '/api/billing/:path*'
   ]
 }

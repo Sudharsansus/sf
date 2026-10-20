@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { db, users, episodes, creditsLedger, workflowLocks } from '@sus/db'
 import { inngest } from '@/lib/inngest/client'
-import { generateLimit, freeGenerateLimit } from '@/lib/redis'
+import { planGenerateLimit } from '@/lib/redis'
 import { canAffordDuration, checkGlobalBudget, checkUserHourlyCost, trackUserCost, getCostForDuration, getPlan, trackGlobalCost } from '@/lib/budget'
 import { eq, sql, and } from 'drizzle-orm'
 import { getSession } from '@/lib/session'
@@ -100,12 +100,13 @@ export async function POST(req: NextRequest) {
     }
 
     // ── GUARD 3: Plan-aware rate limit ───────────────────────────────────────
-    const limiter = user.plan === 'free' ? freeGenerateLimit : generateLimit
+    const planLimits = getPlan(user.plan)
+    const limiter = planGenerateLimit(user.plan, planLimits.generatesPerHour)
     const { success: rlOk } = await limiter.limit(session.user.email)
     if (!rlOk) return NextResponse.json({
       error: user.plan === 'free'
-        ? 'Free users can generate 3 episodes per hour. Upgrade for more.'
-        : 'Too many requests. Please wait a moment.'
+        ? `Free accounts can generate ${planLimits.generatesPerHour} episodes per hour. Upgrade for more.`
+        : `Your plan allows ${planLimits.generatesPerHour} episodes per hour. Please wait a moment.`
     }, { status: 429 })
 
     // Atomic deduction — WHERE >= creditsNeeded is race-condition-safe.

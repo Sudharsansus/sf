@@ -43,6 +43,18 @@ export const PLANS = {
     generatesPerHour: 3,
     maxCostPerHourUsd: 0.70,
   },
+  lite: {
+    credits: 15,
+    priceMonthly: 6,
+    priceYearly: 6,
+    minutesIncluded: 15,
+    maxDuration: '10min',
+    languages: 21,
+    voices: 16,
+    thumbnails: true,
+    generatesPerHour: 4,
+    maxCostPerHourUsd: 2.00,
+  },
   starter: {
     credits: 60,
     priceMonthly: 19,

@@ -9,6 +9,7 @@ import { EpisodeResult } from '@/components/studio/EpisodeResult'
 import { ChatBox } from '@/components/studio/ChatBox'
 import { AuthPopup } from '@/components/ui/AuthPopup'
 import { LANGUAGES } from '@/lib/languages'
+import { PricingCards } from '@/components/billing/PricingCards'
 import '@/components/landing/landing.css'
 import { PipelineDemo } from '@/components/landing/PipelineDemo'
 import { UseCaseTabs } from '@/components/landing/UseCaseTabs'
@@ -935,81 +936,35 @@ export default function Home() {
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <p style={{ fontSize: 11, fontWeight: 600, color: c.subtle, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 12 }}>Pricing</p>
           <h2 style={{ fontSize: 'clamp(22px,3vw,38px)', fontWeight: 600, letterSpacing: -.6, marginBottom: 16 }}>A perfect fit for everyone</h2>
-          <p style={{ fontSize: 14, color: c.muted, marginBottom: 28 }}>Start free. No card required. Upgrade when you're ready.</p>
+          <p style={{ fontSize: 14, color: c.muted, marginBottom: 28 }}>Start free. No card required. Priced for India — pay in ₹ with UPI.</p>
 
-          {/* MONTHLY / YEARLY TOGGLE */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', background: dark ? 'rgba(255,255,255,0.06)' : c.surface, border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : c.border}`, borderRadius: 10, padding: 4, gap: 2 }}>
-            <button onClick={() => setYearly(false)}
-              style={{ fontSize: 13, fontWeight: 500, padding: '7px 20px', borderRadius: 7, border: 'none', background: !yearly ? c.accent : 'transparent', color: !yearly ? c.accentFg : (dark ? '#aaa' : c.muted), cursor: 'pointer', transition: 'all .2s' }}>
-              Monthly
-            </button>
-            <button onClick={() => setYearly(true)}
-              style={{ fontSize: 13, fontWeight: 500, padding: '7px 20px', borderRadius: 7, border: 'none', background: yearly ? c.accent : 'transparent', color: yearly ? c.accentFg : (dark ? '#aaa' : c.muted), cursor: 'pointer', transition: 'all .2s', display: 'flex', alignItems: 'center', gap: 6 }}>
-              Yearly
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', padding: '1px 6px', borderRadius: 4 }}>-20%</span>
-            </button>
-          </div>
         </div>
 
-        {/* PLAN CARDS */}
-        <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 32 }}>
-          {[
-            { id: 'free',    name: 'Free',    monthly: '$0',   yearly: '$0',   credits: 10,   perMin: '',          desc: 'Best for Rookies',  badge: '' },
-            { id: 'starter', name: 'Starter', monthly: '$19',  yearly: '$15',  credits: 60,   perMin: '$0.32/min', desc: 'Best for Creators', badge: '' },
-            { id: 'pro',     name: 'Pro',     monthly: '$39',  yearly: '$31',  credits: 200,  perMin: '$0.20/min', desc: 'Best for SMEs',     badge: 'POPULAR' },
-            { id: 'studio',  name: 'Studio',  monthly: '$79',  yearly: '$63',  credits: 600,  perMin: '$0.13/min', desc: 'Best for Studios',  badge: '' },
-            { id: 'agency',  name: 'Agency',  monthly: '$199', yearly: '$159', credits: 2000, perMin: '$0.10/min', desc: 'Best for Agencies', badge: '' },
-          ].map(p => (
-            <div key={p.id} style={{ border: `1px solid ${p.badge ? '#f97316' : c.border}`, borderRadius: 14, padding: '24px 20px', position: 'relative', background: p.badge ? (dark ? 'rgba(249,115,22,0.05)' : 'rgba(249,115,22,0.03)') : 'transparent', transition: 'border-color .2s' }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = p.badge ? '#f97316' : c.border2)}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = p.badge ? '#f97316' : c.border)}>
-              {p.badge && (
-                <div style={{ position: 'absolute', top: -11, left: '50%', transform: 'translateX(-50%)', fontSize: 9, fontWeight: 700, letterSpacing: .8, color: '#f97316', background: dark ? '#0a0a0a' : '#fff', border: '1px solid rgba(249,115,22,0.5)', padding: '2px 10px', borderRadius: 20, whiteSpace: 'nowrap' }}>{p.desc}</div>
-              )}
-              {!p.badge && (
-                <div style={{ fontSize: 10, fontWeight: 600, color: dark ? '#aaa' : c.subtle, marginBottom: 10, letterSpacing: .3 }}>{p.desc}</div>
-              )}
-              {p.badge && <div style={{ marginBottom: 10 }} />}
-              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8, color: dark ? '#fff' : c.text }}>{p.name}</div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 3, marginBottom: 4 }}>
-                <span style={{ fontSize: 36, fontWeight: 700, letterSpacing: -1.5, lineHeight: 1, color: dark ? '#fff' : c.text }}>{yearly ? p.yearly : p.monthly}</span>
-                {p.id !== 'free' && <span style={{ fontSize: 12, color: c.muted }}>/month</span>}
-              </div>
-              <div style={{ fontSize: 11, color: dark ? '#888' : c.subtle, marginBottom: 20 }}>
-                {p.id === 'free' ? '10 min free · forever' : `${p.credits} min/mo · ${(p as any).perMin}`}
-              </div>
-              <a href="/login" style={{ display: 'block', textAlign: 'center', fontSize: 13, fontWeight: 500, padding: '10px', borderRadius: 8, border: `1px solid ${p.badge ? '#f97316' : c.border}`, background: p.badge ? '#f97316' : 'transparent', color: p.badge ? '#fff' : c.text, transition: 'opacity .15s', boxSizing: 'border-box' as const }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '.8')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-                {p.id === 'free' ? 'Get Started Free' : `Get ${p.name}`}
-              </a>
-            </div>
-          ))}
-        </div>
+        <PricingCards c={c} dark={dark} />
 
         {/* COMPARISON TABLE */}
         <div style={{ border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : c.border}`, borderRadius: 14, overflow: 'hidden', marginBottom: 40, background: dark ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr', background: dark ? 'rgba(255,255,255,0.05)' : c.surface, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr 1fr', background: dark ? 'rgba(255,255,255,0.05)' : c.surface, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>
             <div style={{ padding: '14px 20px', fontSize: 13, fontWeight: 700, color: dark ? '#ffffff' : c.text }}>Features</div>
-            {['Free','Starter','Pro','Studio','Agency'].map(name => (
+            {['Free','Lite','Starter','Pro','Studio','Agency'].map(name => (
               <div key={name} style={{ padding: '14px 12px', fontSize: 13, fontWeight: 700, color: dark ? '#ffffff' : c.text, textAlign: 'center', borderLeft: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` }}>{name}</div>
             ))}
           </div>
           {[
-            ['Research agent',          true,  true,  true,  true,  true],
-            ['Script × 5 variations',   true,  true,  true,  true,  true],
-            ['AI script evaluation',    true,  true,  true,  true,  true],
-            ['16 voice options',        true,  true,  true,  true,  true],
-            ['21 languages (11 Indian)', true,  true,  true,  true,  true],
-            ['Audio rendering',         true,  true,  true,  true,  true],
-            ['AI thumbnails',           false, true,  true,  true,  true],
-            ['SEO package',             false, true,  true,  true,  true],
-            ['YouTube auto-upload',     false, true,  true,  true,  true],
-            ['Instagram scheduling',    false, false, true,  true,  true],
-            ['Priority support',        false, false, true,  true,  true],
-            ['Team access',             false, false, false, false, true],
+            ['Research agent',          true, true, true, true, true, true],
+            ['Script × 5 variations',   true, true, true, true, true, true],
+            ['AI script evaluation',    true, true, true, true, true, true],
+            ['16 voice options',        true, true, true, true, true, true],
+            ['21 languages (11 Indian)', true, true, true, true, true, true],
+            ['Audio rendering',         true, true, true, true, true, true],
+            ['AI thumbnails',           false, true, true, true, true, true],
+            ['SEO package',             false, true, true, true, true, true],
+            ['YouTube auto-upload',     false, true, true, true, true, true],
+            ['Instagram scheduling',    false, false, false, true, true, true],
+            ['Priority support',        false, false, false, true, true, true],
+            ['Team access',             false, false, false, false, false, true],
           ].map(([feature, ...vals], i, arr) => (
-            <div key={String(feature)} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr', borderBottom: i < arr.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` : 'none', transition: 'background .15s' }}
+            <div key={String(feature)} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr 1fr 1fr', borderBottom: i < arr.length - 1 ? `1px solid ${dark ? 'rgba(255,255,255,0.08)' : c.border}` : 'none', transition: 'background .15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.04)' : c.surface)}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
               <div style={{ padding: '13px 20px', fontSize: 13, color: dark ? '#d0d0d0' : c.text, fontWeight: 500 }}>{String(feature)}</div>

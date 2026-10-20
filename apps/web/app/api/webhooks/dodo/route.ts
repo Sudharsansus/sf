@@ -1,44 +1,52 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
-import { db, users, creditsLedger } from '@sus/db'
-import { verifyHMAC } from '@/lib/security'
-import { eq, sql } from 'drizzle-orm'
+import crypto from 'crypto'
+import { grantPurchase } from '@/lib/billing'
 import { logger } from '@/lib/logger'
 
-const CREDITS: Record<string, number> = {
-  starter: 60,
-  pro:     200,
-  studio:  600,
-  agency:  2000,
-  // top-up packs (minutes)
-  pack_30:  30,
-  pack_60:  60,
-  pack_120: 120,
-  pack_300: 300,
+const TOLERANCE_S = 5 * 60
+
+/** Standard Webhooks verification, as used by Dodo Payments. */
+function verify(raw: string, id: string, timestamp: string, signatureHeader: string, secret: string) {
+  if (!id || !timestamp || !signatureHeader) return false
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > TOLERANCE_S) return false
+  const key = secret.startsWith('whsec_') ? Buffer.from(secret.slice(6), 'base64') : Buffer.from(secret)
+  const expected = crypto.createHmac('sha256', key).update(`${id}.${timestamp}.${raw}`).digest()
+  return signatureHeader.split(' ').some(part => {
+    const [version, sig] = part.split(',')
+    if (version !== 'v1' || !sig) return false
+    const got = Buffer.from(sig, 'base64')
+    return got.length === expected.length && crypto.timingSafeEqual(got, expected)
+  })
 }
-const PLANS: Record<string, string> = { starter: 'starter', pro: 'pro', studio: 'studio', agency: 'agency' }
 
 export async function POST(req: NextRequest) {
+  const raw = await req.text()
+  const secret = process.env.DODO_PAYMENTS_WEBHOOK_SECRET
+  if (!secret) return NextResponse.json({ error: 'Not configured' }, { status: 503 })
+
+  const id = req.headers.get('webhook-id') || ''
+  if (!verify(raw, id, req.headers.get('webhook-timestamp') || '', req.headers.get('webhook-signature') || '', secret)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+  }
+
   try {
-    const raw = await req.text()
-    const sig = req.headers.get('x-dodo-signature') || ''
-    if (!verifyHMAC(raw, sig, process.env.DODO_PAYMENTS_WEBHOOK_SECRET!)) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
-    }
     const { type, data } = JSON.parse(raw)
-    if (type === 'payment.completed' || type === 'subscription.created') {
-      const email = data?.customer?.email
-      const planId = data?.planId || 'starter'
-      const credits = CREDITS[planId] || 50
-      if (email) {
-        const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1)
-        if (user) {
-          await db.update(users).set({ credits: sql`credits + ${credits}`, plan: PLANS[planId] || 'free', updatedAt: new Date() }).where(eq(users.id, user.id))
-          await db.insert(creditsLedger).values({ userId: user.id, amount: credits, reason: `payment_${planId}` })
-          logger.info('Credits granted', { email, credits, plan: planId })
-        }
-      }
+    if (type !== 'payment.succeeded') return NextResponse.json({ ok: true, ignored: type })
+
+    const meta = data?.metadata || {}
+    if (!meta.userId || !meta.productId) {
+      logger.error('Dodo payment without metadata', { paymentId: data?.payment_id })
+      return NextResponse.json({ ok: true, ignored: 'missing metadata' })
     }
-    return NextResponse.json({ ok: true })
+
+    const result = await grantPurchase({
+      provider: 'dodo', paymentRef: data.payment_id || id,
+      userId: meta.userId, productId: meta.productId,
+      amount: typeof data.total_amount === 'number' ? data.total_amount / 100 : undefined, currency: data.currency,
+    })
+    return NextResponse.json({ ok: true, result })
   } catch (e: any) {
     logger.error('Dodo webhook error', { error: e.message })
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })

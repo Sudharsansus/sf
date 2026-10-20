@@ -28,11 +28,12 @@
         "GOOGLE_CLIENT_*",
         "NEXT_PUBLIC_*",
         "R2_*",
-        "DODO_PAYMENTS_WEBHOOK_SECRET",
         "YOUTUBE_CLIENT_*",
         "INSTAGRAM_APP_*",
         "INNGEST_*",
-        "CLAUDE_MODEL"
+        "CLAUDE_MODEL",
+        "DODO_*",
+        "RAZORPAY_*"
       ]
     },
     "dev": {
