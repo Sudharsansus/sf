@@ -1,6 +1,7 @@
 import { pgTable, text, integer, uuid, jsonb, boolean, index } from 'drizzle-orm/pg-core'
 import { createdAt, id, updatedAt } from './_columns'
 import { users } from './identity'
+import { shows } from './shows'
 
 export const projects = pgTable('projects', {
   id: id(),
@@ -28,6 +29,8 @@ export const episodes = pgTable('episodes', {
   videoUrl: text('video_url'),
   /** 9:16 Shorts/Reels rendered by worker-media */
   shortUrls: jsonb('short_urls'),
+  /** Show this episode belongs to (RSS feed); null for one-offs */
+  showId: uuid('show_id').references(() => shows.id, { onDelete: 'set null' }),
   thumbnailUrls: jsonb('thumbnail_urls'),
   seoData: jsonb('seo_data'),
   duration: integer('duration').default(0),

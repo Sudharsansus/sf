@@ -15,6 +15,7 @@
   "dependencies": {
     "@isaii/core": "*",
     "@isaii/db": "*",
+    "@isaii/domain-publishing": "*",
     "@isaii/i18n": "*",
     "drizzle-orm": "0.45.4",
     "zod": "4.6.7"

@@ -8,7 +8,9 @@ import { ScriptPicker } from '@/components/studio/ScriptPicker'
 import { EpisodeResult } from '@/components/studio/EpisodeResult'
 import { ChatBox } from '@/components/studio/ChatBox'
 import { AuthPopup } from '@/components/ui/AuthPopup'
-import { LANGUAGES } from '@isaii/i18n'
+import { CODE_MIXED, LANGUAGES } from '@isaii/i18n'
+
+const PICKER_LANGUAGES = [...LANGUAGES.filter(l => l.region === 'india'), ...CODE_MIXED, ...LANGUAGES.filter(l => l.region !== 'india')]
 import { PricingCards } from '@/components/billing/PricingCards'
 import '@isaii/ui/landing.css'
 import { PipelineDemo } from '@isaii/ui'
@@ -20,7 +22,7 @@ import { UploadFlow } from '@isaii/ui'
 import { TrustGrid } from '@isaii/ui'
 import { FAQ } from '@isaii/ui'
 
-const ROTATING_WORDS = ['podcasts', 'YouTube videos', 'newsletters', 'scripts', 'narrations', 'episodes']
+const ROTATING_WORDS = ['podcasts', 'Hindi podcasts', 'Tamil episodes', 'Kannada stories', 'Telugu shows', 'Malayalam narrations', 'YouTube videos']
 
 const DURATION_CREDITS_MAP: Record<string, number> = {
   '1min': 1, '2min': 2, '5min': 5, '10min': 10,
@@ -467,8 +469,8 @@ export default function Home() {
           </span>
         </h1>
 
-        <p className="f1" style={{ fontSize: 16, color: c.muted, lineHeight: 1.7, maxWidth: 440, margin: '0 auto 40px', fontWeight: 500 }}>
-          Research, scripts, voice, visuals, and SEO — one workflow, fully in your control.
+        <p className="f1" style={{ fontSize: 16, color: c.muted, lineHeight: 1.7, maxWidth: 520, margin: '0 auto 40px', fontWeight: 500 }}>
+          Research, scripts, voice, visuals and SEO in Hindi, Tamil, Telugu, Kannada, Malayalam and 16 more languages — one workflow, fully in your control.
         </p>
 
         {/* CONSOLE */}
@@ -659,7 +661,7 @@ export default function Home() {
                   </div>
                   <div style={{ position: 'relative' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, opacity: 0.3, pointerEvents: 'none', filter: 'blur(1px)' }}>
-                      {LANGUAGES.map(lang => (
+                      {PICKER_LANGUAGES.map(lang => (
                         <div key={lang.code} style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${c.border}`, textAlign: 'center', fontSize: 10 }}>
                           <div lang={lang.code} style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{lang.native}</div>
                           {lang.name}
@@ -680,7 +682,7 @@ export default function Home() {
                 <div style={{ marginBottom: 16 }}>
                   <p style={{ fontSize: 11, color: c.muted, marginBottom: 8, fontWeight: 500 }}>Language</p>
                   <div className="lang-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
-                    {LANGUAGES.map(lang => (
+                    {PICKER_LANGUAGES.map(lang => (
                       <button key={lang.code} onClick={() => setLanguage(lang.code)}
                         style={{ padding: '7px 6px', borderRadius: 7, border: `1px solid ${language === lang.code ? c.text : c.border}`, background: language === lang.code ? c.surface2 : 'transparent', color: language === lang.code ? c.text : c.muted, cursor: 'pointer', fontSize: 10, fontWeight: language === lang.code ? 600 : 400, textAlign: 'center' }}>
                         <div lang={lang.code} style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{lang.native}</div>
