@@ -1,0 +1,10 @@
+{
+  "extends": "@isaii/config/typescript/library.json",
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
