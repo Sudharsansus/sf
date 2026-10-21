@@ -8,7 +8,7 @@ import { MemoryStore } from '@isaii/storage'
 import type { STTProvider, TTSProvider } from '@isaii/voice'
 import {
   audioMergeStep, audioPartCount, audioPartStep, evaluateStep, finalizeStep, readyStep, refineStep, researchStep, scriptsStep, seoStep,
-  startGeneration, startProduction, uploadAudio, uploadScript,
+  revoiceLine, startGeneration, startProduction, uploadAudio, uploadScript,
 } from '../src'
 
 let db: Database, close: () => Promise<void>
@@ -90,6 +90,22 @@ describe('generate + produce pipeline steps', () => {
     const audioUrl = await audioMergeStep(deps, { episodeId, partKeys: keys })
     expect(new TextDecoder().decode((await store.get(`episodes/${episodeId}.mp3`))!)).toBe('[te:one][te:two][te:three]')
     expect(store.objects.has(keys[0]!)).toBe(false)
+
+    // Per-line re-voice: only line 1 goes to TTS; audio is rebuilt from stored clips.
+    const synth = vi.spyOn(tts, 'synthesize')
+    const rv = await revoiceLine(deps, u.id, episodeId, { index: 1, text: 'TWO' })
+    expect(synth).toHaveBeenCalledOnce()
+    expect(new TextDecoder().decode((await store.get(`episodes/${episodeId}.mp3`))!)).toBe('[te:one][te:TWO][te:three]')
+    expect(rv.audioUrl).toMatch(/\?v=\d+$/)
+    expect(((await getEpisode(db, episodeId))!.script as { lines: { text: string }[] }).lines[1]!.text).toBe('TWO')
+    await expect(revoiceLine(deps, u.id, episodeId, { index: 9 })).rejects.toThrow('Line not found')
+    await expect(revoiceLine(deps, u.id, episodeId, { index: 0, voiceId: 'nope' })).rejects.toThrow('Unknown voice')
+    synth.mockRestore()
+
+    // Keep my words: no AI rewrite (the fake provider has no reply queued, so a call would fail).
+    const exact = await refineStep(deps, { episodeId, selectedAngle: 'story', durationLabel: '1min', selectedSpeaker: 'both', keepWords: true })
+    expect(exact.title).toBe('story title')
+    expect(exact.lines.map(l => l.text)).toEqual(['one', 'two', 'three'])
     provider.push(new Error('seo down'))
     await expect(seoStep(deps, { episodeId, script: chosen })).rejects.toThrow()
     const done = await finalizeStep(deps, { episodeId, lockKey: `refine:${episodeId}:technical:1min`, seconds: 60, audioUrl, thumbnailUrls: [], seo: {}, partial: true })

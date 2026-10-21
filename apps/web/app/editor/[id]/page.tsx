@@ -27,6 +27,9 @@ export default function EditorPage() {
   const [selectedVoiceA, setSelectedVoiceA] = useState('21m00Tcm4TlvDq8ikWAM')
   const [selectedVoiceB, setSelectedVoiceB] = useState('AZnzlk1XvdvUeBnXmlld')
   const [showVoices, setShowVoices] = useState(false)
+  // Text each line had when its audio was made; the line can be re-voiced once it differs.
+  const [voiced, setVoiced] = useState<string[] | null>(null)
+  const [revoicing, setRevoicing] = useState<number | null>(null)
 
   const VOICES = [
     { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', gender: 'F' },
@@ -58,6 +61,7 @@ export default function EditorPage() {
         if (ep.script?.lines) setLines(ep.script.lines)
         if (ep.title) setTitle(ep.title)
         if (ep.audioUrl) setAudioUrl(ep.audioUrl)
+        if (ep.audioUrl && ep.script?.lines && !ep.script.clipsStale) setVoiced(ep.script.lines.map((l: ScriptLine) => l.text))
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -68,24 +72,46 @@ export default function EditorPage() {
     setSaved(false)
   }
 
+  // Adding, removing or swapping speakers changes which clip belongs to which line.
+  const structureChanged = !voiced || voiced.length !== lines.length
+
+  async function revoice(index: number) {
+    setRevoicing(index); setError('')
+    try {
+      const res = await fetch(`/api/episodes/${episodeId}/lines/${index}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: lines[index].text }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error || 'Re-voice failed'); return }
+      setAudioUrl(data.audioUrl)
+      setVoiced(prev => prev && prev.map((t, i) => (i === index ? data.line.text : t)))
+    } catch (e: any) {
+      setError(e.message || 'Re-voice failed')
+    } finally { setRevoicing(null) }
+  }
+
   function addLine(index: number) {
     const newLine: ScriptLine = { speaker: 'A', text: '' }
     setLines(prev => [...prev.slice(0, index + 1), newLine, ...prev.slice(index + 1)])
+    setVoiced(null)
     setSaved(false)
   }
 
   function deleteLine(index: number) {
     if (lines.length <= 1) return
     setLines(prev => prev.filter((_, i) => i !== index))
+    setVoiced(null)
     setSaved(false)
   }
 
   function swapSpeaker(index: number) {
     updateLine(index, 'speaker', lines[index].speaker === 'A' ? 'B' : 'A')
+    setVoiced(null)
   }
 
   function swapAllSpeakers() {
     setLines(prev => prev.map(l => ({ ...l, speaker: l.speaker === 'A' ? 'B' : 'A' })))
+    setVoiced(null)
     setSaved(false)
   }
 
@@ -181,7 +207,7 @@ export default function EditorPage() {
           <div style={{ border: `1px solid ${c.border}`, borderRadius: 10, padding: '14px 18px', marginBottom: 24, display: 'flex', gap: 12, alignItems: 'center' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.muted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
             <audio controls src={audioUrl} style={{ flex: 1, height: 28 }} />
-            <span style={{ fontSize: 11, color: c.subtle }}>Original audio</span>
+            <span style={{ fontSize: 11, color: c.subtle }}>{structureChanged ? 'Lines changed — produce again to update' : 'Edit a line, then re-voice just that line'}</span>
           </div>
         )}
 
@@ -222,7 +248,13 @@ export default function EditorPage() {
               />
 
               {/* ACTIONS */}
-              <div className="line-actions" style={{ display: 'flex', gap: 4, opacity: 0, transition: 'opacity .15s', paddingTop: 6 }}>
+              {!structureChanged && voiced![i] !== line.text && line.text.trim() && (
+                <button onClick={() => revoice(i)} disabled={revoicing !== null} title="Re-voice only this line"
+                  style={{ gridColumn: '2', justifySelf: 'start', marginTop: -4, fontSize: 11, padding: '3px 10px', borderRadius: 6, border: '1px solid rgba(249,115,22,0.5)', background: 'transparent', color: '#f97316', cursor: revoicing !== null ? 'wait' : 'pointer' }}>
+                  {revoicing === i ? 'Re-voicing…' : '↻ Re-voice this line'}
+                </button>
+              )}
+              <div className="line-actions" style={{ gridRow: 1, gridColumn: 3, display: 'flex', gap: 4, opacity: 0, transition: 'opacity .15s', paddingTop: 6 }}>
                 <button onClick={() => addLine(i)} title="Add line below"
                   style={{ width: 26, height: 26, borderRadius: 6, border: `1px solid ${c.border}`, background: 'transparent', color: c.muted, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>+</button>
                 <button onClick={() => deleteLine(i)} title="Delete line"

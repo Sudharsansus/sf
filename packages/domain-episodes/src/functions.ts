@@ -65,7 +65,7 @@ export const produceEpisode = inngest.createFunction(
       for (let part = 0; part < audioPartCount(script.lines.length); part++) {
         keys.push(await step.run(`audio-part-${part}`, () => audioPartStep(deps, { episodeId: d.episodeId, script, part, voices: { A: d.voiceA, B: d.voiceB } })))
       }
-      return step.run('audio-merge', () => audioMergeStep(deps, { episodeId: d.episodeId, partKeys: keys }))
+      return step.run('audio-merge', () => audioMergeStep(deps, { episodeId: d.episodeId, partKeys: keys, voices: { A: d.voiceA, B: d.voiceB } }))
     })()
     const thumbs = step.run('thumbnails', () => thumbnailsStep(deps, { episodeId: d.episodeId, script }))
     const seo = step.run('seo', () => seoStep(deps, { episodeId: d.episodeId, script }))

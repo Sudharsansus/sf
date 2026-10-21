@@ -2,7 +2,7 @@ import { designThumbnails, refineScript, writeSEO, type AgentDeps, type Script, 
 import { completeWorkflowLock, getEpisode, updateEpisode, type Database } from '@isaii/db'
 import { renderThumbnail } from '@isaii/media'
 import { storageKeys, type BlobStore } from '@isaii/storage'
-import { DEFAULT_VOICES, concat, renderLines, type TTSProvider } from '@isaii/voice'
+import { DEFAULT_VOICES, concat, renderLineClips, type TTSProvider } from '@isaii/voice'
 import { logger } from '@isaii/logger'
 
 export const LINES_PER_AUDIO_STEP = 12
@@ -11,7 +11,7 @@ export type ProduceDeps = { db: Database; store: BlobStore; tts: TTSProvider; ag
 
 export type ChosenScript = { title: string; topic: string; language: string; lines: ScriptLine[]; seconds: number }
 
-export async function refineStep(d: ProduceDeps, e: { episodeId: string; selectedAngle: string; durationLabel: string; selectedSpeaker: string; useExistingScript?: boolean }): Promise<ChosenScript> {
+export async function refineStep(d: ProduceDeps, e: { episodeId: string; selectedAngle: string; durationLabel: string; selectedSpeaker: string; useExistingScript?: boolean; keepWords?: boolean }): Promise<ChosenScript> {
   const ep = await getEpisode(d.db, e.episodeId)
   if (!ep) throw new Error('Episode not found')
   const all = ep.allScripts as { scripts?: Script[]; language?: string } | null
@@ -24,7 +24,7 @@ export async function refineStep(d: ProduceDeps, e: { episodeId: string; selecte
 
   await updateEpisode(d.db, e.episodeId, { status: 'producing', agentStep: 'refine' })
   let chosen: Script = selected
-  if (!e.useExistingScript) {
+  if (!e.useExistingScript && !e.keepWords) {
     try {
       const mode = (['a', 'b', 'both'].includes(e.selectedSpeaker) ? e.selectedSpeaker : 'both') as 'a' | 'b' | 'both'
       chosen = { ...selected, ...(await refineScript(selected, ep.topic, e.durationLabel, mode, language, d.agent)) }
@@ -37,22 +37,28 @@ export async function refineStep(d: ProduceDeps, e: { episodeId: string; selecte
 }
 
 export async function audioPartStep(d: ProduceDeps, e: { episodeId: string; script: ChosenScript; part: number; voices?: { A?: string; B?: string } }) {
-  const audio = await renderLines(d.tts, {
-    lines: e.script.lines, offset: e.part * LINES_PER_AUDIO_STEP, count: LINES_PER_AUDIO_STEP,
+  const offset = e.part * LINES_PER_AUDIO_STEP
+  const clips = await renderLineClips(d.tts, {
+    lines: e.script.lines, offset, count: LINES_PER_AUDIO_STEP,
     voices: { A: e.voices?.A || DEFAULT_VOICES.A, B: e.voices?.B || DEFAULT_VOICES.B }, language: e.script.language,
   })
-  await d.store.put(storageKeys.episodeAudioPart(e.episodeId, e.part), audio, { contentType: 'audio/mpeg' })
+  // Keep each line's clip so one line can be re-voiced later without re-rendering the episode.
+  await Promise.all(clips.map((clip, i) => d.store.put(storageKeys.episodeLine(e.episodeId, offset + i), clip, { contentType: 'audio/mpeg' })))
+  await d.store.put(storageKeys.episodeAudioPart(e.episodeId, e.part), concat(clips), { contentType: 'audio/mpeg' })
   return storageKeys.episodeAudioPart(e.episodeId, e.part)
 }
 
-export async function audioMergeStep(d: ProduceDeps, e: { episodeId: string; partKeys: string[] }) {
+export async function audioMergeStep(d: ProduceDeps, e: { episodeId: string; partKeys: string[]; voices?: { A?: string; B?: string } }) {
   const parts = await Promise.all(e.partKeys.map(async k => {
     const p = await d.store.get(k)
     if (!p) throw new Error(`Missing audio part ${k}`)
     return p
   }))
   const url = await d.store.put(storageKeys.episodeAudio(e.episodeId), concat(parts), { contentType: 'audio/mpeg' })
-  await updateEpisode(d.db, e.episodeId, { audioUrl: url })
+  // Remember the voices so a single line can be re-voiced to match.
+  const ep = await getEpisode(d.db, e.episodeId)
+  const voices = { A: e.voices?.A || DEFAULT_VOICES.A, B: e.voices?.B || DEFAULT_VOICES.B }
+  await updateEpisode(d.db, e.episodeId, { audioUrl: url, script: { ...((ep?.script as object | null) ?? {}), voices } })
   await Promise.all(e.partKeys.map(k => d.store.delete(k).catch(() => undefined)))
   return url
 }

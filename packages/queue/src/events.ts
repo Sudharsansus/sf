@@ -19,6 +19,7 @@ export const ProduceRequested = z.object({
   voiceA: z.string().optional(),
   voiceB: z.string().optional(),
   useExistingScript: z.boolean().optional(),
+  keepWords: z.boolean().optional(),
 })
 
 export const MediaRenderRequested = z.object({

@@ -12,6 +12,7 @@ export type StartProductionInput = {
   voiceA?: string
   voiceB?: string
   useExistingScript?: boolean
+  keepWords?: boolean
 }
 
 const STALE_MS = 30 * 60_000
@@ -26,7 +27,7 @@ export async function startProduction(deps: EpisodeDeps, input: StartProductionI
     throw new AppError(ErrorCode.NOT_FOUND, 'Script angle not found')
   }
 
-  const lockKey = `refine:${ep.id}:${input.selectedAngle}:${durationLabel}`
+  const lockKey = `refine:${ep.id}:${input.selectedAngle}:${durationLabel}${input.keepWords ? ':exact' : ''}`
   const lock = await acquireWorkflowLock(deps.db, { key: lockKey, episodeId: ep.id, step: 'produce', staleMs: STALE_MS, now: deps.now?.() })
   if (lock.state === 'complete') return { episodeId: ep.id, shareId: ep.shareId, status: 'complete' as const, result: lock.result }
   if (lock.state === 'running') return { episodeId: ep.id, shareId: ep.shareId, status: 'producing' as const }
@@ -34,7 +35,7 @@ export async function startProduction(deps: EpisodeDeps, input: StartProductionI
   await updateEpisode(deps.db, ep.id, { status: 'producing', agentStep: 'queued' })
   await sendEvent('episode/produce.requested', {
     episodeId: ep.id, userId: input.userId, selectedAngle: input.selectedAngle, durationLabel,
-    selectedSpeaker: input.selectedSpeaker ?? 'both', lockKey, voiceA: input.voiceA, voiceB: input.voiceB, useExistingScript: input.useExistingScript,
+    selectedSpeaker: input.selectedSpeaker ?? 'both', lockKey, voiceA: input.voiceA, voiceB: input.voiceB, useExistingScript: input.useExistingScript, keepWords: input.keepWords,
   }, deps.send)
   return { episodeId: ep.id, shareId: ep.shareId, status: 'producing' as const }
 }

@@ -18,11 +18,13 @@ interface Props {
   selectedAngle: string
   onSelectAngle: (angle: string) => void
   onProduce:     () => void
+  keepWords?:    boolean
+  onKeepWords?:  (v: boolean) => void
 }
 
 export function ScriptPicker({
   scripts, evaluations, winner, selectedAngle,
-  onSelectAngle, onProduce,
+  onSelectAngle, onProduce, keepWords = false, onKeepWords,
 }: Props) {
   const getScore = (angle: string) => evaluations.find(e => e.angle === angle)?.total || 0
 
@@ -71,6 +73,13 @@ export function ScriptPicker({
           )
         })}
       </div>
+
+      {onKeepWords && (
+        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: '#999', margin: '0 0 12px', cursor: 'pointer' }}>
+          <input type="checkbox" checked={keepWords} onChange={e => onKeepWords(e.target.checked)} style={{ marginTop: 2 }} />
+          <span><strong style={{ color: '#ddd' }}>Keep my words</strong> — voice this script exactly as written, without rewriting it to the chosen length</span>
+        </label>
+      )}
 
       <button onClick={onProduce}
         style={{ width: '100%', padding: '14px', fontSize: 14, fontWeight: 500, color: '#0c0c0c', background: '#f0f0f0', border: 'none', borderRadius: 10, cursor: 'pointer', fontFamily: 'inherit' }}>

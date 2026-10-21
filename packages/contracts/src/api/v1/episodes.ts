@@ -41,6 +41,8 @@ export const ProduceRequest = z.object({
   voiceA: z.string().optional(),
   voiceB: z.string().optional(),
   useExistingScript: z.boolean().default(false),
+  /** Voice the chosen script word for word (skip the AI rewrite to length). */
+  keepWords: z.boolean().default(false),
 })
 
 export const SaveScriptRequest = z.object({ lines: z.array(ScriptLine).min(1).max(2000) })
