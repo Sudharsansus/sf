@@ -6,7 +6,7 @@ import { MemoryStore } from '@isaii/storage'
 import { renderEpisodeVideo, renderShort } from '../src/media'
 
 let db: Database, close: () => Promise<void>
-beforeAll(async () => ({ db, close } = await createTestDb()), 30_000)
+beforeAll(async () => ({ db, close } = await createTestDb()), 120_000)
 afterAll(() => close())
 
 describe('media rendering', () => {

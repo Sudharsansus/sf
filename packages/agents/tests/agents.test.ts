@@ -80,3 +80,13 @@ describe('writeSEO + chat', () => {
     expect(out).toBe('Hello there')
   })
 })
+
+describe('writePreview', () => {
+  it('uses the preview task and trims lines', async () => {
+    const { provider, deps: d } = deps({ data: { title: ' Idli ', lines: [{ speaker: 'A', text: ' Hi ' }, { speaker: 'B', text: '  ' }, { speaker: 'B', text: 'Hello' }] } })
+    const { writePreview } = await import('../src')
+    const out = await writePreview('Idli history', 'ta', d)
+    expect(out).toEqual({ title: 'Idli', lines: [{ speaker: 'A', text: 'Hi' }, { speaker: 'B', text: 'Hello' }] })
+    expect(provider.calls[0]!.user).toContain('Tamil')
+  })
+})

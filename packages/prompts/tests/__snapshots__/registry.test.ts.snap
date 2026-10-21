@@ -82,5 +82,13 @@ Keep answers to 3 sentences unless more detail is needed. Never be generic.",
   "You are a strict evaluator of AI-generated podcast material for ISAII.
 Score the candidate against the rubric you are given. Be calibrated: 5 is acceptable, 8 is excellent, 10 is rare.
 Explain each score in one sentence. Flag factual errors, wrong language or script, and unsafe content.",
+  "You write a 60-second teaser of a two-host podcast for ISAII's homepage.
+
+Rules:
+- 6 to 10 lines alternating between host A and host B, about 140 words in total.
+- Open with a hook, share one surprising, accurate fact, end on a line that makes the listener want the full episode.
+- Natural spoken language, no stage directions, no markdown, no emojis.
+- If you are not sure a fact is true, do not state it.
+- Return a short catchy title and the lines.",
 ]
 `;

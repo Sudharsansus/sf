@@ -2,7 +2,7 @@ import type * as z from 'zod'
 
 export type Effort = 'low' | 'medium' | 'high'
 
-export type TaskType = 'research' | 'scripts' | 'evaluate' | 'refine' | 'seo' | 'thumbnail' | 'chat' | 'judge'
+export type TaskType = 'research' | 'scripts' | 'evaluate' | 'refine' | 'seo' | 'thumbnail' | 'chat' | 'judge' | 'preview'
 
 export type Usage = { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number }
 

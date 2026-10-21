@@ -18,6 +18,12 @@ export const Episode = z.object({
   createdAt: z.string(),
 })
 
+/** Anonymous homepage preview (no account). */
+export const PreviewRequest = z.object({
+  topic: z.string().min(3).max(120),
+  language: LanguageCode.default('en'),
+})
+
 export const GenerateRequest = z.object({
   topic: z.string().min(3).max(200),
   language: LanguageCode.default('en'),

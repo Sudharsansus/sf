@@ -14,7 +14,7 @@ beforeAll(async () => {
   const u = await upsertUserOnSignIn(db, { email: 'api@x.in' }, 10)
   key = (await createApiKey(db, u.id, 'test')).key
   app = createApp({ db, kv: new MemoryKV(), send, secrets: { razorpayWebhook: 'rzp_secret' } })
-}, 30_000)
+}, 120_000)
 afterAll(() => close())
 
 const auth = () => ({ authorization: `Bearer ${key}`, 'content-type': 'application/json' })

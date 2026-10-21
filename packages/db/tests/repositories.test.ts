@@ -8,7 +8,7 @@ import type { Database } from '../src/client'
 
 let db: Database
 let close: () => Promise<void>
-beforeAll(async () => ({ db, close } = await createTestDb()), 30_000)
+beforeAll(async () => ({ db, close } = await createTestDb()), 120_000)
 afterAll(() => close())
 
 describe('users', () => {

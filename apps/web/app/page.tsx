@@ -8,6 +8,7 @@ import { ScriptPicker } from '@/components/studio/ScriptPicker'
 import { EpisodeResult } from '@/components/studio/EpisodeResult'
 import { ChatBox } from '@/components/studio/ChatBox'
 import { AuthPopup } from '@/components/ui/AuthPopup'
+import { PreviewTry } from '@/components/landing/PreviewTry'
 import { CODE_MIXED, LANGUAGES } from '@isaii/i18n'
 
 const PICKER_LANGUAGES = [...LANGUAGES.filter(l => l.region === 'india'), ...CODE_MIXED, ...LANGUAGES.filter(l => l.region !== 'india')]
@@ -828,6 +829,8 @@ export default function Home() {
               </a>
             </div>
           )}
+
+          {g.step === 'idle' && !session && <PreviewTry c={c} dark={dark} topic={g.topic} />}
 
           {g.step === 'idle' && !session && (
             <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>

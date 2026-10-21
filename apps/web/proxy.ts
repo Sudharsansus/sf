@@ -58,6 +58,7 @@ export const config = {
     '/api/admin/:path*',
     '/api/upload/:path*',
     '/api/episodes/:path*',
+    '/api/preview/:path*',
     '/api/billing/:path*'
   ]
 }

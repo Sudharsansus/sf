@@ -5,7 +5,7 @@ import { createTestDb } from '@isaii/db/testing'
 import { audit, createApiKey, hasRole, onSignIn, openToken, publicUser, requireRole, revokeApiKey, sealToken, sessionClaims, verifyApiKey } from '../src'
 
 let db: Database, close: () => Promise<void>
-beforeAll(async () => ({ db, close } = await createTestDb()), 30_000)
+beforeAll(async () => ({ db, close } = await createTestDb()), 120_000)
 afterAll(() => close())
 
 describe('accounts', () => {

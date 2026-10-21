@@ -14,6 +14,8 @@ export const DEFAULT_TASKS: Record<TaskType, TaskConfig> = {
   thumbnail: { model: DEFAULT_MODEL, effort: 'low', maxTokens: 4_000 },
   chat: { model: DEFAULT_MODEL, effort: 'low', maxTokens: 2_048 },
   judge: { model: DEFAULT_MODEL, effort: 'medium', maxTokens: 4_000 },
+  // Anonymous homepage preview: cheap and fast
+  preview: { model: 'claude-haiku-5-5', effort: 'low', maxTokens: 8_000 },
 }
 
 /**

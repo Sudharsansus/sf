@@ -6,8 +6,9 @@ import * as seo from './tasks/seo'
 import * as thumbnail from './tasks/thumbnail'
 import * as chat from './tasks/chat'
 import * as judge from './tasks/judge'
+import * as preview from './tasks/preview'
 
-const TASKS = { research, scripts, evaluate, refine, seo, thumbnail, chat, judge } as const
+const TASKS = { research, scripts, evaluate, refine, seo, thumbnail, chat, judge, preview } as const
 export type PromptTask = keyof typeof TASKS
 
 export type PromptRef = `${PromptTask}@${string}`

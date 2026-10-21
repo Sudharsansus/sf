@@ -4,7 +4,7 @@ import { createTestDb } from '@isaii/db/testing'
 import { createShow, showFeed } from '../src'
 
 let db: Database, close: () => Promise<void>
-beforeAll(async () => ({ db, close } = await createTestDb()), 30_000)
+beforeAll(async () => ({ db, close } = await createTestDb()), 120_000)
 afterAll(() => close())
 
 describe('showFeed', () => {

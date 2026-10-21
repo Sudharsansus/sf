@@ -45,6 +45,10 @@ export const Refined = z.object({
   lines: z.array(ScriptLine),
 })
 
+/** ~60-second two-host teaser for the anonymous homepage preview. */
+export const Preview = z.object({ title: z.string(), lines: z.array(ScriptLine).min(2).max(12) })
+export type Preview = z.infer<typeof Preview>
+
 export const SEO = z.object({
   youtube: z.object({
     title: z.string(), title_b: z.string(), description: z.string(), tags: z.array(z.string()),
