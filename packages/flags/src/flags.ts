@@ -6,9 +6,9 @@ export const FLAGS = {
   /** Video episodes + Shorts (needs worker-media deployed) */
   videoRendering: { default: false, description: 'MP4 episodes and Shorts via worker-media' },
   /** Shows / series with saved hosts */
-  shows: { default: false, description: 'Saved shows with recurring hosts and music' },
+  shows: { default: true, description: 'Saved shows with recurring hosts and music' },
   /** RSS hosting + distribution */
-  rssHosting: { default: false, description: 'Hosted RSS feeds' },
+  rssHosting: { default: true, description: 'Hosted RSS feeds' },
 } as const
 
 export type FlagName = keyof typeof FLAGS

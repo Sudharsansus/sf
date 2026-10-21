@@ -17,11 +17,11 @@ export async function proxy(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid origin' }, { status: 403 })
   }
 
-  const protectedPages = ['/studio', '/dashboard', '/episodes', '/analytics', '/upload', '/editor']
+  const protectedPages = ['/shows/manage', '/studio', '/dashboard', '/episodes', '/analytics', '/upload', '/editor']
   const protectedApis  = [
     '/api/generate', '/api/agents', '/api/jobs',
     '/api/credits', '/api/analytics', '/api/ai-stats',
-    '/api/youtube', '/api/instagram', '/api/admin', '/api/upload', '/api/episodes', '/api/billing'
+    '/api/youtube', '/api/instagram', '/api/admin', '/api/upload', '/api/episodes', '/api/billing', '/api/shows'
   ]
 
   const isProtectedPage = protectedPages.some(p => pathname.startsWith(p))
@@ -59,6 +59,8 @@ export const config = {
     '/api/upload/:path*',
     '/api/episodes/:path*',
     '/api/preview/:path*',
+    '/api/shows/:path*',
+    '/shows/manage/:path*',
     '/api/billing/:path*'
   ]
 }
