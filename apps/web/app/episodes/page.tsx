@@ -2,12 +2,14 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Nav } from '@/components/ui/Nav'
+import { EpisodeMedia } from '@/components/episodes/EpisodeMedia'
 
 export default function EpisodesPage() {
   const { data: session } = useSession()
   const [dark, setDark] = useState(true)
   const [episodes, setEpisodes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [mediaOpen, setMediaOpen] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/jobs').then(r => r.json()).then(d => {
@@ -102,7 +104,8 @@ export default function EpisodesPage() {
         {!loading && episodes.length > 0 && (
           <div style={{ border: `1px solid ${c.border}`, borderRadius: 12, overflow: 'hidden' }}>
             {episodes.map((ep: any, i: number) => (
-              <div key={ep.id} className="ep-row" style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 14, background: 'transparent' }}>
+              <div key={ep.id}>
+              <div className="ep-row" style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', gap: 14, background: 'transparent' }}>
                 {ep.thumbnailUrls?.[0] ? (
                   <img src={ep.thumbnailUrls[0]} alt="" style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover', border: `1px solid ${c.border}`, flexShrink: 0 }} />
                 ) : (
@@ -125,7 +128,15 @@ export default function EpisodesPage() {
                   <a href={`/share/${ep.shareId}`} target="_blank" style={{ fontSize: 12, color: c.muted, border: `1px solid ${c.border}`, padding: '5px 12px', borderRadius: 6, whiteSpace: 'nowrap', transition: 'border-color .15s' }}>
                     Share ↗
                   </a>
+                  {ep.status === 'complete' && (
+                    <button onClick={() => setMediaOpen(mediaOpen === ep.id ? null : ep.id)} aria-expanded={mediaOpen === ep.id}
+                      style={{ fontSize: 12, color: c.muted, border: `1px solid ${c.border}`, background: 'transparent', padding: '5px 12px', borderRadius: 6, whiteSpace: 'nowrap', cursor: 'pointer' }}>
+                      Video
+                    </button>
+                  )}
                 </div>
+              </div>
+              {mediaOpen === ep.id && <EpisodeMedia ep={ep} c={c} />}
               </div>
             ))}
           </div>
