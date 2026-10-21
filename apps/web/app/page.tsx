@@ -65,7 +65,7 @@ const SUGGESTIONS = [
   },
   {
     icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M12 21a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2z"/></svg>,
-    text: 'India startup ecosystem 2025',
+    text: 'India startup ecosystem 2026',
   },
 ]
 
